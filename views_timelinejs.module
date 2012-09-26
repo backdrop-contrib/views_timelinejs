@@ -70,7 +70,8 @@ function views_timelinejs_get_timeline_json($view_name, $display_id) {
 function views_timelinejs_load_libraries() {
   // Include TimelineJS libraries (Libraries API 1.x)
   if ($path = libraries_get_path('timeline')) {
-    drupal_add_js($path . '/compiled/js/storyjs-embed.js');
+    drupal_add_css($path . '/compiled/css/timeline.css');
+    drupal_add_js($path . '/compiled/js/timeline-min.js');
   }
 }
 
