@@ -49,9 +49,12 @@ function views_timelinejs_get_timeline_json($view_name, $display_id) {
 
     if ($view->access($display_id)) {
       $output = $view->execute_display($display_id);
+      if(is_array($output) && isset($output['content'])) {
+        $output = $output['content'];
+      }
       $view->destroy();
       // Strip all markup from output, we want just the pure JSON data
-      return trim(strip_tags($output['content']));
+      return trim(strip_tags($output));
     }
     $view->destroy();
   }
