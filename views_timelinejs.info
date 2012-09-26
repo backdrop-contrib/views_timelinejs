@@ -1,5 +1,6 @@
 name = Views TimelineJS
 description = Provides a View style that displays rows in a Timeline. 
+dependencies[] = libraries
 dependencies[] = views
 package = Views
 core = 7.x
