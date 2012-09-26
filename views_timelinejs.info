@@ -1,0 +1,10 @@
+name = Views TimelineJS
+description = Provides a View style that displays rows in a Timeline. 
+dependencies[] = views
+package = Views
+core = 7.x
+
+files[] = views_timelinejs.module
+files[] = theme/views_timelinejs.theme.inc
+files[] = views_timelinejs.views.inc
+files[] = views_timelinejs_plugin_style_timelinejs.inc
