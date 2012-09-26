@@ -27,7 +27,7 @@ function views_timelinejs_menu() {
  */
 function views_timelinejs_get_timeline_json($view_name, $display_id) {
   $arguments = func_get_args();
-
+  $args = array();
   // Shift two first function arguments off and rebuild from [0]
   foreach($arguments as $count => $arg) {
     if($count > 1) {
@@ -41,8 +41,9 @@ function views_timelinejs_get_timeline_json($view_name, $display_id) {
     $view->set_display($display_id);
 
     // Set arguments that were received from URL call
-    $view->set_arguments($args);
-
+    if(is_array($args)) {
+      $view->set_arguments($args);
+    }
     // Set a variable that makes theming layer output JSON instead of standard markup
     $view->json = TRUE;
 
