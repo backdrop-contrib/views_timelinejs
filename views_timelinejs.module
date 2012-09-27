@@ -10,6 +10,21 @@ function views_timelinejs_views_api() {
 }
 
 /**
+ * Implementation of hook_theme()
+ */
+function views_timelinejs_theme() {
+  return array(
+    'views_timelinejs_link_to_entity' => array(
+      'file' => 'theme/views_timelinejs.theme.inc',
+      'arguments' => array(
+        'uri' => NULL,
+        'link_text' => NULL,
+      ),
+    ),
+  );
+}
+
+/**
  * Function to include TimelineJS libraries
  */
 function views_timelinejs_load_libraries() {

@@ -18,6 +18,11 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         'media' => array('default' => '', 'translatable' => FALSE),
         'date' => array('default' => '', 'translatable' => FALSE),
       ),
+      'timeline_config' => array(
+        'link_to_entity' => array('default' => '', 'translatable' => FALSE),
+        'link_text_enabled' => array('default' => '', 'translatable' => FALSE),
+        'link_text' => array('default' => '', 'translatable' => FALSE),
+      ),
     );
     return array_merge(parent::option_definition(), $options);
   }
@@ -32,20 +37,48 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     }
 
     $options = $this->display->handler->get_field_labels();
-    $fields = $this->display->handler->get_option('fields');
+    $fields = array('0' => t('None'));
 
-    $text_fields = array('0' => t('None'));
-    $date_fields = array();
-    $media_fields = array();
-
-    foreach($fields as $field) {
-      $text_fields[$field['id']] = $options[$field['id']];
+    foreach($this->display->handler->get_option('fields') as $field) {
+      $fields[$field['id']] = $options[$field['id']];
     }
 
     // TODO: Detect field types, populate only compatible fields
-    $date_fields = $text_fields;
-    $media_fields = $text_fields;
+    $text_fields = $fields;
+    $date_fields = $fields;
+    $media_fields = $fields;
 
+    $form['timeline_config'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('General configuration'),
+    );
+    $form['timeline_config']['link_to_entity'] = array(
+      '#type' => 'checkbox',
+      '#title' => 'Link timeline items to entity',
+      '#description' => t('If checked, headlines will be made links to entity.'),
+      '#default_value' => isset($this->options['timeline_config']['link_to_entity']) ? $this->options['timeline_config']['link_to_entity'] : '',
+    );
+    $form['timeline_config']['link_text_enabled'] = array(
+      '#type' => 'checkbox',
+      '#title' => 'Add a link to entity after bodytext',
+      '#description' => t('Append a link to original entity to the end of the bodytext.'),
+      '#default_value' => isset($this->options['timeline_config']['link_text_enabled']) ? $this->options['timeline_config']['link_text_enabled'] : '',
+    );
+    $form['timeline_config']['link_text'] = array(
+      '#type' => 'textfield',
+      '#title' => 'Link text',
+      '#description' => t('Text that will be used in the link to entity'),
+      '#default_value' => isset($this->options['timeline_config']['link_text']) ? $this->options['timeline_config']['link_text'] : 'Read more',
+      '#states' => array(
+        'visible' => array(
+          ':input[name="style_options[timeline_config][link_to_entity]"]' => array('value' => 1),
+        ),
+      ),
+    );
+    $form['timeline_fields'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Field mappings'),
+    );
     $form['timeline_fields']['headline'] = array(
       '#type' => 'select',
       '#options' => $text_fields,
@@ -74,7 +107,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#description' => t('Only UNIX timestamp-like date fields are currently supported (node created, updated, etc...)'),
       '#default_value' => isset($this->options['timeline_fields']['date']) ? $this->options['timeline_fields']['date'] : '',
     );
-
   }
 
   /**
@@ -82,7 +114,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
    */
   function render() {
     $view = $this->view;
-
     $field_mapping = array(
       'startDate' => 'date',
       'endDate' => 'date',
@@ -90,13 +121,21 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       'text' => 'bodytext',
       'media' => 'media',
     );
-
+    $link_text = isset($this->options['timeline_config']['link_text']) ? $this->options['timeline_config']['link_text'] : 'Read more';
     $rows = array();
+
     // TODO: Figure out how to detect field types and different rendering methods for them
     $media_field_type = isset($this->options['timeline_fields']['media']) ? $view->field[$this->options['timeline_fields']['media']]->field_info['type'] : NULL;
 
     // Build a TimelineJS friendly array from the views data
     foreach($this->view->result as $count => $row) {
+      // Get the link to entity
+      // TODO: Currently restricted to node views, should work with other entities also
+      if ($this->options['timeline_config']['link_to_entity'] && $view->base_table == 'node' && isset($row->_field_data[$view->base_field]['entity'])) {
+        $row->uri = entity_uri($row->_field_data[$view->base_field]['entity_type'], $row->_field_data[$view->base_field]['entity']);
+        $row->link_to_entity = l(t(check_plain($link_text)), $row->uri['path']);
+      }
+
       $fields = array();
 
       // Get basic data for each timeline entry field based on display handler settings
@@ -139,6 +178,16 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
 
         // Sanitize all user inputted output
         $fields[$name] = check_plain($fields[$name]);
+      }
+
+      // Add links to original entity
+      if(isset($fields['text']) && $this->options['timeline_config']['link_text_enabled']) {
+        // Append link to entity in the end of bodytext
+        $fields['text'] .= theme('views_timelinejs_link_to_entity', array('uri' => $row->uri['path'], 'link_text' => t($link_text)));
+      }
+      if(isset($fields['headline']) && isset($row->uri['path'])) {
+        // Make headline a link to entity
+        $fields['headline'] = l($fields['headline'], $row->uri['path']);
       }
 
       // Combine the results array with processed row data
