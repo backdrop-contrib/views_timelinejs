@@ -92,9 +92,9 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     );
 
     $rows = array();
+    // TODO: Figure out how to detect field types and different rendering methods for them
     $media_field_type = isset($this->options['timeline_fields']['media']) ? $view->field[$this->options['timeline_fields']['media']]->field_info['type'] : NULL;
 
-    // TODO: Should we skip parsing Views results entirely, if this is not the JSON output
     // Build a TimelineJS friendly array from the views data
     foreach($this->view->result as $count => $row) {
       $fields = array();
@@ -151,23 +151,17 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
 
     // Skip rendering if view is being edited or previewed
     if(!$view->editing) {
-      if(isset($this->view->json)) {
-        // Output results as JSON data to feed TimelineJS library
-        $data = array(
-          'timeline' => array(
-            'headline' => 'Title',
-            'type' => 'default',
-            'date' => $rows,
-          ),
-        );
-        return drupal_json_encode($data);
-      }
-      else {
-        // Output wrapper markup and include JS libraries
-        return theme('views_timelinejs', array('view' => $view, 'options' => $this->options, 'rows' => $rows));
-      }
+      // Prepare data array that TimelineJS understands
+      $data = array(
+        'timeline' => array(
+          'headline' => 'Title',
+          'type' => 'default',
+          'date' => $rows,
+        ),
+      );
+      return theme('views_timelinejs', array('view' => $view, 'options' => $this->options, 'rows' => $data));
     }
-   else {
+    else {
       return t('TimelineJS style does not support preview mode.');
     }
   }

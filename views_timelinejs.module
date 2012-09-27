@@ -10,61 +10,6 @@ function views_timelinejs_views_api() {
 }
 
 /**
- * Implements hook_menu().
- */
-function views_timelinejs_menu() {
-  $items['_timelinejs'] = array(
-    'page callback' => 'views_timelinejs_get_timeline_json',
-    'delivery callback' => 'views_timelinejs_deliver_json',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-  );
-  return $items;
-}
-
-/**
- * Function to load a view, return view results in JSON format
- */
-function views_timelinejs_get_timeline_json($view_name, $display_id) {
-  $arguments = func_get_args();
-  $args = array();
-  // Shift two first function arguments off and rebuild from [0]
-  foreach($arguments as $count => $arg) {
-    if($count > 1) {
-      $args[] = $arg;
-    }
-  }
-
-  // Load the specified View.
-  $view = views_get_view($view_name);
-  if(is_object($view) && isset($view->name)) {
-    $view->set_display($display_id);
-
-    // Set arguments that were received from URL call
-    if(is_array($args)) {
-      $view->set_arguments($args);
-    }
-    // Set a variable that makes theming layer output JSON instead of standard markup
-    $view->json = TRUE;
-
-    if ($view->access($display_id)) {
-      $output = $view->execute_display($display_id);
-      if(is_array($output) && isset($output['content'])) {
-        $output = $output['content'];
-      }
-      $view->destroy();
-      // Strip all markup from output, we want just the pure JSON data
-      return trim(strip_tags($output));
-    }
-    $view->destroy();
-  }
-  // View couldn't be loaded, output nothing
-  else {
-    exit();
-  }
-}
-
-/**
  * Function to include TimelineJS libraries
  */
 function views_timelinejs_load_libraries() {
@@ -73,12 +18,7 @@ function views_timelinejs_load_libraries() {
     drupal_add_css($path . '/compiled/css/timeline.css');
     drupal_add_js($path . '/compiled/js/timeline-min.js');
   }
-}
-
-/**
- * Delivery callback to output Drupal data as JSON
- */
-function views_timelinejs_deliver_json($page_callback_result) {
-  drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
-  print($page_callback_result);
+  else {
+    drupal_set_message(t('TimelineJS libraries not found in libraries/timeline directory. Timeline will not work.'), 'error', FALSE);
+  }
 }
