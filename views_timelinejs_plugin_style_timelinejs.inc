@@ -211,6 +211,10 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       $rows[$count]['asset']['media'] = isset($fields['media']) ? $fields['media'] : '';
     }
 
+    // Let modules alter timeline data before rendering by implementing
+    // hook_views_timelinejs_data_alter(&$rows, $view)
+    drupal_alter('views_timelinejs_data', $rows, clone $view);
+
     // Skip rendering if view is being edited or previewed
     if(!$view->editing) {
       // Prepare data array that TimelineJS understands
