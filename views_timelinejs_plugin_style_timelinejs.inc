@@ -114,6 +114,11 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
    */
   function render() {
     $view = $this->view;
+
+    // We want to render some fields, because of field
+    // rewriting and other field level processing
+    $this->view->style_plugin->render_fields($this->view->result);
+
     $field_mapping = array(
       'startDate' => 'date',
       'endDate' => 'date',
@@ -149,13 +154,15 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
             }
             else {
               // Get field's raw value
-              $fields[$target_field] = $this->view->style_plugin->get_field_value($count, $this->options['timeline_fields'][$source_field]);
+              $fields[$target_field] = $view->style_plugin->get_field_value($count, $this->options['timeline_fields'][$source_field]);
             }
           }
         }
       }
 
       // Apply additional field-level processing
+      // TODO: Maybe it's not worth using general field mapping loop above,
+      // since most of the fields require field-level processing
       if(isset($fields['startDate'])) {
         $fields['startDate'] = format_date($fields['startDate'], 'custom', 'Y,m,d');
       }
@@ -167,6 +174,12 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         if(isset($field_tmp['uri'])) {
           $fields['media'] = file_create_url($field_tmp['uri']);
         }
+      }
+      // We want to use rendered output for bodytext, because of
+      // field level processing provided by views (trimming, etc)
+      // Remove all markup, so that we don't get any broken HTML
+      if(isset($fields['text'])) {
+        $fields['text'] = strip_tags($this->view->style_plugin->rendered_fields[$count][$this->options['timeline_fields']['bodytext']]);
       }
 
       // Loop through fields if there are arrays and deassemble them to get value
