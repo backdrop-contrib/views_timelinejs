@@ -9,3 +9,7 @@ https://github.com/VeriteCo/TimelineJS
 
 3. Place Timeline JS libraries into sites/all/libraries/timeline
 
+MAINTAINERS
+===========
+ * Juha Niemi
+ * Pol Dell'Aiera

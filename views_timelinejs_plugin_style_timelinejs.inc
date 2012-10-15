@@ -52,6 +52,36 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#type' => 'fieldset',
       '#title' => t('General configuration'),
     );
+    $form['timeline_config']['headline'] = array(
+      '#type' => 'textfield',
+      '#title' => 'Headline of Timeline JS',
+      '#description' => t('If checked, headlines will be made links to entity.'),
+      '#default_value' => isset($this->options['timeline_config']['headline']) ? $this->options['timeline_config']['headline'] : '',
+    );
+    $form['timeline_config']['width'] = array(
+      '#type' => 'textfield',
+      '#title' => 'Width of the timeline',
+      '#description' => t('The width of the timeline.'),
+      '#default_value' => isset($this->options['timeline_config']['width']) ? $this->options['timeline_config']['width'] : '100%',
+    );
+    $form['timeline_config']['height'] = array(
+      '#type' => 'textfield',
+      '#title' => 'Height of the timeline',
+      '#description' => t('The height, in pixel of the timeline.'),
+      '#default_value' => isset($this->options['timeline_config']['height']) ? $this->options['timeline_config']['height'] : '500',
+    );
+    $form['timeline_config']['start_zoom_adjust'] = array(
+      '#type' => 'textfield',
+      '#title' => 'Start zoom',
+      '#description' => t('This will tweak the default zoom level. Equivalent to pressing the zoom in or zoom out button the specified number of times. Negative numbers zoom out. default is 0'),
+      '#default_value' => isset($this->options['timeline_config']['start_zoom_adjust']) ? $this->options['timeline_config']['start_zoom_adjust'] : '0',
+    );
+    $form['timeline_config']['start_at_slide'] = array(
+      '#type' => 'textfield',
+      '#title' => 'Start slide',
+      '#description' => t('You can tell TimelineJS to start at a specific slide number default is 0'),
+      '#default_value' => isset($this->options['timeline_config']['start_at_slide']) ? $this->options['timeline_config']['start_at_slide'] : '0',
+    );
     $form['timeline_config']['link_to_entity'] = array(
       '#type' => 'checkbox',
       '#title' => 'Link timeline items to entity',
@@ -154,43 +184,49 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
             }
             else {
               // Get field's raw value
-              $fields[$target_field] = $view->style_plugin->get_field_value($count, $this->options['timeline_fields'][$source_field]);
+              $fields[$target_field] = array(
+                'field' => $this->options['timeline_fields'][$source_field],
+                'raw' => $view->style_plugin->get_field_value($count, $this->options['timeline_fields'][$source_field]),
+              );
             }
           }
         }
       }
 
-      // Apply additional field-level processing
-      // TODO: Maybe it's not worth using general field mapping loop above,
-      // since most of the fields require field-level processing
-      if(isset($fields['startDate'])) {
-        $fields['startDate'] = format_date($fields['startDate'], 'custom', 'Y,m,d');
-      }
-      if(isset($fields['endDate'])) {
-        $fields['endDate'] = format_date($fields['endDate'], 'custom', 'Y,m,d');
-      }
-      if(isset($fields['media']) && is_array($fields['media'])) {
-        $field_tmp = array_shift($fields['media']);
-        if(isset($field_tmp['uri'])) {
-          $fields['media'] = file_create_url($field_tmp['uri']);
-        }
-      }
-      // We want to use rendered output for bodytext, because of
-      // field level processing provided by views (trimming, etc)
-      // Remove all markup, so that we don't get any broken HTML
-      if(isset($fields['text'])) {
-        $fields['text'] = strip_tags($this->view->style_plugin->rendered_fields[$count][$this->options['timeline_fields']['bodytext']]);
-      }
+      foreach ($fields as $key => $field_data) {
+        $field = $field_data['field'];
+        $fields[$key] = $field_data['raw'];
 
-      // Loop through fields if there are arrays and deassemble them to get value
-      foreach($fields as $name => $field) {
-        if(is_array($field)) {
-          $field_tmp = array_shift($field);
-          $fields[$name] = $field_tmp['value'];
+        if (isset($view->field[$field]->field_info['type'])) {
+          $type = $view->field[$field]->field_info['type'];
+          switch($type) {
+            case 'text_with_summary':
+              $fields[$key] = $this->view->style_plugin->rendered_fields[$count][$field];
+              break;
+            case 'date':
+              if (is_array($fields[$key])) {
+                $date_tmp = array_shift($fields[$key]);
+                $fields['startDate'] = strtotime($date_tmp['value']);
+                if (isset($date_tmp['value2'])) {
+                  $fields['endDate'] = strtotime($date_tmp['value2']);
+                } else {
+                  $fields['endDate'] = $fields['startDate'];
+                }
+                $fields['startDate'] = format_date($fields['startDate'], 'custom', 'Y,m,d');
+                $fields['endDate'] = format_date($fields['endDate'], 'custom', 'Y,m,d');
+              }
+              break;
+            case 'image':
+              $image_style = image_style_load($view->field[$field]->options['settings']['image_style']);
+              if (is_array($fields[$key])) {
+                $field_tmp = array_shift($fields[$key]);
+                $preview_file = image_style_url($image_style['name'], $field_tmp['uri']);
+                image_style_create_derivative($image_style, $field_tmp['uri'], $preview_file);
+                $fields[$key] = $preview_file;
+              }
+              break;
+          }
         }
-
-        // Sanitize all user inputted output
-        $fields[$name] = check_plain($fields[$name]);
       }
 
       // Add links to original entity
@@ -215,20 +251,31 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     // hook_views_timelinejs_data_alter(&$rows, $view)
     drupal_alter('views_timelinejs_data', $rows, clone $view);
 
-    // Skip rendering if view is being edited or previewed
-    if(!$view->editing) {
-      // Prepare data array that TimelineJS understands
-      $data = array(
+    // Prepare data array that TimelineJS understands
+    $data = array(
+      'type' => 'timeline',
+      'embed_id' => 'timelinejs_' . $view->name . '_' . $view->current_display,
+      'lang' => $GLOBALS['language']->language,
+      'width' => $this->options['timeline_config']['width'],
+      'height' => $this->options['timeline_config']['height'],
+      'start_zoom_adjust' => $this->options['timeline_config']['start_zoom_adjust'],
+      'start_at_slide' => $this->options['timeline_config']['start_at_slide'],
+      'source' => array(
         'timeline' => array(
-          'headline' => 'Title',
+          'headline' => $this->options['timeline_config']['headline'],
           'type' => 'default',
           'date' => $rows,
         ),
-      );
-      return theme('views_timelinejs', array('view' => $view, 'options' => $this->options, 'rows' => $data));
+      ),
+    );
+
+    // Skip rendering if view is being edited or previewed
+    if(!$view->editing) {
+      return theme('views_timelinejs', array('timelinejs' => $data));
     }
     else {
       return t('TimelineJS style does not support preview mode.');
+      //return '<pre>'.print_r($data, 1).'</pre>';
     }
   }
 }
