@@ -82,6 +82,13 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#description' => t('You can tell TimelineJS to start at a specific slide number default is 0'),
       '#default_value' => isset($this->options['timeline_config']['start_at_slide']) ? $this->options['timeline_config']['start_at_slide'] : '0',
     );
+    $form['timeline_config']['start_at_end'] = array(
+      '#type' => 'select',
+      '#options' => array('1'=>'yes', '0'=>'No'),
+      '#title' => 'Start at the end ?',
+      '#description' => t('Set to yes to start the timeline on the last date. Default is no'),
+      '#default_value' => isset($this->options['timeline_config']['start_at_end']) ? $this->options['timeline_config']['start_at_end'] : '0',
+    );
     $form['timeline_config']['link_to_entity'] = array(
       '#type' => 'checkbox',
       '#title' => 'Link timeline items to entity',
@@ -260,6 +267,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       'height' => $this->options['timeline_config']['height'],
       'start_zoom_adjust' => $this->options['timeline_config']['start_zoom_adjust'],
       'start_at_slide' => $this->options['timeline_config']['start_at_slide'],
+      'start_at_end' => (bool) $this->options['timeline_config']['start_at_end'],
       'source' => array(
         'timeline' => array(
           'headline' => $this->options['timeline_config']['headline'],
