@@ -8,7 +8,7 @@ function template_preprocess_views_timelinejs(&$vars) {
   views_timelinejs_load_libraries();
 
   // Include inline javascript
-  drupal_add_js(array('timelineJS' => $vars['timelinejs']), 'setting');
+  drupal_add_js(array('timelineJS' => array($vars['timelinejs'])), 'setting');
   drupal_add_js(drupal_get_path('module', 'views_timelinejs') . '/js/views_timelinejs.js');
 }
 
