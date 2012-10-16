@@ -17,6 +17,11 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         'bodytext' => array('default' => '', 'translatable' => FALSE),
         'media' => array('default' => '', 'translatable' => FALSE),
         'date' => array('default' => '', 'translatable' => FALSE),
+        'caption' => array('default' => '', 'translatable' => FALSE),
+        'credit' => array('default' => '', 'translatable' => FALSE),
+        'thumbnail' => array('default' => '', 'translatable' => FALSE),
+        'era' => array('default' => '', 'translatable' => FALSE),
+        'tag' => array('default' => '', 'translatable' => FALSE),
       ),
       'timeline_config' => array(
         'link_to_entity' => array('default' => '', 'translatable' => FALSE),
@@ -47,6 +52,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $text_fields = $fields;
     $date_fields = $fields;
     $media_fields = $fields;
+    $bool_fields = $fields;
 
     $form['timeline_config'] = array(
       '#type' => 'fieldset',
@@ -144,6 +150,41 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#description' => t('Only UNIX timestamp-like date fields are currently supported (node created, updated, etc...)'),
       '#default_value' => isset($this->options['timeline_fields']['date']) ? $this->options['timeline_fields']['date'] : '',
     );
+    $form['timeline_fields']['caption'] = array(
+      '#type' => 'select',
+      '#options' => $text_fields,
+      '#title' => 'Select field for media caption',
+      '#description' => t('This field should be a text-like field'),
+      '#default_value' => isset($this->options['timeline_fields']['caption']) ? $this->options['timeline_fields']['caption'] : '',
+    );
+    $form['timeline_fields']['credit'] = array(
+      '#type' => 'select',
+      '#options' => $text_fields,
+      '#title' => 'Select field for media credit',
+      '#description' => t('This field should be a text-like field'),
+      '#default_value' => isset($this->options['timeline_fields']['credit']) ? $this->options['timeline_fields']['credit'] : '',
+    );
+    $form['timeline_fields']['thumbnail'] = array(
+      '#type' => 'select',
+      '#options' => $media_fields,
+      '#title' => 'Select field for thumbnail',
+      '#description' => t('Only image fields are currently supported'),
+      '#default_value' => isset($this->options['timeline_fields']['thumbnail']) ? $this->options['timeline_fields']['thumbnail'] : '',
+    );
+    $form['timeline_fields']['era'] = array(
+      '#type' => 'select',
+      '#options' => $bool_fields,
+      '#title' => 'Select field for type (era or title)',
+      '#description' => t('This field should be a boolean (true/false) field'),
+      '#default_value' => isset($this->options['timeline_fields']['era']) ? $this->options['timeline_fields']['era'] : '',
+    );
+    $form['timeline_fields']['tag'] = array(
+      '#type' => 'select',
+      '#options' => $text_fields,
+      '#title' => 'Select field for tag',
+      '#description' => t('This field should be a text-like field'),
+      '#default_value' => isset($this->options['timeline_fields']['tag']) ? $this->options['timeline_fields']['tag'] : '',
+    );
   }
 
   /**
@@ -154,7 +195,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
 
     // We want to render some fields, because of field
     // rewriting and other field level processing
-    $this->view->style_plugin->render_fields($this->view->result);
+    $view->style_plugin->render_fields($view->result);
 
     $field_mapping = array(
       'startDate' => 'date',
@@ -162,7 +203,13 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       'headline' => 'headline',
       'text' => 'bodytext',
       'media' => 'media',
+      'caption' => 'caption',
+      'credit' => 'credit',
+      'era' => 'era',
+      'thumbnail' => 'thumbnail',
+      'tag' => 'tag',
     );
+
     $link_text = isset($this->options['timeline_config']['link_text']) ? $this->options['timeline_config']['link_text'] : 'Read more';
     $rows = array();
 
@@ -170,7 +217,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $media_field_type = isset($this->options['timeline_fields']['media']) ? $view->field[$this->options['timeline_fields']['media']]->field_info['type'] : NULL;
 
     // Build a TimelineJS friendly array from the views data
-    foreach($this->view->result as $count => $row) {
+    foreach($view->result as $count => $row) {
       // Get the link to entity
       // TODO: Currently restricted to node views, should work with other entities also
       if ($this->options['timeline_config']['link_to_entity'] && $view->base_table == 'node' && isset($row->_field_data[$view->base_field]['entity'])) {
@@ -208,7 +255,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           $type = $view->field[$field]->field_info['type'];
           switch($type) {
             case 'text_with_summary':
-              $fields[$key] = $this->view->style_plugin->rendered_fields[$count][$field];
+              $fields[$key] = $view->style_plugin->rendered_fields[$count][$field];
               break;
             case 'date':
               if (is_array($fields[$key])) {
@@ -246,21 +293,41 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         $fields['headline'] = l($fields['headline'], $row->uri['path']);
       }
 
-      // Combine the results array with processed row data
-      $rows[$count]['startDate'] = isset($fields['startDate']) ? $fields['startDate'] : '';
-      $rows[$count]['endDate'] = isset($fields['endDate']) ? $fields['endDate'] : '';
-      $rows[$count]['headline'] = isset($fields['headline']) ? $fields['headline'] : '';
-      $rows[$count]['text'] = isset($fields['text']) ? $fields['text'] : '';
-      $rows[$count]['asset']['media'] = isset($fields['media']) ? $fields['media'] : '';
+      if (isset($fields['era']) && ($fields['era'] == TRUE || $fields['era'] == 'era')) {
+        $era[] = array(
+          'startDate' => isset($fields['startDate']) ? $fields['startDate'] : '',
+          'endDate' => isset($fields['endDate']) ? $fields['endDate'] : '',
+          'headline' => isset($fields['headline']) ? $fields['headline'] : '',
+          'text' => isset($fields['text']) ? $fields['text'] : '',
+          'tag' => isset($fields['tag']) ? $fields['tag'] : '',
+        );
+      } else {
+        // Combine the results array with processed row data
+        $date[] = array(
+          'startDate' => isset($fields['startDate']) ? $fields['startDate'] : '',
+          'endDate'   => isset($fields['endDate']) ? $fields['endDate'] : '',
+          'headline'  => isset($fields['headline']) ? $fields['headline'] : '',
+          'text'      => isset($fields['text']) ? $fields['text'] : '',
+          'tag'       => isset($fields['tag']) ? $fields['tag'] : '',
+          'asset' => array(
+            'media'     => isset($fields['media']) ? $fields['media'] : '',
+            'thumbnail' => isset($fields['thumbnail']) ? $fields['thumbnail'] : '',
+            'credit'    => isset($fields['credit']) ? $fields['credit'] : '',
+            'caption'   => isset($fields['caption']) ? $fields['caption'] : ''
+          ),
+        );
+      }
     }
 
     // Let modules alter timeline data before rendering by implementing
     // hook_views_timelinejs_data_alter(&$rows, $view)
-    drupal_alter('views_timelinejs_data', $rows, clone $view);
+    // TODO: Re enable this later.
+    //drupal_alter('views_timelinejs_data', $rows, clone $view);
 
     // Prepare data array that TimelineJS understands
     $data = array(
       'type' => 'timeline',
+      'embed_path' => libraries_get_path('timeline') . '/compiled/',
       'embed_id' => 'timelinejs_' . $view->name . '_' . $view->current_display,
       'lang' => $GLOBALS['language']->language,
       'width' => $this->options['timeline_config']['width'],
@@ -272,7 +339,8 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         'timeline' => array(
           'headline' => $this->options['timeline_config']['headline'],
           'type' => 'default',
-          'date' => $rows,
+          'date' => $date,
+          'era'  => $era,
         ),
       ),
     );
@@ -282,8 +350,8 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       return theme('views_timelinejs', array('timelinejs' => $data));
     }
     else {
-      return t('TimelineJS style does not support preview mode.');
-      //return '<pre>'.print_r($data, 1).'</pre>';
+      //return t('TimelineJS style does not support preview mode.');
+      return '<pre>'.print_r($data, 1).'</pre>';
     }
   }
 }

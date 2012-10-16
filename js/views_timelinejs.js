@@ -16,4 +16,3 @@ var embed_path;
 
 })(jQuery);
 
-
