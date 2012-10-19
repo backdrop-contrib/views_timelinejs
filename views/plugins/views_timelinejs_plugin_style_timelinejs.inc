@@ -328,6 +328,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $data = array(
       'type' => 'timeline',
       'embed_path' => libraries_get_path('timeline') . '/compiled/',
+      'id' => drupal_html_class('storyjs-' . user_password(8)),
       'embed_id' => 'timelinejs_' . $view->name . '_' . $view->current_display,
       'lang' => $GLOBALS['language']->language,
       'width' => $this->options['timeline_config']['width'],
