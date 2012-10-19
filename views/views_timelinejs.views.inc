@@ -9,6 +9,7 @@
  * Implements hook_views_plugins().
  */
 function views_timelinejs_views_plugins() {
+  $path = drupal_get_path('module', 'views_timelinejs') . '/views';
   return array(
     'style' => array(
       'timelinejs' => array(
@@ -21,9 +22,9 @@ function views_timelinejs_views_plugins() {
         'uses fields'     => TRUE,
         'uses row class' => FALSE,
         'type' => 'normal',
-        'path' => drupal_get_path('module', 'views_timelinejs'),
+        'path' => $path . '/plugins',
         'theme' => 'views_timelinejs',
-        'theme path' => drupal_get_path('module', 'views_timelinejs') . '/theme',
+        'theme path' => $path . '/theme',
         'theme file' => 'views_timelinejs.theme.inc',
       ),
     ),
