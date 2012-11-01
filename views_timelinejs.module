@@ -16,7 +16,7 @@ function views_timelinejs_views_api() {
 function views_timelinejs_theme() {
   return array(
     'views_timelinejs_link_to_entity' => array(
-      'file' => 'theme/views_timelinejs.theme.inc',
+      'file' => 'views/theme/views_timelinejs.theme.inc',
       'arguments' => array(
         'uri' => NULL,
         'link_text' => NULL,
