@@ -4,4 +4,5 @@
  * View template to output TimelineJS wrapper markup
  */
 ?>
-<div id="<?php print $timelinejs['embed_id']; ?>" class="timelinejs"></div>
+<div id="<?php print $timelinejs_id ?>" class="timelinejs">
+</div>

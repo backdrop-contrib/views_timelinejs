@@ -1,18 +1,17 @@
-var embed_path;
-
-(function ($) {
-
-  Drupal.behaviors.timelineJS = {
-    attach: function(context, settings) {
-      $.each(Drupal.settings.timelineJS, function(key, timeline) {
-        embed_path = timeline['embed_path'];
-        if (timeline['processed'] != true) {
-          createStoryJS(timeline);
-        }
-        timeline['processed'] = true;
+Drupal.behaviors.timelineJS = {
+  attach: function(context, settings) {
+    // TODO: Make this work with multiple timelines per page
+    if(VMM.Timeline && Drupal.settings.timelineJS['source']) {
+      var timeline = new VMM.Timeline(
+        Drupal.settings.timelineJS['embed_id'],
+        Drupal.settings.timelineJS['width'],
+        Drupal.settings.timelineJS['height']
+      );
+      timeline.init({
+        source: Drupal.settings.timelineJS['source'],
+        lang: Drupal.settings.timelineJS['lang'],
       });
     }
   }
-
-})(jQuery);
+}
 

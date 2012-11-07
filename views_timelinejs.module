@@ -6,7 +6,6 @@
 function views_timelinejs_views_api() {
   return array(
     'api' => '3',
-    'path' => drupal_get_path('module', 'views_timelinejs') . '/views',
   );
 }
 
@@ -16,7 +15,7 @@ function views_timelinejs_views_api() {
 function views_timelinejs_theme() {
   return array(
     'views_timelinejs_link_to_entity' => array(
-      'file' => 'views/theme/views_timelinejs.theme.inc',
+      'file' => 'theme/views_timelinejs.theme.inc',
       'arguments' => array(
         'uri' => NULL,
         'link_text' => NULL,
@@ -32,7 +31,7 @@ function views_timelinejs_load_libraries() {
   // Include TimelineJS libraries (Libraries API 1.x)
   if ($path = libraries_get_path('timeline')) {
     drupal_add_css($path . '/compiled/css/timeline.css');
-    drupal_add_js($path . '/compiled/js/storyjs-embed.js');
+    drupal_add_js($path . '/compiled/js/timeline-min.js');
   }
   else {
     drupal_set_message(t('TimelineJS libraries not found in libraries/timeline directory. Timeline will not work.'), 'error', FALSE);
