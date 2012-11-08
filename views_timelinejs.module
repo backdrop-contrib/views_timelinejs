@@ -33,7 +33,7 @@ function views_timelinejs_load_libraries() {
   // Include TimelineJS libraries (Libraries API 1.x)
   if ($path = libraries_get_path('timeline')) {
     drupal_add_css($path . '/compiled/css/timeline.css');
-    drupal_add_js($path . '/compiled/js/timeline-min.js');
+    drupal_add_js($path . '/compiled/js/storyjs-embed.js');
   }
   else {
     drupal_set_message(t('TimelineJS libraries not found in libraries/timeline directory. Timeline will not work.'), 'error', FALSE);

@@ -17,11 +17,12 @@ function template_preprocess_views_timelinejs(&$vars) {
     'height' => '500',
     'source' => $vars['rows'],
     'embed_id' => $vars['timelinejs_id'],
+    'embed_path' => libraries_get_path('timeline') . '/compiled/',
     'lang' => $language->language,
+    'processed' => FALSE,
   );
-
   // Include inline javascript
-  drupal_add_js(array('timelineJS' => $settings), 'setting');
+  drupal_add_js(array('timelineJS' => array($settings)), 'setting');
   drupal_add_js(drupal_get_path('module', 'views_timelinejs') . '/js/views_timelinejs.js');
 
 }

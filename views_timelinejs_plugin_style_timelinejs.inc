@@ -275,20 +275,22 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     // hook_views_timelinejs_data_alter(&$rows, $view)
     drupal_alter('views_timelinejs_data', $rows, clone $view);
 
+    // Prepare data array that TimelineJS understands
+    $data = array(
+      'timeline' => array(
+        'headline' => 'Title',
+        'type' => 'default',
+        'date' => $rows,
+      ),
+    );
+
     // Skip rendering if view is being edited or previewed
     if(!$view->editing) {
-      // Prepare data array that TimelineJS understands
-      $data = array(
-        'timeline' => array(
-          'headline' => 'Title',
-          'type' => 'default',
-          'date' => $rows,
-        ),
-      );
       return theme('views_timelinejs', array('view' => $view, 'options' => $this->options, 'rows' => $data));
     }
     else {
-      return t('TimelineJS style does not support preview mode.');
+      return '<pre>' . print_r($data, 1) . '</pre>';
+      //return t('TimelineJS style does not support preview mode.');
     }
   }
 }
