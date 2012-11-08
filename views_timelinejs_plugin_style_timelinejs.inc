@@ -9,6 +9,9 @@
  */
 class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
 
+  /*
+   * REMOVED OPTIONS_DEFINITION FOR NOW.
+   *
   function option_definition() {
     // TODO: Define all plugin settings here
     $options = array(
@@ -26,31 +29,85 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     );
     return array_merge(parent::option_definition(), $options);
   }
+   */
 
   function options_form(&$form, &$form_state) {
+
     $handlers = $this->display->handler->get_handlers('field');
     if (empty($handlers)) {
       $form['error_markup'] = array(
-        '#markup' => '<div class="error messages">' . t('You need at least one field before you can configure TimelineJS.') . '</div>',
+        '#prefix' => '<div class="error messages">',
+        '#markup' => t('You need at least one field before you can configure TimelineJS.'),
+        '#suffix' => '</div>',
       );
       return;
     }
 
     $options = $this->display->handler->get_field_labels();
-    $fields = array('0' => t('None'));
+    $media_fields = array('0' => t('None'));
+    $date_fields = array('0' => t('None'));
+    $text_fields = array('0' => t('None'));
 
-    foreach($this->display->handler->get_option('fields') as $field) {
-      $fields[$field['id']] = $options[$field['id']];
+    // Load all date_source plugins.
+    ctools_include('plugins');
+    $date_sources = ctools_get_plugins('views_timelinejs', 'date_sources');
+    $text_sources = ctools_get_plugins('views_timelinejs', 'text_sources');
+    $media_sources = ctools_get_plugins('views_timelinejs', 'media_sources');
+
+    // Go through all the field handlers to check support.
+    foreach ($handlers as $field => $handler) {
+      // Get a nice name for the field.
+      $field_names[$field] = $handler->ui_name();
+      if ($label = $handler->label()) {
+        $field_names[$field] .= ' ("' . $label . '")';
+      }
+
+      if (isset($handler->definition['field_name'])) {
+        $field_name = $handler->definition['field_name'];
+        $field_info = field_info_field($field_name);
+      }
+
+      // Check if field is supported as a date source.
+      foreach ($date_sources as $source) {
+        if (get_class($handler) == $source['handler_name']) {
+          if ($field_info['type'] == $source['field_type'] || $field == 'created' || $field == 'changed') {
+            $date_fields[$field] = $field_names[$field];
+          }
+        }
+      }
+
+      // Check if field is a supported text source.
+      foreach($text_sources as $source) {
+        if (get_class($handler) == $source['handler_name']) {
+          if ((isset($field_info['type']) && $field_info['type'] == $source['field_type']) || $field == 'title') {
+            $text_fields[$field] = $field_names[$field];
+          }
+        }
+      }
+
+      // Check if field is a supported media source.
+      foreach ($media_sources as $source) {
+        if (get_class($handler) == $source['handler_name']) {
+          if (isset($field_info['type']) && $field_info['type'] == $source['field_type']) {
+            $media_fields[$field] = $field_names[$field];
+          }
+        }
+      }
     }
 
-    // TODO: Detect field types, populate only compatible fields
-    $text_fields = $fields;
-    $date_fields = $fields;
-    $media_fields = $fields;
+    // TODO: Detect all field types, populate only compatible fields
+    // Add default + supported fields to arrays.
+    // Currently only checking support for date fields.
+    $text_fields = $text_fields;
+    $date_fields = $date_fields;
+    $media_fields = $media_fields;
 
     $form['timeline_config'] = array(
       '#type' => 'fieldset',
       '#title' => t('General configuration'),
+      '#description' => t('Settings for how the Timeline will behave.'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
     );
     $form['timeline_config']['link_to_entity'] = array(
       '#type' => 'checkbox',
@@ -78,6 +135,9 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $form['timeline_fields'] = array(
       '#type' => 'fieldset',
       '#title' => t('Field mappings'),
+      '#description' => t('Select the fields to be used for different parts of the timeline.'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
     );
     $form['timeline_fields']['headline'] = array(
       '#type' => 'select',
