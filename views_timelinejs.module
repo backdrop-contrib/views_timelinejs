@@ -64,11 +64,11 @@ function views_timelinejs_ctools_plugin_type() {
  * A helper function.
  * Returns the date conversion callback function name of a plugin.
  */
-function views_timelinejs_get_callback($handler_name, $plugin_type) {
+function views_timelinejs_get_callback($handler_name, $field_type, $plugin_type) {
   ctools_include('plugins');
   $plugins = ctools_get_plugins('views_timelinejs', $plugin_type);
   foreach ($plugins as $plugin) {
-    if ($plugin['handler_name'] == $handler_name) {
+    if ($plugin['handler_name'] == $handler_name && $plugin['field_type'] == $field_type) {
       return ctools_plugin_get_function($plugin, 'callback');
     }
   }
