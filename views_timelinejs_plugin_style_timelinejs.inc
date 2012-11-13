@@ -210,18 +210,8 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $link_text = isset($this->options['timeline_config']['link_text']) ? $this->options['timeline_config']['link_text'] : 'Read more';
     $rows = array();
 
-    // TODO: Figure out how to detect field types and different rendering methods for them.
-    $media_field_type = isset($this->options['timeline_fields']['media']) ? $view->field[$this->options['timeline_fields']['media']]->field_info['type'] : NULL;
-
     // Build a TimelineJS friendly array from the views data
     foreach($this->view->result as $count => $row) {
-      // Get the link to entity
-      // TODO: Currently restricted to node views, should work with other entities also
-      if ($this->options['timeline_config']['link_to_entity'] && $view->base_table == 'node' && isset($row->_field_data[$view->base_field]['entity'])) {
-        $row->uri = entity_uri($row->_field_data[$view->base_field]['entity_type'], $row->_field_data[$view->base_field]['entity']);
-        $row->link_to_entity = l(t(check_plain($link_text)), $row->uri['path']);
-      }
-
       $data = array();
       $data['asset'] = array();
       // Build the data we need.
@@ -253,7 +243,13 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           if (!is_string($v_text)) {
             $v_text = $v_text['value'];
           }
-          $rows[$count][$target_field] = check_plain($v_text);
+          if ($this->options['timeline_config']['link_to_entity'] && $view->base_table == 'node' && isset($row->_field_data[$view->base_field]['entity'])) {
+            $row->uri = entity_uri($row->_field_data[$view->base_field]['entity_type'], $row->_field_data[$view->base_field]['entity']);
+            $rows[$count][$target_field] = l($v_text, $row->uri['path']);
+          }
+          else {
+            $rows[$count][$target_field] = check_plain($v_text);
+          }
         }
 
         if(in_array($target_field, array('startDate', 'endDate'))) {
@@ -271,7 +267,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
             $tmp['field_type'] = 'date';
           }
 
-          dfb($tmp, 'Field', FirePHP::LOG);
           if ($conversion_callback = views_timelinejs_get_callback($tmp['handler'], $tmp['field_type'], 'date_sources')) {
             $date['formatted'] = call_user_func($conversion_callback, $value, 'iso8601', array('field' => $tmp));
             $date['timestamp'] = call_user_func($conversion_callback, $value, 'timestamp', array('field' => $tmp));
@@ -315,7 +310,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           if ($conversion_callback = views_timelinejs_get_callback($tmp['handler'], $tmp['field_type'], 'media_sources')) {
             $media['formatted'] = call_user_func($conversion_callback, $value, array('field' => $tmp));
           }
-          #dfb($media, 'Media', FirePHP::LOG);
+
           $rows[$count]['asset'][$target_field] = check_plain($media['formatted']);
         }
       }
