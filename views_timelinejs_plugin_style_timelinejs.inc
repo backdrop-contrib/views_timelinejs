@@ -219,13 +219,10 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         $tmp = $this->getDefinedUsage($source_field);
 
         if ($target_field == 'text') {
-          $v_text = $view->field[$tmp['fieldname']]->get_value($row);
-          if (is_array($v_text)) {
-            $v_text = array_shift($v_text);
-          }
-          $rows[$count][$target_field] = $v_text['value'];
+          $v_text = strip_tags($view->style_plugin->rendered_fields[$count][$this->options['timeline_fields'][$source_field]]);
 
-          $rows[$count][$target_field] = strip_tags($rows[$count][$target_field]);
+          $rows[$count][$target_field] = $v_text;
+
           if (isset($this->options['timeline_config']['link_text_enabled'])) {
             $rows[$count][$target_field] .= theme('views_timelinejs_link_to_entity', array('uri' => $row->uri['path'], 'link_text' => t($link_text)));
           }
