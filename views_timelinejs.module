@@ -57,6 +57,7 @@ function views_timelinejs_ctools_plugin_type() {
     'date_sources' => array(),
     'text_sources' => array(),
     'media_sources' => array(),
+    'tag_sources' => array(),
   );
 }
 

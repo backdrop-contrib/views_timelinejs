@@ -9,28 +9,6 @@
  */
 class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
 
-  /*
-   * REMOVED OPTIONS_DEFINITION FOR NOW.
-   *
-  function option_definition() {
-    // TODO: Define all plugin settings here
-    $options = array(
-      'timeline_fields' => array(
-        'headline' => array('default' => '', 'translatable' => FALSE),
-        'bodytext' => array('default' => '', 'translatable' => FALSE),
-        'media' => array('default' => '', 'translatable' => FALSE),
-        'date' => array('default' => '', 'translatable' => FALSE),
-      ),
-      'timeline_config' => array(
-        'link_to_entity' => array('default' => '', 'translatable' => FALSE),
-        'link_text_enabled' => array('default' => '', 'translatable' => FALSE),
-        'link_text' => array('default' => '', 'translatable' => FALSE),
-      ),
-    );
-    return array_merge(parent::option_definition(), $options);
-  }
-   */
-
   function options_form(&$form, &$form_state) {
 
     $handlers = $this->display->handler->get_handlers('field');
@@ -47,12 +25,14 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $media_fields = array('0' => t('None'));
     $date_fields = array('0' => t('None'));
     $text_fields = array('0' => t('None'));
+    $tag_fields = array('0' => t('None'));
 
     // Load all date_source plugins.
     ctools_include('plugins');
     $date_sources = ctools_get_plugins('views_timelinejs', 'date_sources');
     $text_sources = ctools_get_plugins('views_timelinejs', 'text_sources');
     $media_sources = ctools_get_plugins('views_timelinejs', 'media_sources');
+    $tag_sources = ctools_get_plugins('views_timelinejs', 'tag_sources');
 
     // Go through all the field handlers to check support.
     foreach ($handlers as $field => $handler) {
@@ -93,15 +73,18 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           }
         }
       }
+
+      // Check if field is a supported tag source.
+      foreach ($tag_sources as $source) {
+        if (get_class($handler) == $source['handler_name']) {
+          if (isset($field_info['type']) && $field_info['type'] == $source['field_type']) {
+            $tag_fields[$field] = $field_names[$field];
+          }
+        }
+      }
     }
 
-    // TODO: Detect all field types, populate only compatible fields
-    // Add default + supported fields to arrays.
-    // Currently only checking support for date fields.
-    $text_fields = $text_fields;
-    $date_fields = $date_fields;
-    $media_fields = $media_fields;
-
+    /** TIMELINE GENERAL CONFIGURATION **/
     $form['timeline_config'] = array(
       '#type' => 'fieldset',
       '#title' => t('General configuration'),
@@ -132,6 +115,27 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         ),
       ),
     );
+    $form['timeline_config']['hash_bookmark'] = array(
+      '#type' => 'select',
+      '#title' => 'Hash Bookmarks',
+      '#description' => t('On each slide, a # will be added to the end of the url in the url bar. These urls are bookmarkable, so you can share or return to the same place in the timeline later.'),
+      '#options' => array(
+        '0' => t('No'),
+        '1' => t('Yes'),
+      ),
+      '#default_value' => isset($this->options['timeline_config']['hash_bookmark']) ? $this->options['timeline_config']['hash_bookmark'] : '',
+    );
+    $form['timeline_config']['start_at_end'] = array(
+      '#type' => 'select',
+      '#title' => 'Start at the end',
+      '#description' => t('The most recent event will be shown first.'),
+      '#options' => array(
+        '0' => t('No'),
+        '1' => t('Yes'),
+      ),
+      '#default_value' => isset($this->options['timeline_config']['hash_bookmark']) ? $this->options['timeline_config']['hash_bookmark'] : '',
+    );
+
     $form['timeline_fields'] = array(
       '#type' => 'fieldset',
       '#title' => t('Field mappings'),
@@ -157,15 +161,20 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#type' => 'select',
       '#options' => $date_fields,
       '#title' => 'Start Date',
-      '#description' => t('Only UNIX timestamp-like date fields are currently supported (node created, updated, etc...)'),
       '#default_value' => isset($this->options['timeline_fields']['startDate']) ? $this->options['timeline_fields']['startDate'] : '',
     );
     $form['timeline_fields']['endDate'] = array(
       '#type' => 'select',
       '#options' => $date_fields,
       '#title' => t('End Date'),
-      '#description' => t('Only UNIX timestamp-like date fields are currently supported (node created, updated, etc...)'),
       '#default_value' => isset($this->options['timeline_fields']['endDate']) ? $this->options['timeline_fields']['endDate'] : '',
+    );
+    $form['timeline_fields']['tag'] = array(
+      '#type' => 'select',
+      '#options' => $tag_fields,
+      '#title' => t('Tag'),
+      '#description' => t('Select a field that will be used for tagging the content. Up to 6 tags supported, no more will be shown.'),
+      '#default_value' => isset($this->options['timeline_fields']['tag']) ? $this->options['timeline_fields']['tag'] : '',
     );
     $form['timeline_fields']['media'] = array(
       '#type' => 'select',
@@ -206,6 +215,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       'media' => 'media',
       'caption' => 'caption',
       'credit' => 'credit',
+      'tag' => 'tag',
     );
     $link_text = isset($this->options['timeline_config']['link_text']) ? $this->options['timeline_config']['link_text'] : 'Read more';
     $rows = array();
@@ -249,6 +259,18 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           }
         }
 
+        if ($target_field == 'tag') {
+          $value = $view->field[$tmp['fieldname']]->get_value($row);
+          if (is_array($value)) {
+            $value = array_shift($value);
+          }
+
+          if ($conversion_callback = views_timelinejs_get_callback($tmp['handler'], $tmp['field_type'], 'tag_sources')) {
+            $value = call_user_func($conversion_callback, $value, array('field' => $tmp));
+          }
+
+          $rows[$count][$target_field] = check_plain($value);
+        }
         if(in_array($target_field, array('startDate', 'endDate'))) {
           $date = array();
           // Load field data.
