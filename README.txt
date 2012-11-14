@@ -9,3 +9,51 @@ https://github.com/VeriteCo/TimelineJS
 
 3. Place Timeline JS libraries into sites/all/libraries/timeline
 
+
+USAGE
+=====
+
+1. Create a content type with the right fields.
+
+To create a TimelineJS view, you will need to use a content type that has
+fields which correspond to display elements on the timeline.
+
+When creating a TimelineJS view, you will need to map the following display
+elements:
+ * headline (for example, node title) [REQUIRED]
+ * bodytext [REQUIRED]
+ * media asset (image and link fields are supported out of the box) [REQUIRED]
+ * date element (post date, changed date, date_api fields supported out of the box) [REQUIRED]
+ * media caption (not required)
+ * media credit (not required)
+
+Once a content type has the necessary fields, you can create your TimelineJS
+view using the Views interface.
+
+2. Create your new view
+
+Using the "Add new view" form, create your new TimelineJS view and choose the
+content type that has the required TimelineJS fields. Change the display format
+to "TimelineJS". Click "Continue and edit" to finish setting up the new view.
+
+3. Configuring the view
+
+Click "Add" in the fields section of the Views interface to add all the required
+fields from your content type. Once all your fields have been added to the view,
+they will be available for field mappings.
+
+Click the TimelineJS "settings" in format section. Edit the general
+configuration of the timeline display and then edit the field mappings and
+make sure each timeline element has a corresponding content field selected.
+If you do not select a field mapping for all the required elements, you will
+get errors on your view.
+
+Click "Save" for your view to complete the configuration. The preview display
+on the Views edit interface shows the data used by TimelineJS.
+To see the TimelineJS display, access the block or page you just created.
+
+
+MAINTAINERS
+===========
+* Juha Niemi
+* Olli Erinko
