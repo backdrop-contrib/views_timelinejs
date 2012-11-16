@@ -89,8 +89,11 @@ function views_timelinejs_convert_to_gregorian($value, $date_format, $timezone, 
   $timezone = new DateTimezone($timezone);
   $db_timezone = new DateTimezone($db_timezone);
   switch ($date_format) {
+    case 'datestamp':
     case 'timestamp':
-      $date = new DateTime("@$value", $db_timezone);
+      $date = new DateTime();
+      $date->setTimezone($db_timezone);
+      $date->setTimestamp($value);
       break;
 
     default:
@@ -105,8 +108,11 @@ function views_timelinejs_convert_to_iso($value, $date_format, $timezone, $db_ti
   $timezone = new DateTimezone($timezone);
   $db_timezone = new DateTimezone($db_timezone);
   switch ($date_format) {
+    case 'datestamp':
     case 'timestamp':
-      $date = new DateTime("@$value", $db_timezone);
+      $date = new DateTime();
+      $date->setTimezone($db_timezone);
+      $date->setTimestamp($value);
       break;
 
     default:
@@ -121,8 +127,11 @@ function views_timelinejs_convert_to_timestamp($value, $date_format, $timezone, 
   $timezone = new DateTimezone($timezone);
   $db_timezone = new DateTimezone($db_timezone);
   switch ($date_format) {
+    case 'datestamp':
     case 'timestamp':
-      $date = new DateTime("@$value", $db_timezone);
+      $date = new DateTime();
+      $date->setTimezone($db_timezone);
+      $date->setTimestamp($value);
       break;
 
     default:

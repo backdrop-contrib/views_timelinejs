@@ -3,6 +3,7 @@ description = Provides a View style that displays rows in a Timeline.
 dependencies[] = libraries
 dependencies[] = views
 package = Views
+php = 5.3.0
 core = 7.x
 
 files[] = theme/views_timelinejs.theme.inc

@@ -157,17 +157,12 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#description' => t('This field should be a text-like field'),
       '#default_value' => isset($this->options['timeline_fields']['bodytext']) ? $this->options['timeline_fields']['bodytext'] : '',
     );
-    $form['timeline_fields']['startDate'] = array(
+    $form['timeline_fields']['date'] = array(
       '#type' => 'select',
       '#options' => $date_fields,
-      '#title' => 'Start Date',
-      '#default_value' => isset($this->options['timeline_fields']['startDate']) ? $this->options['timeline_fields']['startDate'] : '',
-    );
-    $form['timeline_fields']['endDate'] = array(
-      '#type' => 'select',
-      '#options' => $date_fields,
-      '#title' => t('End Date'),
-      '#default_value' => isset($this->options['timeline_fields']['endDate']) ? $this->options['timeline_fields']['endDate'] : '',
+      '#title' => 'Start & End Date',
+      '#description' => t('Select a field for start and end date of events. End date is optional, start date is not.'),
+      '#default_value' => isset($this->options['timeline_fields']['date']) ? $this->options['timeline_fields']['date'] : '',
     );
     $form['timeline_fields']['tag'] = array(
       '#type' => 'select',
@@ -208,8 +203,8 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $this->view->style_plugin->render_fields($this->view->result);
 
     $field_mapping = array(
-      'startDate' => 'startDate',
-      'endDate' => 'endDate',
+      'startDate' => 'date',
+      'endDate' => 'date',
       'headline' => 'headline',
       'text' => 'bodytext',
       'media' => 'media',
@@ -274,7 +269,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         if(in_array($target_field, array('startDate', 'endDate'))) {
           $date = array();
           // Load field data.
-          #$value = $view->style_plugin->get_field_value($count, $this->options['timeline_fields'][$source_field]);
           $value = $view->field[$tmp['fieldname']]->get_value($row);
           // If it's a date field, we have an array.
           if (is_array($value)) {
@@ -353,7 +347,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     }
     else {
       return '<pre>' . print_r($data, 1) . '</pre>';
-      //return t('TimelineJS style does not support preview mode.');
     }
   }
 
