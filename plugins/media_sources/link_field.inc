@@ -12,5 +12,10 @@ $plugin = array(
 );
 
 function views_timelinejs_media_source_link_field_preparation($value, $options = array()) {
-  return $value['url'];
+  if (is_array($value) && isset($value['url'])) {
+    return $value['url'];
+  }
+  else {
+    return FALSE;
+  }
 }
