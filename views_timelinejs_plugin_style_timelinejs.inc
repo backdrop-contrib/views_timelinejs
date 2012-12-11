@@ -245,7 +245,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
 
           $rows[$count][$target_field] = $v_text;
 
-          if (isset($this->options['timeline_config']['link_text_enabled'])) {
+          if (isset($this->options['timeline_config']['link_text_enabled']) && $this->options['timeline_config']['link_text_enabled']) {
             $rows[$count][$target_field] .= theme('views_timelinejs_link_to_entity', array('uri' => $row->uri['path'], 'link_text' => t($link_text)));
           }
         }
