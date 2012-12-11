@@ -312,7 +312,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
               if ($target_field == 'startDate') {
                 $rows[$count][$target_field] = check_plain($date['formatted']['value']);
               }
-              elseif ($target_field == 'endDate') {
+              elseif (($target_field == 'endDate') && isset($date['formatted']['value2'])) {
                 $rows[$count][$target_field] = check_plain($date['formatted']['value2']);
               }
             }
