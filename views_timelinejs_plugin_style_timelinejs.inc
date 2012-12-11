@@ -9,6 +9,24 @@
  */
 class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
 
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['timeline_fields']['caption'] = array('default' => '0');
+    $options['timeline_fields']['credit'] = array('default' => '0');
+    $options['timeline_fields']['media'] = array('default' => '0');
+    $options['timeline_fields']['tag'] = array('default' => '0');
+    $options['timeline_fields']['date'] = array('default' => '0');
+    $options['timeline_fields']['bodytext'] = array('default' => '0');
+    $options['timeline_fields']['headline'] = array('default' => '0');
+    $options['timeline_config']['hash_bookmark'] = array('default' => '0');
+    $options['timeline_config']['link_text'] = array('default' => 'Read more');
+    $options['timeline_config']['link_text_enabled'] = array('default' => 0);
+    $options['timeline_config']['link_to_entity'] = array('default' => 0);
+
+    return $options;
+  }
+
   function options_form(&$form, &$form_state) {
 
     $handlers = $this->display->handler->get_handlers('field');
@@ -21,7 +39,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       return;
     }
 
-    $options = $this->display->handler->get_field_labels();
     $media_fields = array('0' => t('None'));
     $date_fields = array('0' => t('None'));
     $text_fields = array('0' => t('None'));
@@ -96,19 +113,19 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#type' => 'checkbox',
       '#title' => 'Link timeline items to entity',
       '#description' => t('If checked, headlines will be made links to entity.'),
-      '#default_value' => isset($this->options['timeline_config']['link_to_entity']) ? $this->options['timeline_config']['link_to_entity'] : '',
+      '#default_value' => $this->options['timeline_config']['link_to_entity'],
     );
     $form['timeline_config']['link_text_enabled'] = array(
       '#type' => 'checkbox',
       '#title' => 'Add a link to entity after bodytext',
       '#description' => t('Append a link to original entity to the end of the bodytext.'),
-      '#default_value' => isset($this->options['timeline_config']['link_text_enabled']) ? $this->options['timeline_config']['link_text_enabled'] : '',
+      '#default_value' => $this->options['timeline_config']['link_text_enabled'],
     );
     $form['timeline_config']['link_text'] = array(
       '#type' => 'textfield',
       '#title' => 'Link text',
       '#description' => t('Text that will be used in the link to entity'),
-      '#default_value' => isset($this->options['timeline_config']['link_text']) ? $this->options['timeline_config']['link_text'] : 'Read more',
+      '#default_value' => $this->options['timeline_config']['link_text'],
       '#states' => array(
         'visible' => array(
           ':input[name="style_options[timeline_config][link_to_entity]"]' => array('value' => 1),
@@ -123,7 +140,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         '0' => t('No'),
         '1' => t('Yes'),
       ),
-      '#default_value' => isset($this->options['timeline_config']['hash_bookmark']) ? $this->options['timeline_config']['hash_bookmark'] : '',
+      '#default_value' => $this->options['timeline_config']['hash_bookmark'],
     );
     $form['timeline_config']['start_at_end'] = array(
       '#type' => 'select',
@@ -133,7 +150,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         '0' => t('No'),
         '1' => t('Yes'),
       ),
-      '#default_value' => isset($this->options['timeline_config']['hash_bookmark']) ? $this->options['timeline_config']['hash_bookmark'] : '',
+      '#default_value' => $this->options['timeline_config']['start_at_end'],
     );
 
     $form['timeline_fields'] = array(
@@ -148,47 +165,47 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#options' => $text_fields,
       '#title' => 'Select field for headline',
       '#description' => t('This field should be a text-like field'),
-      '#default_value' => isset($this->options['timeline_fields']['headline']) ? $this->options['timeline_fields']['headline'] : '',
+      '#default_value' => $this->options['timeline_fields']['headline'],
     );
     $form['timeline_fields']['bodytext'] = array(
       '#type' => 'select',
       '#options' => $text_fields,
       '#title' => 'Select field for bodytext',
       '#description' => t('This field should be a text-like field'),
-      '#default_value' => isset($this->options['timeline_fields']['bodytext']) ? $this->options['timeline_fields']['bodytext'] : '',
+      '#default_value' => $this->options['timeline_fields']['bodytext'],
     );
     $form['timeline_fields']['date'] = array(
       '#type' => 'select',
       '#options' => $date_fields,
       '#title' => 'Start & End Date',
       '#description' => t('Select a field for start and end date of events. End date is optional, start date is not.'),
-      '#default_value' => isset($this->options['timeline_fields']['date']) ? $this->options['timeline_fields']['date'] : '',
+      '#default_value' => $this->options['timeline_fields']['date'],
     );
     $form['timeline_fields']['tag'] = array(
       '#type' => 'select',
       '#options' => $tag_fields,
       '#title' => t('Tag'),
       '#description' => t('Select a field that will be used for tagging the content. Up to 6 tags supported, no more will be shown.'),
-      '#default_value' => isset($this->options['timeline_fields']['tag']) ? $this->options['timeline_fields']['tag'] : '',
+      '#default_value' => $this->options['timeline_fields']['tag'],
     );
     $form['timeline_fields']['media'] = array(
       '#type' => 'select',
       '#options' => $media_fields,
       '#title' => 'Select field for media asset',
       '#description' => t('Only image fields are currently supported'),
-      '#default_value' => isset($this->options['timeline_fields']['media']) ? $this->options['timeline_fields']['media'] : '',
+      '#default_value' => $this->options['timeline_fields']['media'],
     );
     $form['timeline_fields']['credit'] = array(
       '#type' => 'select',
       '#title' => t('Credits'),
       '#options' => $text_fields,
-      '#default_value' => isset($this->options['timeline_fields']['credit']) ? $this->options['timeline_fields']['credit'] : '',
+      '#default_value' => $this->options['timeline_fields']['credit'],
     );
     $form['timeline_fields']['caption'] = array(
       '#type' => 'select',
       '#title' => t('Captions'),
       '#options' => $text_fields,
-      '#default_value' => isset($this->options['timeline_fields']['caption']) ? $this->options['timeline_fields']['caption'] : '',
+      '#default_value' => $this->options['timeline_fields']['caption'],
     );
   }
 
