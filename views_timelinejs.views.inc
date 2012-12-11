@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Defines the View Style Plugins for Views TimelineJS module.
