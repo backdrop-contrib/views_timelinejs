@@ -19,5 +19,10 @@ $plugin = array(
  *   $options - The field_information array.
  */
 function views_timelinejs_media_source_image_field_preparation($value, $options = array()) {
-  return file_create_url($value['uri']);
+  if (is_array($value) && isset($value['uri'])) {
+    return file_create_url($value['uri']);
+  }
+  else {
+    return FALSE;
+  }
 }
