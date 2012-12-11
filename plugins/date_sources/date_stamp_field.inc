@@ -29,15 +29,21 @@ function views_timelinejs_date_stamp_source_date_field_conversion($date, $output
   switch ($output_format) {
     case 'iso8601':
       $ret['value'] = views_timelinejs_convert_to_iso($date['value'], $input_format, $timezone, $db_timezone);
-      $ret['value2'] = views_timelinejs_convert_to_iso($date['value2'], $input_format, $timezone, $db_timezone);
+      if (isset($date['value2'])) {
+        $ret['value2'] = views_timelinejs_convert_to_iso($date['value2'], $input_format, $timezone, $db_timezone);
+      }
       return $ret;
     case 'gregorian':
       $ret['value'] = views_timelinejs_convert_to_gregorian($date['value'], $input_format, $timezone, $db_timezone);
-      $ret['value2'] = views_timelinejs_convert_to_gregorian($date['value2'], $input_format, $timezone, $db_timezone);
+      if (isset($date['value2'])) {
+        $ret['value2'] = views_timelinejs_convert_to_gregorian($date['value2'], $input_format, $timezone, $db_timezone);
+      }
       return $ret;
     case 'timestamp':
       $ret['value'] = views_timelinejs_convert_to_timestamp($date['value'], $input_format, $timezone, $db_timezone);
-      $ret['value2'] = views_timelinejs_convert_to_timestamp($date['value2'], $input_format, $timezone, $db_timezone);
+      if (isset($date['value2'])) {
+        $ret['value2'] = views_timelinejs_convert_to_timestamp($date['value2'], $input_format, $timezone, $db_timezone);
+      }
       return $ret;
   }
 }
