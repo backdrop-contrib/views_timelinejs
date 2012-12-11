@@ -272,15 +272,20 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         }
 
         if ($target_field == 'tag') {
-          $value = $view->field[$tmp['fieldname']]->get_value($row);
-          if (is_array($value)) {
-            $value = array_shift($value);
-          }
+          $value = '';
+          // Check if if a tag exists.
+          if (isset($view->field[$tmp['fieldname']])) {
+            $value = $view->field[$tmp['fieldname']]->get_value($row);
+            if (is_array($value)) {
+              $value = array_shift($value);
+            }
 
-          if ($conversion_callback = views_timelinejs_get_callback($tmp['handler'], $tmp['field_type'], 'tag_sources')) {
-            $value = call_user_func($conversion_callback, $value, array('field' => $tmp));
+            if ($conversion_callback = views_timelinejs_get_callback($tmp['handler'], $tmp['field_type'], 'tag_sources')) {
+              $value = call_user_func($conversion_callback, $value, array(
+                'field' => $tmp,
+              ));
+            }
           }
-
           $rows[$count][$target_field] = check_plain($value);
         }
         if(in_array($target_field, array('startDate', 'endDate'))) {
