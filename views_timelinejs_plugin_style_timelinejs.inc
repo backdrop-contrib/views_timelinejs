@@ -226,8 +226,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
   function render() {
     $view = $this->view;
 
-    // We want to render some fields, because of field
-    // rewriting and other field level processing
+    // Render fields to trigger rewriting and other field processing.
     $this->view->style_plugin->render_fields($this->view->result);
 
     $field_mapping = array(
@@ -240,109 +239,39 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       'credit' => 'credit',
       'tag' => 'tag',
     );
-    $link_text = isset($this->options['timeline_config']['link_text']) ? $this->options['timeline_config']['link_text'] : t('Read more');
-    $rows = array();
 
-    // Build a TimelineJS friendly array from the views data
-    foreach($this->view->result as $count => $row) {
-      $data = array();
-      $data['asset'] = array();
-      // Build the data we need.
-      foreach($field_mapping as $target_field => $source_field) {
-        $tmp = $this->getDefinedUsage($source_field);
+    // Determine if required fields are mapped.
+    $required_mappings = array(
+      'date',
+      'headline',
+    );
 
-        if ($target_field == 'text') {
-          $v_text = strip_tags($view->style_plugin->rendered_fields[$count][$this->options['timeline_fields'][$source_field]]);
+    $has_required_mappings = TRUE;
+    foreach ($required_mappings as $field_name) {
+      if (!$this->getDefinedUsage($field_name)) {
+        $has_required_mappings = FALSE;
+      }
+    }
 
-          $rows[$count][$target_field] = $v_text;
+    // Render if there's enough mapped fields.
+    if ($has_required_mappings) {
+      $link_text = isset($this->options['timeline_config']['link_text']) ? $this->options['timeline_config']['link_text'] : t('Read more');
+      $rows = array();
 
-          if (isset($this->options['timeline_config']['link_text_enabled']) && $this->options['timeline_config']['link_text_enabled'] && isset($row->uri['path'])) {
-            $rows[$count][$target_field] .= theme('views_timelinejs_link_to_entity',
-              array(
-                'uri' => $row->uri['path'],
-                'link_text' => check_plain($link_text),
-              )
-            );
-          }
-        }
-
-        if ($target_field == 'headline') {
-          /**
-           * These should always be text fields.
-           * Treat them as such until further notice.
-           */
-          $v_text = $view->field[$tmp['fieldname']]->get_value($row);
-          if (is_array($v_text)) {
-            $v_text = array_shift($v_text);
-          }
-          if (!is_string($v_text)) {
-            $v_text = $v_text['value'];
-          }
-          if ($this->options['timeline_config']['link_to_entity'] && $view->base_table == 'node' && isset($row->_field_data[$view->base_field]['entity'])) {
-            $row->uri = entity_uri($row->_field_data[$view->base_field]['entity_type'], $row->_field_data[$view->base_field]['entity']);
-            $rows[$count][$target_field] = l($v_text, $row->uri['path']);
-          }
-          else {
-            $rows[$count][$target_field] = check_plain($v_text);
-          }
-        }
-
-        if ($target_field == 'tag') {
-          $value = '';
-          // Check if if a tag exists.
-          if (isset($view->field[$tmp['fieldname']])) {
-            $value = $view->field[$tmp['fieldname']]->get_value($row);
-            if (is_array($value)) {
-              $value = array_shift($value);
-            }
-
-            if ($conversion_callback = views_timelinejs_get_callback($tmp['handler'], $tmp['field_type'], 'tag_sources')) {
-              $value = call_user_func($conversion_callback, $value, array(
-                'field' => $tmp,
-              ));
-            }
-          }
-          $rows[$count][$target_field] = check_plain($value);
-        }
-        if(in_array($target_field, array('startDate', 'endDate'))) {
-          $date = array();
-          // Load field data.
-          $value = $view->field[$tmp['fieldname']]->get_value($row);
-          // If it's a date field, we have an array.
-          if (is_array($value)) {
-            $value = array_shift($value);
+      // Build a TimelineJS friendly array from the views data.
+      foreach ($this->view->result as $count => $row) {
+        $data = array();
+        $data['asset'] = array();
+        // Build the data we need.
+        foreach ($field_mapping as $target_field => $source_field) {
+          $tmp = $this->getDefinedUsage($source_field);
+          // Don't render fields that haven't been mapped.
+          if (!isset($view->field[$tmp['fieldname']])) {
+            continue;
           }
 
-          // Make sure created and changed fields work as date sources.
-          if($tmp['fieldname'] == 'created' || $tmp['fieldname'] == 'changed') {
-            $tmp['field_type'] = 'date';
-          }
-
-          if ($conversion_callback = views_timelinejs_get_callback($tmp['handler'], $tmp['field_type'], 'date_sources')) {
-            $date['formatted'] = call_user_func($conversion_callback, $value, 'iso8601', array('field' => $tmp));
-            $date['timestamp'] = call_user_func($conversion_callback, $value, 'timestamp', array('field' => $tmp));
-          }
-
-          if (isset($date) && $date != "") {
-            if (is_array($date['formatted'])) {
-              if ($target_field == 'startDate') {
-                $rows[$count][$target_field] = check_plain($date['formatted']['value']);
-              }
-              elseif (($target_field == 'endDate') && isset($date['formatted']['value2'])) {
-                $rows[$count][$target_field] = check_plain($date['formatted']['value2']);
-              }
-            }
-            else {
-              $rows[$count][$target_field] = check_plain($date['formatted']);
-            }
-          }
-        }
-        if (in_array($target_field, array('caption', 'credit'))) {
-          /**
-           * These should always be text fields.
-           * Treat them as such until further notice.
-           */
-          if ($tmp['handler'] != NULL) {
+          // Headline - plain text input, optional link to entity.
+          if ($target_field == 'headline') {
             $v_text = $view->field[$tmp['fieldname']]->get_value($row);
             if (is_array($v_text)) {
               $v_text = array_shift($v_text);
@@ -350,38 +279,152 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
             if (!is_string($v_text)) {
               $v_text = $v_text['value'];
             }
-            $rows[$count]['asset'][$target_field] = check_plain($v_text);
-          }
-        }
-        if ($target_field == 'media') {
-          $value = $view->field[$tmp['fieldname']]->get_value($row);
-          if (is_array($value)) {
-            $value = array_shift($value);
-          }
-          if ($conversion_callback = views_timelinejs_get_callback($tmp['handler'], $tmp['field_type'], 'media_sources')) {
-            $media['formatted'] = call_user_func($conversion_callback, $value, array('field' => $tmp));
+            if ($this->options['timeline_config']['link_to_entity'] && $view->base_table == 'node' && isset($row->_field_data[$view->base_field]['entity'])) {
+              $row->uri = entity_uri($row->_field_data[$view->base_field]['entity_type'], $row->_field_data[$view->base_field]['entity']);
+              $rows[$count][$target_field] = l($v_text, $row->uri['path']);
+            }
+            else {
+              $rows[$count][$target_field] = check_plain($v_text);
+            }
           }
 
-          $rows[$count]['asset'][$target_field] = check_plain($media['formatted']);
+          // Body - plain text input, optionally append "read more" entity link.
+          if ($target_field == 'text') {
+            $v_text = strip_tags($view->style_plugin->rendered_fields[$count][$this->options['timeline_fields'][$source_field]]);
+
+            $rows[$count][$target_field] = $v_text;
+
+            if (isset($this->options['timeline_config']['link_text_enabled']) && $this->options['timeline_config']['link_text_enabled'] && isset($row->uri['path'])) {
+              $rows[$count][$target_field] .= theme('views_timelinejs_link_to_entity',
+                array(
+                  'uri' => $row->uri['path'],
+                  'link_text' => check_plain($link_text),
+                )
+              );
+            }
+          }
+
+          // Tag.
+          if ($target_field == 'tag') {
+            $value = '';
+            // Check if if a tag exists.
+            if (isset($view->field[$tmp['fieldname']])) {
+              $value = $view->field[$tmp['fieldname']]->get_value($row);
+              if (is_array($value)) {
+                $value = array_shift($value);
+              }
+
+              if ($conversion_callback = views_timelinejs_get_callback($tmp['handler'], $tmp['field_type'], 'tag_sources')) {
+                $value = call_user_func($conversion_callback, $value, array(
+                  'field' => $tmp,
+                ));
+              }
+            }
+            $rows[$count][$target_field] = check_plain($value);
+          }
+
+          // Start and End date.
+          if (in_array($target_field, array('startDate', 'endDate'))) {
+            $date = array();
+            // Load field data.
+            $value = $view->field[$tmp['fieldname']]->get_value($row);
+            // If it's a date field, we have an array.
+            if (is_array($value)) {
+              $value = array_shift($value);
+            }
+
+            // Make sure created and changed fields work as date sources.
+            if ($tmp['fieldname'] == 'created' || $tmp['fieldname'] == 'changed') {
+              $tmp['field_type'] = 'date';
+            }
+
+            if ($conversion_callback = views_timelinejs_get_callback($tmp['handler'], $tmp['field_type'], 'date_sources')) {
+              $date['formatted'] = call_user_func($conversion_callback, $value, 'iso8601', array('field' => $tmp));
+              $date['timestamp'] = call_user_func($conversion_callback, $value, 'timestamp', array('field' => $tmp));
+            }
+
+            if (isset($date) && $date) {
+              if (is_array($date['formatted'])) {
+                if ($target_field == 'startDate') {
+                  $rows[$count][$target_field] = check_plain($date['formatted']['value']);
+                }
+                elseif (($target_field == 'endDate') && isset($date['formatted']['value2'])) {
+                  $rows[$count][$target_field] = check_plain($date['formatted']['value2']);
+                }
+              }
+              else {
+                $rows[$count][$target_field] = check_plain($date['formatted']);
+              }
+            }
+          }
+
+          // Media URL.
+          if ($target_field == 'media') {
+            $value = $view->field[$tmp['fieldname']]->get_value($row);
+            if (is_array($value)) {
+              $value = array_shift($value);
+            }
+            if ($conversion_callback = views_timelinejs_get_callback($tmp['handler'], $tmp['field_type'], 'media_sources')) {
+              $media['formatted'] = call_user_func($conversion_callback, $value, array('field' => $tmp));
+            }
+
+            $rows[$count]['asset'][$target_field] = check_plain($media['formatted']);
+          }
+
+          // Media Caption, Media Credit - both plain text.
+          if (in_array($target_field, array('caption', 'credit'))) {
+            if ($tmp['handler'] != NULL) {
+              $v_text = $view->field[$tmp['fieldname']]->get_value($row);
+              if (is_array($v_text)) {
+                $v_text = array_shift($v_text);
+              }
+              if (!is_string($v_text)) {
+                $v_text = $v_text['value'];
+              }
+              $rows[$count]['asset'][$target_field] = check_plain($v_text);
+            }
+          }
         }
       }
+
+      // Allow other modules to alter timeline data before rendering by
+      // implementing hook_views_timelinejs_data_alter().
+      drupal_alter('views_timelinejs_data', $rows, clone $view);
+
+      // Prepare data array that TimelineJS understands.
+      $data = array(
+        'timeline' => array(
+          'headline' => 'Title',
+          'type' => 'default',
+          'date' => $rows,
+        ),
+      );
     }
-    // Let modules alter timeline data before rendering by implementing
-    // hook_views_timelinejs_data_alter(&$rows, $view)
-    drupal_alter('views_timelinejs_data', $rows, clone $view);
+    // Does not have required mapping.
+    else {
+      // Populate a fake timeline with instructions.
+      $date = new DateTime();
+      $data = array(
+        'timeline' => array(
+          'headline' => t('Insufficient field mapping'),
+          'type' => 'default',
+          'date' => array(
+            array(
+              'headline' => t('Please configure the field mapping by going to Format: TimelineJS - Settings.'),
+              'startDate' => $date->format('Y-m-d\TH:i:s\Z'),
+            ),
+          ),
+        ),
+      );
+    }
 
-    // Prepare data array that TimelineJS understands
-    $data = array(
-      'timeline' => array(
-        'headline' => 'Title',
-        'type' => 'default',
-        'date' => $rows,
-      ),
-    );
-
-    // Skip rendering if view is being edited or previewed
-    if(!$view->editing) {
-      return theme('views_timelinejs', array('view' => $view, 'options' => $this->options, 'rows' => $data));
+    // Skip rendering if view is being edited or previewed.
+    if (!$view->editing) {
+      return theme('views_timelinejs', array(
+        'view' => $view,
+        'options' => $this->options,
+        'rows' => $data,
+      ));
     }
     else {
       return '<pre>' . print_r($data, 1) . '</pre>';
@@ -400,8 +443,14 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
    */
   protected function getDefinedUsage($type) {
     $view = $this->view;
-    $fieldname = '';
+
+    // If it's not mapped at all, don't do anything.
+    if (!isset($view->style_options['timeline_fields'])) {
+      return FALSE;
+    }
+
     if ($fields = $view->style_options['timeline_fields']) {
+      $fieldname = '';
       if (isset($fields[$type])) {
         $fieldname = $fields[$type];
       }
