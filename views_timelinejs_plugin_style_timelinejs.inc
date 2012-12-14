@@ -1,13 +1,17 @@
 <?php
 /**
  * @file
+ * Views Style.
  */
 
 /**
- * This class holds all the funtionality used for the unformatted style plugin.
+ * Unformatted style plugin.
  */
 class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
 
+  /**
+   * Define option defaults.
+   */
   function option_definition() {
     $options = parent::option_definition();
 
@@ -26,6 +30,9 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     return $options;
   }
 
+  /**
+   * Define options form.
+   */
   function options_form(&$form, &$form_state) {
 
     $handlers = $this->display->handler->get_handlers('field');
@@ -73,7 +80,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       }
 
       // Check if field is a supported text source.
-      foreach($text_sources as $source) {
+      foreach ($text_sources as $source) {
         if (get_class($handler) == $source['handler_name']) {
           if ((isset($field_info['type']) && $field_info['type'] == $source['field_type']) || $field == 'title') {
             $text_fields[$field] = $field_names[$field];
@@ -100,7 +107,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       }
     }
 
-    /** TIMELINE GENERAL CONFIGURATION **/
+    // Timeline general configuration.
     $form['timeline_config'] = array(
       '#type' => 'fieldset',
       '#title' => t('General configuration'),
@@ -152,6 +159,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#default_value' => $this->options['timeline_config']['start_at_end'],
     );
 
+    // Field mapping.
     $form['timeline_fields'] = array(
       '#type' => 'fieldset',
       '#title' => t('Field mappings'),
@@ -213,7 +221,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
   }
 
   /**
-   * Render the display in this style.
+   * Render the display.
    */
   function render() {
     $view = $this->view;
@@ -380,7 +388,17 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     }
   }
 
-  function getDefinedUsage($type) {
+  /**
+   * Helper function to determine alias, handler, and fieldname of a given type.
+   *
+   * @param string $type
+   *   The type to be parsed.
+   *
+   * @return array|boolean
+   *   An array containing the keys/values for: alias, handler, fieldname,
+   *   field_type, date_format, and tz_handling.
+   */
+  protected function getDefinedUsage($type) {
     $view = $this->view;
     $fieldname = '';
     if ($fields = $view->style_options['timeline_fields']) {
@@ -399,9 +417,9 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         );
       }
       if (!empty($view->field[$fieldname]->field_info)) {
-          $field_information['field_type'] = $view->field[$fieldname]->field_info['type'];
-          $field_information['date_format'] = $field_information['field_type'];
-          $field_information['tz_handling'] = 'site';
+        $field_information['field_type'] = $view->field[$fieldname]->field_info['type'];
+        $field_information['date_format'] = $field_information['field_type'];
+        $field_information['tz_handling'] = 'site';
       }
 
       if (!empty($field_information)) {

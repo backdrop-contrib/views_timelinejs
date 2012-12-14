@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Image field integration as a media source for TimelineJS.
+ * Image field as a media source for TimelineJS.
  */
 
 $plugin = array(
@@ -12,11 +12,15 @@ $plugin = array(
 );
 
 /**
- * A callback function for formatting the field data to a format TimelineJS understands.
+ * Parses image field to be passed as URL to TimelineJS.
  *
- * @param
- *   $value - The whole field value. (fid, alt, title, etc..)
- *   $options - The field_information array.
+ * @param array $value
+ *   Image field value.
+ * @param array $options
+ *   Optional configuration; not used.
+ *
+ * @return string|boolean
+ *   String containing full URL to file or boolean FALSE
  */
 function views_timelinejs_media_source_image_field_preparation($value, $options = array()) {
   if (is_array($value) && isset($value['uri'])) {

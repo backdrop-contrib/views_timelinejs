@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Text field integration as a tag source for TimelineJS.
+ * Taxonomy term reference as tag source for TimelineJS.
  */
 
 $plugin = array(
@@ -11,14 +11,24 @@ $plugin = array(
   'callback' => 'views_timelinejs_taxonomy_term_reference_tag',
 );
 
+/**
+ * Parses taxonomy term reference and returns name as tag.
+ *
+ * @param array $value
+ *   Taxonomy term reference value.
+ * @param array $options
+ *   Optional configuration; not used.
+ *
+ * @return string|boolean
+ *   String containing tag or boolean FALSE if not found.
+ */
 function views_timelinejs_taxonomy_term_reference_tag($value, $options = array()) {
   if (isset($value['tid']) && $value['tid'] != '') {
     $tid = $value['tid'];
     $term = taxonomy_term_load($tid);
-
     return $term->name;
   }
   else {
-    return false;
+    return FALSE;
   }
 }

@@ -12,14 +12,14 @@ $plugin = array(
 );
 
 /**
- * Converts different expected date formats to one global date format to be used in TimelineJS.
- * Respects Drupals TZ handling.
+ * Converts date stamp field formats, forces TimelineJS to ignore browser TZ.
  *
- * @return
- *   date in defined output.
+ * Converts different expected date formats to one global date format to be used
+ * in TimelineJS. Uses Drupal's TZ, not field TZ. Adds Z to ISODate to force
+ * TimelineJS to ignore browser timezone.
  *
- * Adds Z to ISODate to force TimelineJS to *not* use browser timezone.
- * Does not use field timezone. Uses drupals global tz instead.
+ * @return string
+ *   Formatted date.
  */
 function views_timelinejs_date_stamp_source_date_field_conversion($date, $output_format, $options = array()) {
   $input_format = $options['field']['date_format'];
@@ -33,17 +33,20 @@ function views_timelinejs_date_stamp_source_date_field_conversion($date, $output
         $ret['value2'] = views_timelinejs_convert_to_iso($date['value2'], $input_format, $timezone, $db_timezone);
       }
       return $ret;
+
     case 'gregorian':
       $ret['value'] = views_timelinejs_convert_to_gregorian($date['value'], $input_format, $timezone, $db_timezone);
       if (isset($date['value2'])) {
         $ret['value2'] = views_timelinejs_convert_to_gregorian($date['value2'], $input_format, $timezone, $db_timezone);
       }
       return $ret;
+
     case 'timestamp':
       $ret['value'] = views_timelinejs_convert_to_timestamp($date['value'], $input_format, $timezone, $db_timezone);
       if (isset($date['value2'])) {
         $ret['value2'] = views_timelinejs_convert_to_timestamp($date['value2'], $input_format, $timezone, $db_timezone);
       }
       return $ret;
+
   }
 }

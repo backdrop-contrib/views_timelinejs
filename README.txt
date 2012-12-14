@@ -9,7 +9,6 @@ https://github.com/VeriteCo/TimelineJS
 
 3. Place Timeline JS libraries into sites/all/libraries/timeline
 
-
 USAGE
 =====
 
@@ -20,12 +19,16 @@ fields which correspond to display elements on the timeline.
 
 When creating a TimelineJS view, you will need to map the following display
 elements:
- * headline (for example, node title) [REQUIRED]
- * bodytext [REQUIRED]
- * media asset (image and link fields are supported out of the box) [REQUIRED]
- * date element (post date, changed date, date_api fields supported out of the box) [REQUIRED]
- * media caption (not required)
- * media credit (not required)
+
+ * Headline (required) - Plain text; a high level summary.
+ * Body text - Plain text; a paragraph or two of optional details.
+ * Start and End Date - Required start and optional end of an event; can be a
+   date field or timestamp.
+ * Media URL - Drupal core image fields and link fields are supported; must
+   contain a raw URL to an image or video.
+ * Media Credit - Byline naming the author or attributing the source.
+ * Media Caption - Brief explanation of the media content.
+ * Tag - Content tagging; maximum of 6 tags.
 
 Once a content type has the necessary fields, you can create your TimelineJS
 view using the Views interface.
@@ -55,5 +58,6 @@ To see the TimelineJS display, access the block or page you just created.
 
 MAINTAINERS
 ===========
-* Juha Niemi
-* Olli Erinko
+* Juha Niemi (juhaniemi)
+* Olli Erinko (operinko)
+* Jon Peck (fluxsauce)

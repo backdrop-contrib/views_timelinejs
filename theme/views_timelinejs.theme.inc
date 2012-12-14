@@ -1,28 +1,35 @@
 <?php
+/**
+ * @file
+ * Theme preprocessors.
+ */
 
 /**
- * Preprocess function for views-timelinejs.tpl.php
+ * Preprocessor for views template.
  */
 function template_preprocess_views_timelinejs(&$vars) {
   global $language;
 
-  // Load required libraries and styles
+  // Load required libraries and styles.
   views_timelinejs_load_libraries();
 
-  switch($vars['options']['timeline_config']['hash_bookmark']) {
+  switch ($vars['options']['timeline_config']['hash_bookmark']) {
     case 1:
       $bookmarks = TRUE;
       break;
+
     case 0:
     default:
       $bookmarks = FALSE;
       break;
+
   }
 
-  switch($vars['options']['timeline_config']['start_at_end']) {
+  switch ($vars['options']['timeline_config']['start_at_end']) {
     case 1:
       $start_at_end = TRUE;
       break;
+
     case 0:
     default:
       $start_at_end = FALSE;
@@ -43,14 +50,14 @@ function template_preprocess_views_timelinejs(&$vars) {
     'lang' => $language->language,
     'processed' => FALSE,
   );
-  // Include inline javascript
+
+  // Include inline javascript.
   drupal_add_js(array('timelineJS' => array($settings)), 'setting');
   drupal_add_js(drupal_get_path('module', 'views_timelinejs') . '/js/views_timelinejs.js');
-
 }
 
 /**
- * Theme function to add Read more link after timeline entry bodytext
+ * Add "read more" link after event body text.
  */
 function theme_views_timelinejs_link_to_entity($vars) {
   return '<p class="read-more">' . l($vars['link_text'], $vars['uri']) . '</p>';
