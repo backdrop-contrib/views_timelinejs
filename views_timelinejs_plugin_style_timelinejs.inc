@@ -155,56 +155,60 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $form['timeline_fields'] = array(
       '#type' => 'fieldset',
       '#title' => t('Field mappings'),
-      '#description' => t('Select the fields to be used for different parts of the timeline.'),
+      '#description' => t('Fields used to construct the timeline events.'),
       '#collapsible' => TRUE,
       '#collapsed' => FALSE,
     );
     $form['timeline_fields']['headline'] = array(
       '#type' => 'select',
       '#options' => $text_fields,
-      '#title' => 'Select field for headline',
-      '#description' => t('This field should be a text-like field'),
+      '#title' => t('Headline'),
+      '#required' => TRUE,
+      '#description' => t('Plain text; a high level summary.'),
       '#default_value' => $this->options['timeline_fields']['headline'],
     );
     $form['timeline_fields']['bodytext'] = array(
       '#type' => 'select',
       '#options' => $text_fields,
-      '#title' => 'Select field for bodytext',
-      '#description' => t('This field should be a text-like field'),
+      '#title' => t('Body text'),
+      '#description' => t('Plain text; a paragraph or two of optional details.'),
       '#default_value' => $this->options['timeline_fields']['bodytext'],
     );
     $form['timeline_fields']['date'] = array(
       '#type' => 'select',
       '#options' => $date_fields,
-      '#title' => 'Start & End Date',
-      '#description' => t('Select a field for start and end date of events. End date is optional, start date is not.'),
+      '#title' => t('Start and End date'),
+      '#required' => TRUE,
+      '#description' => t('Required start and optional end of an event; can be a date field or timestamp.'),
       '#default_value' => $this->options['timeline_fields']['date'],
-    );
-    $form['timeline_fields']['tag'] = array(
-      '#type' => 'select',
-      '#options' => $tag_fields,
-      '#title' => t('Tag'),
-      '#description' => t('Select a field that will be used for tagging the content. Up to 6 tags supported, no more will be shown.'),
-      '#default_value' => $this->options['timeline_fields']['tag'],
     );
     $form['timeline_fields']['media'] = array(
       '#type' => 'select',
       '#options' => $media_fields,
-      '#title' => 'Select field for media asset',
-      '#description' => t('Only image fields are currently supported'),
+      '#title' => t('Media URL'),
+      '#description' => t('Drupal core image fields and link fields are supported; must contain a raw URL to an image or video.'),
       '#default_value' => $this->options['timeline_fields']['media'],
     );
     $form['timeline_fields']['credit'] = array(
       '#type' => 'select',
-      '#title' => t('Credits'),
+      '#title' => t('Media Credit'),
+      '#description' => t('Byline naming the author or attributing the source.'),
       '#options' => $text_fields,
       '#default_value' => $this->options['timeline_fields']['credit'],
     );
     $form['timeline_fields']['caption'] = array(
       '#type' => 'select',
-      '#title' => t('Captions'),
+      '#title' => t('Media Caption'),
+      '#description' => t('Brief explanation of the media content.'),
       '#options' => $text_fields,
       '#default_value' => $this->options['timeline_fields']['caption'],
+    );
+    $form['timeline_fields']['tag'] = array(
+      '#type' => 'select',
+      '#options' => $tag_fields,
+      '#title' => t('Tag'),
+      '#description' => t('Content tagging; maximum of 6 tags.'),
+      '#default_value' => $this->options['timeline_fields']['tag'],
     );
   }
 
@@ -228,7 +232,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       'credit' => 'credit',
       'tag' => 'tag',
     );
-    $link_text = isset($this->options['timeline_config']['link_text']) ? $this->options['timeline_config']['link_text'] : 'Read more';
+    $link_text = isset($this->options['timeline_config']['link_text']) ? $this->options['timeline_config']['link_text'] : t('Read more');
     $rows = array();
 
     // Build a TimelineJS friendly array from the views data
@@ -248,7 +252,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
             $rows[$count][$target_field] .= theme('views_timelinejs_link_to_entity',
               array(
                 'uri' => $row->uri['path'],
-                'link_text' => t($link_text),
+                'link_text' => check_plain($link_text),
               )
             );
           }
