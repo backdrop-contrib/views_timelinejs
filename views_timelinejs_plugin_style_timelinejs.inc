@@ -281,7 +281,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
             }
             if ($this->options['timeline_config']['link_to_entity'] && $view->base_table == 'node' && isset($row->_field_data[$view->base_field]['entity'])) {
               $row->uri = entity_uri($row->_field_data[$view->base_field]['entity_type'], $row->_field_data[$view->base_field]['entity']);
-              $rows[$count][$target_field] = l($v_text, $row->uri['path']);
+              $rows[$count][$target_field] = str_replace('&#039;', '&apos;', l($v_text, $row->uri['path']));
             }
             else {
               $rows[$count][$target_field] = check_plain($v_text);
