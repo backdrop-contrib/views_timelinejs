@@ -46,7 +46,7 @@ function template_preprocess_views_timelinejs(&$vars) {
     'height' => '500',
     'source' => $vars['rows'],
     'embed_id' => $vars['timelinejs_id'],
-    'embed_path' => libraries_get_path('timeline') . '/compiled/',
+    'embed_path' => base_path() . libraries_get_path('timeline') . '/compiled/',
     'lang' => $language->language,
     'processed' => FALSE,
   );
