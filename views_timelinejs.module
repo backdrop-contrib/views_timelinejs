@@ -150,15 +150,16 @@ function views_timelinejs_convert_to_iso($value, $date_format, $timezone, $db_ti
   $db_timezone = new DateTimezone($db_timezone);
   switch ($date_format) {
     case 'datestamp':
-    case 'timestamp':
+    case 'timestamp':{
       $date = new DateTime();
       $date->setTimezone($db_timezone);
       $date->setTimestamp($value);
       break;
-
-    default:
+    }
+    default:{
       $date = new DateTime($value, $db_timezone);
       break;
+    }
   }
   $date->setTimezone($timezone);
   return $date->format('Y-m-d\TH:i:s\Z');

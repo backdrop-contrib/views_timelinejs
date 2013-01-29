@@ -13,36 +13,11 @@ function template_preprocess_views_timelinejs(&$vars) {
   // Load required libraries and styles.
   views_timelinejs_load_libraries();
 
-  switch ($vars['options']['timeline_config']['hash_bookmark']) {
-    case 1:
-      $bookmarks = TRUE;
-      break;
-
-    case 0:
-    default:
-      $bookmarks = FALSE;
-      break;
-
-  }
-
-  switch ($vars['options']['timeline_config']['start_at_end']) {
-    case 1:
-      $start_at_end = TRUE;
-      break;
-
-    case 0:
-    default:
-      $start_at_end = FALSE;
-      break;
-  }
-
   $view = $vars['view'];
   $vars['timelinejs_id'] = 'timelinejs_' . $view->name . '_' . $view->current_display;
 
   $settings = array(
     'width' => '100%',
-    'hash_bookmark' => $bookmarks,
-    'start_at_end' => $start_at_end,
     'height' => '500',
     'source' => $vars['rows'],
     'embed_id' => $vars['timelinejs_id'],
@@ -51,7 +26,15 @@ function template_preprocess_views_timelinejs(&$vars) {
     'processed' => FALSE,
   );
 
-  // Include inline javascript.
+  if ($vars['options']['timeline_config']['hash_bookmark']) {
+    $settings['hash_bookmark'] = TRUE;
+  }
+
+  if ($vars['options']['timeline_config']['start_at_end']) {
+    $settings['start_at_end'] = TRUE;
+  }
+
+  // Add inline JavaScript.
   drupal_add_js(array('timelineJS' => array($settings)), 'setting');
   drupal_add_js(drupal_get_path('module', 'views_timelinejs') . '/js/views_timelinejs.js');
 }
