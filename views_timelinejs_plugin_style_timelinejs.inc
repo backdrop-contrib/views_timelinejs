@@ -291,16 +291,16 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           // Body - plain text input, optionally append "read more" entity link.
           if ($target_field == 'text') {
             $v_text = strip_tags($view->style_plugin->rendered_fields[$count][$this->options['timeline_fields'][$source_field]]);
-
-            $rows[$count][$target_field] = $v_text;
-
-            if (isset($this->options['timeline_config']['link_text_enabled']) && $this->options['timeline_config']['link_text_enabled'] && isset($row->uri['path'])) {
-              $rows[$count][$target_field] .= theme('views_timelinejs_link_to_entity',
-                array(
-                  'uri' => $row->uri['path'],
-                  'link_text' => check_plain($link_text),
-                )
-              );
+            if ($v_text) {
+              $rows[$count][$target_field] = $v_text;
+              if (isset($this->options['timeline_config']['link_text_enabled']) && $this->options['timeline_config']['link_text_enabled'] && isset($row->uri['path'])) {
+                $rows[$count][$target_field] .= theme('views_timelinejs_link_to_entity',
+                  array(
+                    'uri' => $row->uri['path'],
+                    'link_text' => check_plain($link_text),
+                  )
+                );
+              }
             }
           }
 
@@ -368,7 +368,9 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
               $media['formatted'] = call_user_func($conversion_callback, $value, array('field' => $tmp));
             }
 
-            $rows[$count]['asset'][$target_field] = check_plain($media['formatted']);
+            if ($media['formatted']) {
+              $rows[$count]['asset'][$target_field] = check_plain($media['formatted']);
+            }
           }
 
           // Media Caption, Media Credit - both plain text.
@@ -381,7 +383,9 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
               if (!is_string($v_text)) {
                 $v_text = $v_text['value'];
               }
-              $rows[$count]['asset'][$target_field] = check_plain($v_text);
+              if ($v_text) {
+                $rows[$count]['asset'][$target_field] = check_plain($v_text);
+              }
             }
           }
         }
