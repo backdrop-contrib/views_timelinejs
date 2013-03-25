@@ -23,6 +23,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $options['timeline_fields']['bodytext'] = array('default' => '0');
     $options['timeline_fields']['headline'] = array('default' => '0');
     $options['timeline_config']['hash_bookmark'] = array('default' => '0');
+    $options['timeline_config']['start_zoom_adjust'] = array('default' => '0');
     $options['timeline_config']['link_text'] = array('default' => 'Read more');
     $options['timeline_config']['link_text_enabled'] = array('default' => 0);
     $options['timeline_config']['link_to_entity'] = array('default' => 0);
@@ -157,6 +158,24 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         '1' => t('Yes'),
       ),
       '#default_value' => $this->options['timeline_config']['start_at_end'],
+    );
+    $form['timeline_config']['start_zoom_adjust'] = array(
+      '#type' => 'select',
+      '#title' => 'Zoom Level',
+      '#description' => t('Set the default zoom level.'),
+      '#options' => array(
+        '0' => t('0'),
+        '1' => t('1'),
+        '2' => t('2'),
+        '3' => t('3'),
+        '4' => t('4'),
+        '5' => t('5'),
+        '6' => t('6'),
+        '7' => t('7'),
+        '8' => t('8'),
+        '9' => t('9'),
+      ),
+      '#default_value' => $this->options['timeline_config']['start_zoom_adjust'],
     );
 
     // Field mapping.

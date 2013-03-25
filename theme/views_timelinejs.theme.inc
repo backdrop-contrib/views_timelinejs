@@ -34,6 +34,10 @@ function template_preprocess_views_timelinejs(&$vars) {
     $settings['start_at_end'] = TRUE;
   }
 
+  if (isset($vars['options']['timeline_config']['start_zoom_adjust'])) {
+    $settings['start_zoom_adjust'] = $vars['options']['timeline_config']['start_zoom_adjust'];
+  }
+
   // Add inline JavaScript.
   drupal_add_js(array('timelineJS' => array($settings)), 'setting');
   drupal_add_js(drupal_get_path('module', 'views_timelinejs') . '/js/views_timelinejs.js');
