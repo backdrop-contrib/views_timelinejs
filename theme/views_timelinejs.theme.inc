@@ -17,8 +17,8 @@ function template_preprocess_views_timelinejs(&$vars) {
   $vars['timelinejs_id'] = 'timelinejs_' . $view->name . '_' . $view->current_display;
 
   $settings = array(
-    'width' => $vars['options']['timeline_theme']['width'],
-    'height' => $vars['options']['timeline_theme']['height'],
+    'width' => check_plain($vars['options']['timeline_theme']['width']),
+    'height' => check_plain($vars['options']['timeline_theme']['height']),
     'source' => $vars['rows'],
     'embed_id' => $vars['timelinejs_id'],
     'embed_path' => base_path() . libraries_get_path('timeline') . '/compiled/',
@@ -35,7 +35,7 @@ function template_preprocess_views_timelinejs(&$vars) {
   }
 
   if (isset($vars['options']['timeline_config']['start_zoom_adjust'])) {
-    $settings['start_zoom_adjust'] = $vars['options']['timeline_config']['start_zoom_adjust'];
+    $settings['start_zoom_adjust'] = check_plain($vars['options']['timeline_config']['start_zoom_adjust']);
   }
 
   // Add inline JavaScript.
