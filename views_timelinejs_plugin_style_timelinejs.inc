@@ -15,6 +15,8 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
   function option_definition() {
     $options = parent::option_definition();
 
+    $options['timeline_theme']['width'] = array('default' => '100%');
+    $options['timeline_theme']['height'] = array('default' => '500');
     $options['timeline_fields']['caption'] = array('default' => '0');
     $options['timeline_fields']['credit'] = array('default' => '0');
     $options['timeline_fields']['media'] = array('default' => '0');
@@ -25,8 +27,8 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $options['timeline_config']['hash_bookmark'] = array('default' => '0');
     $options['timeline_config']['start_zoom_adjust'] = array('default' => '0');
     $options['timeline_config']['link_text'] = array('default' => 'Read more');
-    $options['timeline_config']['link_text_enabled'] = array('default' => 0);
-    $options['timeline_config']['link_to_entity'] = array('default' => 0);
+    $options['timeline_config']['link_text_enabled'] = array('default' => '0');
+    $options['timeline_config']['link_to_entity'] = array('default' => '0');
 
     return $options;
   }
@@ -237,6 +239,27 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#description' => t('Content tagging; maximum of 6 tags.'),
       '#default_value' => $this->options['timeline_fields']['tag'],
     );
+
+    // Timeline display configuration.
+    $form['timeline_theme'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Display configuration'),
+      '#description' => t('Settings for how the Timeline will look.'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+    );
+    $form['timeline_theme']['width'] = array(
+      '#type' => 'textfield',
+      '#title' => 'Width of the timeline',
+      '#description' => t('The width of the timeline.'),
+      '#default_value' => $this->options['timeline_theme']['width'],
+    );
+    $form['timeline_theme']['height'] = array(
+      '#type' => 'textfield',
+      '#title' => 'Height of the timeline',
+      '#description' => t('The height of the timeline.'),
+      '#default_value' => $this->options['timeline_theme']['height'],
+    );
   }
 
   /**
@@ -434,7 +457,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           'date' => array(
             array(
               'headline' => t('Please configure the field mapping by going to Format: TimelineJS - Settings.'),
-              'startDate' => $date->format('Y-m-d\TH:i:s\Z'),
+              'startDate' => $date->format('Y,m,d,H,i'),
             ),
           ),
         ),
