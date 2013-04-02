@@ -358,7 +358,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
             }
 
             if ($conversion_callback = views_timelinejs_get_callback($tmp['handler'], $tmp['field_type'], 'date_sources')) {
-              $date['formatted'] = call_user_func($conversion_callback, $value, 'iso8601', array('field' => $tmp));
+              $date['formatted'] = call_user_func($conversion_callback, $value, 'csv', array('field' => $tmp));
               $date['timestamp'] = call_user_func($conversion_callback, $value, 'timestamp', array('field' => $tmp));
             }
 

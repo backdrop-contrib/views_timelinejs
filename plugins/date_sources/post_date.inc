@@ -26,11 +26,8 @@ function views_timelinejs_date_source_post_date_conversion($date, $output_format
   $timezone = views_timelinejs_get_timezone();
   $db_timezone = 'UTC';
   switch ($output_format) {
-    case 'iso8601':
-      return views_timelinejs_convert_to_iso($date, $input_format, $timezone, $db_timezone);
-
-    case 'gregorian':
-      return views_timelinejs_convert_to_gregorian($date, $input_format, $timezone, $db_timezone);
+    case 'csv':
+      return views_timelinejs_convert_to_csv($date, $input_format, $timezone, $db_timezone);
 
     case 'timestamp':
       return views_timelinejs_convert_to_timestamp($date, $input_format, $timezone, $db_timezone);

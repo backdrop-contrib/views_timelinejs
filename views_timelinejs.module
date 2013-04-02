@@ -97,7 +97,7 @@ function views_timelinejs_get_timezone() {
 }
 
 /**
- * Converts a given time and date into gregorian format with Drupal's timezone.
+ * Converts a given time and date into CSV format with Drupals timezone.
  *
  * @param string $value
  *   The date to be converted.
@@ -109,64 +109,48 @@ function views_timelinejs_get_timezone() {
  *   The Drupal timezone.
  *
  * @return string
- *   Gregorian formatted date.
+ *   CSV formatted date.
  */
-function views_timelinejs_convert_to_gregorian($value, $date_format, $timezone, $db_timezone) {
+function views_timelinejs_convert_to_csv($value, $date_format, $timezone, $db_timezone) {
   $timezone = new DateTimezone($timezone);
   $db_timezone = new DateTimezone($db_timezone);
   switch ($date_format) {
     case 'datestamp':
     case 'timestamp':
-      $date = new DateTime();
+      $date = new DateObject();
       $date->setTimezone($db_timezone);
       $date->setTimestamp($value);
       break;
 
     default:
-      $date = new DateTime($value, $db_timezone);
+      $date = new DateObject($value, $db_timezone);
       break;
   }
+  $gran = $date->toArray();
+
+  if (!empty($gran['year'])) {
+    $format[] = 'Y';
+  }
+  if (!empty($gran['month'])) {
+    $format[] = 'm';
+  }
+  if (!empty($gran['day'])) {
+    $format[] = 'd';
+  }
+  if (!empty($gran['hour']) && $gran['hour'] > 0) {
+    $format[] = 'H';
+  }
+  if (!empty($gran['minute']) && $gran['minute'] > 0) {
+    $format[] = 'i';
+  }
+
+  $format = implode(',', $format);
   $date->setTimezone($timezone);
-  return $date->format('M d Y G:i:s');
+  return $date->format($format);
 }
 
 /**
- * Converts a given time and date into ISO format with Drupal's timezone.
- *
- * @param string $value
- *   The date to be converted.
- * @param string $date_format
- *   The format of the date.
- * @param string $timezone
- *   The timezone of the date.
- * @param string $db_timezone
- *   The Drupal timezone.
- *
- * @return string
- *   ISO formatted date.
- */
-function views_timelinejs_convert_to_iso($value, $date_format, $timezone, $db_timezone) {
-  $timezone = new DateTimezone($timezone);
-  $db_timezone = new DateTimezone($db_timezone);
-  switch ($date_format) {
-    case 'datestamp':
-    case 'timestamp':{
-      $date = new DateTime();
-      $date->setTimezone($db_timezone);
-      $date->setTimestamp($value);
-      break;
-    }
-    default:{
-      $date = new DateTime($value, $db_timezone);
-      break;
-    }
-  }
-  $date->setTimezone($timezone);
-  return $date->format('Y-m-d\TH:i:s\Z');
-}
-
-/**
- * Converts a given time and date into timestamp with Drupal's timezone.
+ * Converts a given time and date into timestamp with Drupals timezone.
  *
  * @param string $value
  *   The date to be converted.
