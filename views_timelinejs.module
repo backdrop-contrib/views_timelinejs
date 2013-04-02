@@ -112,6 +112,11 @@ function views_timelinejs_get_timezone() {
  *   CSV formatted date.
  */
 function views_timelinejs_convert_to_csv($value, $date_format, $timezone, $db_timezone) {
+  // To avoid errors, if value is empty set it to unix epoch.
+  if (empty($value)) {
+    $value = "1/1/1970";
+  }
+
   $timezone = new DateTimezone($timezone);
   $db_timezone = new DateTimezone($db_timezone);
   switch ($date_format) {
