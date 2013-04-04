@@ -15,8 +15,10 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
   function option_definition() {
     $options = parent::option_definition();
 
-    $options['timeline_theme']['width'] = array('default' => '100%');
+    $options['timeline_theme']['width'] = array('default' => '100');
+    $options['timeline_theme']['width_unit'] = array('default' => '1');
     $options['timeline_theme']['height'] = array('default' => '500');
+    $options['timeline_theme']['height_unit'] = array('default' => '0');
     $options['timeline_fields']['caption'] = array('default' => '0');
     $options['timeline_fields']['credit'] = array('default' => '0');
     $options['timeline_fields']['media'] = array('default' => '0');
@@ -241,6 +243,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     );
 
     // Timeline display configuration.
+    $units = array(0 => 'px', 1 => '%');
     $form['timeline_theme'] = array(
       '#type' => 'fieldset',
       '#title' => t('Display configuration'),
@@ -254,11 +257,25 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#description' => t('The width of the timeline.'),
       '#default_value' => $this->options['timeline_theme']['width'],
     );
+    $form['timeline_theme']['width_unit'] = array(
+      '#type' => 'radios',
+      '#title' => t('Units for the width'),
+      '#description' => t('Choose which units will be used to define the width of the timeline.'),
+      '#default_value' => $this->options['timeline_theme']['width_unit'],
+      '#options' => $units,
+    );
     $form['timeline_theme']['height'] = array(
       '#type' => 'textfield',
       '#title' => 'Height of the timeline',
       '#description' => t('The height of the timeline.'),
       '#default_value' => $this->options['timeline_theme']['height'],
+    );
+    $form['timeline_theme']['height_unit'] = array(
+      '#type' => 'radios',
+      '#title' => t('Units for the height'),
+      '#description' => t('Choose which units will be used to define the height of the timeline.'),
+      '#default_value' => $this->options['timeline_theme']['height_unit'],
+      '#options' => $units,
     );
   }
 

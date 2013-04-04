@@ -16,9 +16,15 @@ function template_preprocess_views_timelinejs(&$vars) {
   $view = $vars['view'];
   $vars['timelinejs_id'] = 'timelinejs_' . $view->name . '_' . $view->current_display;
 
+  $width_unit = $vars['options']['timeline_theme']['width_unit'] ? '%' : '';
+  $height_unit = $vars['options']['timeline_theme']['height_unit'] ? '%' : '';
+
+  $width = check_plain($vars['options']['timeline_theme']['width']) . $width_unit;
+  $height = check_plain($vars['options']['timeline_theme']['height']) . $height_unit;
+
   $settings = array(
-    'width' => check_plain($vars['options']['timeline_theme']['width']),
-    'height' => check_plain($vars['options']['timeline_theme']['height']),
+    'width' => $width,
+    'height' => $height,
     'source' => $vars['rows'],
     'embed_id' => $vars['timelinejs_id'],
     'embed_path' => base_path() . libraries_get_path('timeline') . '/compiled/',
