@@ -31,17 +31,44 @@ function views_timelinejs_theme() {
 }
 
 /**
- * Include TimelineJS libraries.
+ * Implements hook_libraries_info().
  */
-function views_timelinejs_load_libraries() {
-  // Libraries API 1.x.
-  if ($path = libraries_get_path('timeline')) {
-    drupal_add_css($path . '/compiled/css/timeline.css');
-    drupal_add_js($path . '/compiled/js/storyjs-embed.js');
-  }
-  else {
-    drupal_set_message(t('TimelineJS libraries not found in libraries/timeline directory. Timeline will not work.'), 'error', FALSE);
-  }
+function views_timelinejs_libraries_info() {
+  $libraries = array();
+
+  $libraries['timeline'] = array(
+    'name' => 'timeline',
+    'vendor url' => 'http://timeline.verite.co',
+    'download url' => 'http://timeline.verite.co',
+    'version arguments' => array(
+      'file' => 'compiled/js/timeline.js',
+      'pattern' => '/Version ([\d.]+)/i',
+      'lines' => 5,
+      'cols' => 20,
+    ),
+    'files' => array(
+      'js' => array(
+        'compiled/js/storyjs-embed.js',
+      ),
+      'css' => array(
+        'compiled/css/timeline.css',
+      ),
+    ),
+    'versions' => array(
+      '2.17' => array(
+        'files' => array(
+          'js' => array(
+            'compiled/js/storyjs-embed.js',
+          ),
+          'css' => array(
+            'compiled/css/timeline.css',
+          ),
+        ),
+      ),
+    ),
+  );
+
+  return $libraries;
 }
 
 /**
