@@ -28,16 +28,16 @@ function views_timelinejs_date_iso_source_date_field_conversion($date, $output_f
   $db_timezone = date_get_timezone_db($tz_handling);
   switch ($output_format) {
     case 'csv':
-      $ret['value'] = views_timelinejs_convert_to_csv($date['value'], $input_format, $timezone, $db_timezone);
+      $ret['value'] = views_timelinejs_convert_to_csv($date['value'], $input_format, $timezone, $db_timezone, $options['field']['granularity']);
       if (isset($date['value2'])) {
-        $ret['value2'] = views_timelinejs_convert_to_csv($date['value2'], $input_format, $timezone, $db_timezone);
+        $ret['value2'] = views_timelinejs_convert_to_csv($date['value2'], $input_format, $timezone, $db_timezone, $options['field']['granularity']);
       }
       break;
 
     case 'timestamp':
-      $ret['value'] = views_timelinejs_convert_to_timestamp($date['value'], $input_format, $timezone, $db_timezone);
+      $ret['value'] = views_timelinejs_convert_to_timestamp($date['value'], $input_format, $timezone, $db_timezone, $options['field']['granularity']);
       if (isset($date['value2'])) {
-        $ret['value2'] = views_timelinejs_convert_to_timestamp($date['value2'], $input_format, $timezone, $db_timezone);
+        $ret['value2'] = views_timelinejs_convert_to_timestamp($date['value2'], $input_format, $timezone, $db_timezone, $options['field']['granularity']);
       }
       break;
   }

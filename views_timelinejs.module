@@ -111,7 +111,7 @@ function views_timelinejs_get_timezone() {
  * @return string
  *   CSV formatted date.
  */
-function views_timelinejs_convert_to_csv($value, $date_format, $timezone, $db_timezone) {
+function views_timelinejs_convert_to_csv($value, $date_format, $timezone, $db_timezone, $granularity) {
   // To avoid errors, if value is empty set it to unix epoch.
   if (empty($value)) {
     return "FALSE";
@@ -131,21 +131,21 @@ function views_timelinejs_convert_to_csv($value, $date_format, $timezone, $db_ti
       $date = new DateObject($value, $db_timezone);
       break;
   }
-  $gran = $date->toArray();
 
-  if (!empty($gran['year'])) {
+  $format = array();
+  if (is_string($granularity['year']) && $granularity['year'] == 'year') {
     $format[] = 'Y';
   }
-  if (!empty($gran['month'])) {
+  if (is_string($granularity['month']) && $granularity['month'] == 'month') {
     $format[] = 'm';
   }
-  if (!empty($gran['day'])) {
+  if (is_string($granularity['day']) && $granularity['day'] == 'day') {
     $format[] = 'd';
   }
-  if (!empty($gran['hour']) && $gran['hour'] > 0) {
+  if (is_string($granularity['hour']) && $granularity['hour'] == 'hour') {
     $format[] = 'H';
   }
-  if (!empty($gran['minute']) && $gran['minute'] > 0) {
+  if (is_string($granularity['minute']) && $granularity['minute'] == 'minute') {
     $format[] = 'i';
   }
 

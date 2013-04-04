@@ -536,10 +536,18 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           'fieldname' => $fieldname,
         );
       }
+
       if (!empty($view->field[$fieldname]->field_info)) {
         $field_information['field_type'] = $view->field[$fieldname]->field_info['type'];
         $field_information['date_format'] = $field_information['field_type'];
-        $field_information['tz_handling'] = 'site';
+
+        // If we're dealing with a date-field, get tz_handling and granularity as well.
+        if (isset($view->field[$fieldname]->field_info['settings']['tz_handling'])) {
+          $field_information['tz_handling'] = $view->field[$fieldname]->field_info['settings']['tz_handling'];
+        }
+        if (isset($view->field[$fieldname]->field_info['settings']['granularity'])) {
+          $field_information['granularity'] = $view->field[$fieldname]->field_info['settings']['granularity'];
+        }
       }
 
       if (!empty($field_information)) {

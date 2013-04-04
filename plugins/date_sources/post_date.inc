@@ -27,10 +27,10 @@ function views_timelinejs_date_source_post_date_conversion($date, $output_format
   $db_timezone = 'UTC';
   switch ($output_format) {
     case 'csv':
-      return views_timelinejs_convert_to_csv($date, $input_format, $timezone, $db_timezone);
+      return views_timelinejs_convert_to_csv($date, $input_format, $timezone, $db_timezone, $options['field']['granularity']);
 
     case 'timestamp':
-      return views_timelinejs_convert_to_timestamp($date, $input_format, $timezone, $db_timezone);
+      return views_timelinejs_convert_to_timestamp($date, $input_format, $timezone, $db_timezone, $options['field']['granularity']);
 
   }
 }
