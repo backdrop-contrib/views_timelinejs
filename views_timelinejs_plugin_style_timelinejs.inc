@@ -408,14 +408,14 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
                   if ($date['formatted']['value'] != "FALSE") {
                     $rows[$count][$target_field] = check_plain($date['formatted']['value']);
                   } else {
-                    drupal_set_message(t("Could not format date for field @field in node @nid. It won't be shown in timeline.", array('@nid' => $row->nid, '@field' => $tmp['fieldname'])), 'error');
+                    drupal_set_message(t("Could not format date for field %field in node @nid. It won't be shown in timeline.", array('@nid' => $row->nid, '%field' => $tmp['fieldname'])), 'error');
                   }
                 }
                 elseif (($target_field == 'endDate') && isset($date['formatted']['value2'])) {
                   if ($date['formatted']['value'] != "FALSE") {
                     $rows[$count][$target_field] = check_plain($date['formatted']['value2']);
                   } else {
-                    drupal_set_message(t("Could not format date for field @field in node @nid. It won't be shown in timeline.", array('@nid' => $row->nid, '@field' => $tmp['fieldname'])), 'error');
+                    drupal_set_message(t("Could not format date for field %field in node @nid. It won't be shown in timeline.", array('@nid' => $row->nid, '%field' => $tmp['fieldname'])), 'error');
                   }
                 }
               }
