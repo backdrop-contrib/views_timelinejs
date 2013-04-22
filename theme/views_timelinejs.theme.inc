@@ -9,12 +9,11 @@
  */
 function template_preprocess_views_timelinejs(&$vars) {
   global $language;
+  $view = $vars['view'];
+  $vars['timelinejs_id'] = 'timelinejs_' . $view->name . '_' . $view->current_display;
 
   // Load required libraries and styles.
   if (($library = libraries_load('timeline')) && !empty($library['loaded'])) {
-    $view = $vars['view'];
-    $vars['timelinejs_id'] = 'timelinejs_' . $view->name . '_' . $view->current_display;
-
     $width_unit = $vars['options']['timeline_theme']['width_unit'] ? '%' : '';
     $height_unit = $vars['options']['timeline_theme']['height_unit'] ? '%' : '';
 
@@ -47,7 +46,7 @@ function template_preprocess_views_timelinejs(&$vars) {
     drupal_add_js(array('timelineJS' => array($settings)), 'setting');
     drupal_add_js(drupal_get_path('module', 'views_timelinejs') . '/js/views_timelinejs.js');
   } else {
-    drupal_set_message(t('TimelineJS libraries not found in libraries/timeline directory. Timeline will not work.'), 'error', FALSE);
+    drupal_set_message($library['error message'], 'error', FALSE);
   }
 }
 
