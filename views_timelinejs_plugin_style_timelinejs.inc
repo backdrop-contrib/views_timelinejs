@@ -26,6 +26,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $options['timeline_fields']['date'] = array('default' => '0');
     $options['timeline_fields']['bodytext'] = array('default' => '0');
     $options['timeline_fields']['headline'] = array('default' => '0');
+    $options['timeline_config']['strip_tags'] = array('default' => '1');
     $options['timeline_config']['hash_bookmark'] = array('default' => '0');
     $options['timeline_config']['start_zoom_adjust'] = array('default' => '0');
     $options['timeline_config']['link_text'] = array('default' => 'Read more');
@@ -142,6 +143,16 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           ':input[name="style_options[timeline_config][link_to_entity]"]' => array('value' => 1),
         ),
       ),
+    );
+    $form['timeline_config']['strip_tags'] = array(
+      '#type' => 'select',
+      '#title' => 'Strip HTML from Body',
+      '#description' => t('Choose whether you want to strip HTML from your "Body text" field.'),
+      '#options' => array(
+        '0' => t('No'),
+        '1' => t('Yes'),
+      ),
+      '#default_value' => $this->options['timeline_config']['strip_tags'],
     );
     $form['timeline_config']['hash_bookmark'] = array(
       '#type' => 'select',
@@ -347,9 +358,12 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
             }
           }
 
-          // Body - plain text input, optionally append "read more" entity link.
+          // Body - HTML vs Plain text depends on a setting; optionally append "read more" entity link.
           if ($target_field == 'text') {
-            $v_text = strip_tags($view->style_plugin->rendered_fields[$count][$this->options['timeline_fields'][$source_field]]);
+            $v_text = $view->style_plugin->rendered_fields[$count][$this->options['timeline_fields'][$source_field]];
+            if ($this->options['timeline_config']['strip_tags'] == 1) {
+              $v_text = strip_tags($v_text);
+            }
             if ($v_text) {
               $rows[$count][$target_field] = $v_text;
               if (isset($this->options['timeline_config']['link_text_enabled']) && $this->options['timeline_config']['link_text_enabled'] && isset($row->uri['path'])) {
