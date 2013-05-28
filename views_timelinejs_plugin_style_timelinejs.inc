@@ -361,7 +361,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           // Body - HTML vs Plain text depends on a setting; optionally append "read more" entity link.
           if ($target_field == 'text') {
             $v_text = $view->style_plugin->rendered_fields[$count][$this->options['timeline_fields'][$source_field]];
-            if ($this->options['timeline_config']['strip_tags'] == 1) {
+            if (!empty($this->options['timeline_config']['strip_tags']) && $this->options['timeline_config']['strip_tags'] == 1) {
               $v_text = strip_tags($v_text);
             }
             if ($v_text) {
