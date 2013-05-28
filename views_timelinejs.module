@@ -65,6 +65,16 @@ function views_timelinejs_libraries_info() {
           ),
         ),
       ),
+      '2.22' => array(
+        'files' => array(
+          'js' => array(
+            'compiled/js/storyjs-embed.js',
+          ),
+          'css' => array(
+            'compiled/css/timeline.css',
+          ),
+        ),
+      ),
     ),
   );
 
