@@ -185,6 +185,9 @@ function views_timelinejs_convert_to_csv($value, $date_format, $timezone, $db_ti
   if (is_string($granularity['minute']) && $granularity['minute'] == 'minute') {
     $format[] = 'i';
   }
+  if (is_string($granularity['second']) && $granularity['second'] == 'second') {
+    $format[] = 's';
+  }
 
   $format = implode(',', $format);
   $date->setTimezone($timezone);
