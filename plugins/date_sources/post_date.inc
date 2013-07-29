@@ -29,7 +29,9 @@ function views_timelinejs_date_source_post_date_conversion($date, $output_format
   switch ($output_format) {
     case 'csv':
       return views_timelinejs_convert_to_csv($date, $input_format, $timezone, $db_timezone, $granularity);
+
     case 'timestamp':
       return views_timelinejs_convert_to_timestamp($date, $input_format, $timezone, $db_timezone, $granularity);
+
   }
 }
