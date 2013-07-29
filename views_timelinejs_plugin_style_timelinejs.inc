@@ -484,9 +484,9 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         }
       }
 
-      // Allow other modules to alter timeline data before rendering by
-      // implementing hook_views_timelinejs_data_alter().
-      drupal_alter('views_timelinejs_data', $rows, clone $view);
+      // Allow other modules to alter timeline rows before rendering by
+      // implementing hook_views_timelinejs_rows_alter().
+      drupal_alter('views_timelinejs_rows', $rows, clone $view);
 
       // Prepare data array that TimelineJS understands.
       $data = array(
@@ -514,6 +514,10 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         ),
       );
     }
+
+    // Allow other modules to alter timeline data before rendering by
+    // implementing hook_views_timelinejs_data_alter().
+    drupal_alter('views_timelinejs_data', $data, clone $view);
 
     // Skip rendering if view is being edited or previewed.
     if (!$view->editing) {
