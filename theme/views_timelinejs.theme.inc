@@ -45,7 +45,8 @@ function template_preprocess_views_timelinejs(&$vars) {
     // Add inline JavaScript.
     drupal_add_js(array('timelineJS' => array($settings)), 'setting');
     drupal_add_js(drupal_get_path('module', 'views_timelinejs') . '/js/views_timelinejs.js');
-  } else {
+  }
+  else {
     drupal_set_message($library['error message'], 'error', FALSE);
   }
 }
