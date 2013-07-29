@@ -481,7 +481,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           }
 
           // Media URL.
-          if ($target_field == 'media') {
+          if ($target_field == 'media' && isset($row->_field_data[$view->field[$tmp['fieldname']]->field_alias])) {
             $value = $view->field[$tmp['fieldname']]->get_value($row);
             if (is_array($value)) {
               $value = array_shift($value);
