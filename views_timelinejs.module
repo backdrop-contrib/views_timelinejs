@@ -170,23 +170,29 @@ function views_timelinejs_convert_to_csv($value, $date_format, $timezone, $db_ti
   }
 
   $format = array();
-  if (is_string($granularity['year']) && $granularity['year'] == 'year') {
-    $format[] = 'Y';
+
+  if (empty($granularity)) {
+    $format = array('Y,m,d,H,i');
   }
-  if (is_string($granularity['month']) && $granularity['month'] == 'month') {
-    $format[] = 'm';
-  }
-  if (is_string($granularity['day']) && $granularity['day'] == 'day') {
-    $format[] = 'd';
-  }
-  if (is_string($granularity['hour']) && $granularity['hour'] == 'hour') {
-    $format[] = 'H';
-  }
-  if (is_string($granularity['minute']) && $granularity['minute'] == 'minute') {
-    $format[] = 'i';
-  }
-  if (is_string($granularity['second']) && $granularity['second'] == 'second') {
-    $format[] = 's';
+  else {
+    if (is_string($granularity['year']) && $granularity['year'] == 'year') {
+      $format[] = 'Y';
+    }
+    if (is_string($granularity['month']) && $granularity['month'] == 'month') {
+      $format[] = 'm';
+    }
+    if (is_string($granularity['day']) && $granularity['day'] == 'day') {
+      $format[] = 'd';
+    }
+    if (is_string($granularity['hour']) && $granularity['hour'] == 'hour') {
+      $format[] = 'H';
+    }
+    if (is_string($granularity['minute']) && $granularity['minute'] == 'minute') {
+      $format[] = 'i';
+    }
+    if (is_string($granularity['second']) && $granularity['second'] == 'second') {
+      $format[] = 's';
+    }
   }
 
   $format = implode(',', $format);
