@@ -28,7 +28,6 @@ function template_preprocess_views_timelinejs(&$vars) {
       'embed_path' => base_path() . libraries_get_path('timeline') . '/compiled/',
       'lang' => $language->language,
       'processed' => FALSE,
-      'gmap_key' => check_plain($vars['options']['timeline_config']['gmap_key']),
       'maptype' => $vars['options']['timeline_config']['maptype'],
     );
 

@@ -29,7 +29,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $options['timeline_config']['strip_tags'] = array('default' => '1');
     $options['timeline_config']['hash_bookmark'] = array('default' => '0');
     $options['timeline_config']['start_zoom_adjust'] = array('default' => '0');
-    $options['timeline_config']['gmap_key'] = array('default' => '');
     $options['timeline_config']['maptype'] = array('default' => 'toner');
     $options['timeline_config']['link_text'] = array('default' => 'Read more');
     $options['timeline_config']['link_text_enabled'] = array('default' => '0');
@@ -215,12 +214,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         '9' => t('9'),
       ),
       '#default_value' => $this->options['timeline_config']['start_zoom_adjust'],
-    );
-    $form['timeline_config']['gmap_key'] = array(
-      '#type' => 'textfield',
-      '#title' => 'Google Maps API Key',
-      '#description' => t('Can be found at <a href="https://code.google.com/apis/console/">Google APIs Console</a>'),
-      '#default_value' => $this->options['timeline_config']['gmap_key'],
     );
     $form['timeline_config']['maptype'] = array(
       '#type' => 'select',
