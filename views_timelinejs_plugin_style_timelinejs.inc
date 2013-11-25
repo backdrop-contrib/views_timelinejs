@@ -89,8 +89,11 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
 
       // Check if field is a supported text source.
       foreach ($text_sources as $source) {
-        if (get_class($handler) == $source['handler_name']) {
-          if ((isset($field_info['type']) && $field_info['type'] == $source['field_type']) || $field == 'title') {
+        if ($field == 'title') {
+          $text_fields[$field] = $field_names[$field];
+        }
+        elseif (get_class($handler) == $source['handler_name']) {
+          if (isset($field_info['type']) && $field_info['type'] == $source['field_type']) {
             $text_fields[$field] = $field_names[$field];
           }
         }
