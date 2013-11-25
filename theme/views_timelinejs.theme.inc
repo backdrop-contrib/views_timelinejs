@@ -40,6 +40,11 @@ function template_preprocess_views_timelinejs(&$vars) {
       $settings['start_at_end'] = TRUE;
     }
 
+    if($vars['options']['timeline_config']['start_at_current']){
+      $settings['start_at_end'] = FALSE;
+      $settings['start_at_slide'] = $vars['rows']['timeline']['start_at_current'];
+    }
+
     if (isset($vars['options']['timeline_config']['start_zoom_adjust'])) {
       $settings['start_zoom_adjust'] = check_plain($vars['options']['timeline_config']['start_zoom_adjust']);
     }

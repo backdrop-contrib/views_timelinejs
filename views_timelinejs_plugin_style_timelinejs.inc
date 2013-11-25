@@ -176,6 +176,16 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       ),
       '#default_value' => $this->options['timeline_config']['start_at_end'],
     );
+    $form['timeline_config']['start_at_current'] = array(
+      '#type' => 'select',
+      '#title' => 'Start at Current',
+      '#description' => t('The slide closest to current time.'),
+      '#options' => array(
+        '0' => t('No'),
+        '1' => t('Yes'),
+      ),
+      '#default_value' => $this->options['timeline_config']['start_at_current'],
+    );
     $form['timeline_config']['start_zoom_adjust'] = array(
       '#type' => 'select',
       '#title' => 'Zoom Level',
@@ -366,6 +376,15 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       $link_text = isset($this->options['timeline_config']['link_text']) ? $this->options['timeline_config']['link_text'] : t('Read more');
       $rows = array();
 
+      if($view->style_options['timeline_config']['start_at_current']){
+        // Gives you a timestamp of the date
+        $date_check = strtotime('now');
+        // Holds the difference of the closest date
+        $difference = NULL;
+        // Holds the index in the array
+        $start_at_current = NULL;
+      }
+
       // Build a TimelineJS friendly array from the views data.
       foreach ($this->view->result as $count => $row) {
         $data = array();
@@ -459,6 +478,17 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
               if (is_array($date['formatted'])) {
                 if ($target_field == 'startDate') {
                   if ($date['formatted']['value'] != "FALSE") {
+                    if($view->style_options['timeline_config']['start_at_current']){
+                      // abs to get the absolute difference
+                      $diff = abs($date['timestamp']['value'] - $date_check);
+
+                      // If the difference is smaller than the absolute difference of the last date we need to update our values here
+                      if($difference == NULL || $diff < $difference) {
+                        $difference = $diff;
+                        $start_at_current = $count;
+                      }
+                    }
+
                     $rows[$count][$target_field] = check_plain($date['formatted']['value']);
                   }
                   else {
@@ -525,6 +555,9 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           'date' => $rows,
         ),
       );
+      if($view->style_options['timeline_config']['start_at_current']){
+        $data['timeline']['start_at_current'] = $start_at_current;
+      }
     }
     // Does not have required mapping.
     else {
