@@ -41,7 +41,6 @@ function views_timelinejs_date_source_date_field_conversion($date, $output_forma
         $ret['value2'] = views_timelinejs_convert_to_timestamp($date['value2'], $input_format, $timezone, $db_timezone, $granularity);
       }
       break;
-
   }
 
   // If times are the same, don't duplicate.
