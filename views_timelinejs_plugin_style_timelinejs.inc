@@ -88,7 +88,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
    * Define options form.
    */
   function options_form(&$form, &$form_state) {
-
     $handlers = $this->display->handler->get_handlers('field');
     if (empty($handlers)) {
       $form['error_markup'] = array(
@@ -110,6 +109,57 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $text_sources = ctools_get_plugins('views_timelinejs', 'text_sources');
     $media_sources = ctools_get_plugins('views_timelinejs', 'media_sources');
     $tag_sources = ctools_get_plugins('views_timelinejs', 'tag_sources');
+
+    /**
+     * Add footer, header and empty sets to the list of fields.
+     */
+    $globals = array();
+    $display_handler = $this->display->handler;
+    $headers = $display_handler->get_option('header');
+    $footers = $display_handler->get_option('footer');
+    $empties = $display_handler->get_option('empty');
+
+    foreach ($headers as $header) {
+      if ($header['field'] == 'area') {
+        $field_names['header_' . $header['field']] = 'Global: Text area ("Header: ' . $header['ui_name'] . '")';
+      }
+      if ($header['field'] == 'area_text_custom') {
+        $field_names['header_' . $header['field']] = 'Global: Unfiltered text ("Header:' . $header['ui_name'] . '")';
+      }
+      foreach ($text_sources as $source) {
+        if ($header['field'] == $source['field_type']) {
+          $text_fields['header_' . $header['field']] = $field_names['header_' . $header['field']];
+        }
+      }
+    }
+
+    foreach ($footers as $footer) {
+      if ($footer['field'] == 'area') {
+        $field_names['footer_' . $footer['field']] = 'Global: Text area ("Footer: ' . $footer['ui_name'] . '")';
+      }
+      if ($footer['field'] == 'area_text_custom') {
+        $field_names['footer_' . $footer['field']] = 'Global: Unfiltered text ("Footer: ' . $footer['ui_name'] . '")';
+      }
+      foreach ($text_sources as $source) {
+        if ($footer['field'] == $source['field_type']) {
+          $text_fields['footer_' . $footer['field']] = $field_names['footer_' . $footer['field']];
+        }
+      }
+    }
+
+    foreach ($empties as $empty) {
+      if ($empty['field'] == 'area') {
+        $field_names['empty_' . $empty['field']] = 'Global: Text area ("No results: ' . $empty['ui_name'] . '")';
+      }
+      if ($empty['field'] == 'area_text_custom') {
+        $field_names['empty_' . $empty['field']] = 'Global: Unfiltered text ("No results: ' . $empty['ui_name'] . '")';
+      }
+      foreach ($text_sources as $source) {
+        if ($empty['field'] == $source['field_type']) {
+          $text_fields['empty_' . $empty['field']] = $field_names['empty_'.$empty['field']];
+        }
+      }
+    }
 
     // Go through all the field handlers to check support.
     foreach ($handlers as $field => $handler) {
@@ -412,6 +462,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     // Render if there's enough mapped fields.
     if ($has_required_mappings) {
       $link_text = isset($this->options['timeline_config']['link_text']) ? $this->options['timeline_config']['link_text'] : t('Read more');
+      $global_areas = array('header', 'footer', 'empty');
       $rows = array();
 
       if($this->view->style_options['timeline_config']['start_at_current']){
@@ -430,14 +481,23 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         // Build the data we need.
         foreach ($field_mapping as $target_field => $source_field) {
           $tmp = $this->getDefinedUsage($source_field);
+
+          $global_field = explode('_', $tmp['fieldname']);
           // Don't render fields that haven't been mapped.
-          if (!isset($this->view->field[$tmp['fieldname']])) {
+          if (!isset($this->view->field[$tmp['fieldname']]) && !in_array($global_field[0], $global_areas)) {
             continue;
           }
 
           // Headline - plain text input, optional link to entity.
           if ($target_field == 'headline') {
-            $v_text = $this->view->field[$tmp['fieldname']]->render($row);
+            if (in_array($global_field[0], $global_areas)) {
+              $lines = $this->display->handler->get_option($global_field[0]);
+              $v_text = $lines[$global_field[1]]['content'];
+            }
+            else {
+              $v_text = $this->view->field[$tmp['fieldname']]->render($row);
+            }
+
             if (is_array($v_text)) {
               $v_text = array_shift($v_text);
             }
@@ -456,7 +516,16 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           // Body - HTML vs Plain text depends on a setting.
           // Optionally append "read more" entity link.
           if ($target_field == 'text') {
-            $field_value = $this->view->field[$tmp['fieldname']]->get_value($row);
+            if (in_array($global_field[0], $global_areas)) {
+              $lines = $this->display->handler->get_option($global_field[0]);
+              $field_value = array();
+              $field_value[0] = array();
+              $field_value[0]['value'] = $lines[$global_field[1]]['content'];
+            }
+            else {
+              $field_value = $this->view->field[$tmp['fieldname']]->get_value($row);
+            }
+
             if (!empty($field_value['0'])) {
               $v_text = $field_value['0']['value'];
             }
@@ -675,11 +744,18 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       elseif (isset($fields['advanced'][$type])) {
         $fieldname = $fields['advanced'][$type];
       }
-
-      if (isset($fieldname) && $fieldname != '0') {
+      $global_fields = explode('_', $fieldname);
+      if (isset($fieldname) && $fieldname != '0' && !in_array($global_fields[0], array('header', 'footer', 'empty'))) {
         $field_information = array(
           'alias' => $this->view->field[$fieldname]->field_alias,
           'handler' => $this->view->field[$fieldname]->definition['handler'],
+          'fieldname' => $fieldname,
+        );
+      }
+      elseif (in_array($global_fields[0], array('header', 'footer', 'empty'))) {
+        $field_information = array(
+          'alias' => 'nid',
+          'handler' => 'views_' . $global_fields[1] . '_field',
           'fieldname' => $fieldname,
         );
       }
