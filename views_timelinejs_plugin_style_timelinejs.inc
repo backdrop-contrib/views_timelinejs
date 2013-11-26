@@ -15,25 +15,72 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
   function option_definition() {
     $options = parent::option_definition();
 
-    $options['timeline_theme']['width'] = array('default' => '100');
-    $options['timeline_theme']['width_unit'] = array('default' => '1');
-    $options['timeline_theme']['height'] = array('default' => '500');
-    $options['timeline_theme']['height_unit'] = array('default' => '0');
-    $options['timeline_fields']['caption'] = array('default' => '0');
-    $options['timeline_fields']['credit'] = array('default' => '0');
-    $options['timeline_fields']['media'] = array('default' => '0');
-    $options['timeline_fields']['tag'] = array('default' => '0');
-    $options['timeline_fields']['date'] = array('default' => '0');
-    $options['timeline_fields']['bodytext'] = array('default' => '0');
-    $options['timeline_fields']['headline'] = array('default' => '0');
-    $options['timeline_config']['strip_tags'] = array('default' => '1');
-    $options['timeline_config']['hash_bookmark'] = array('default' => '0');
-    $options['timeline_config']['start_zoom_adjust'] = array('default' => '0');
-    $options['timeline_config']['maptype'] = array('default' => 'toner');
-    $options['timeline_config']['link_text'] = array('default' => 'Read more');
-    $options['timeline_config']['link_text_enabled'] = array('default' => '0');
-    $options['timeline_config']['link_to_entity'] = array('default' => '0');
-
+    $options['timeline_theme'] = array(
+      'contains' => array(
+        'width' => array(
+          'default' => '100',
+        ),
+        'width_unit' => array(
+          'default' => '1',
+        ),
+        'height' => array(
+          'default' => '500',
+        ),
+        'height_unit' => array(
+          'default' => '0',
+        ),
+      ),
+    );
+    $options['timeline_fields'] = array(
+      'contains' => array(
+        'caption' => array(
+          'default' => '0',
+        ),
+        'credit' => array(
+          'default' => '0',
+        ),
+        'media' => array(
+          'default' => '0',
+        ),
+        'tag' => array(
+          'default' => '0',
+        ),
+        'date' => array(
+          'default' => '0',
+        ),
+        'bodytext' => array(
+          'default' => '0',
+        ),
+        'headline' => array(
+          'default' => '0',
+        ),
+      ),
+    );
+    $options['timeline_config'] = array(
+      'contains' => array(
+        'strip_tags' => array(
+          'default' => '1',
+        ),
+        'hash_bookmark' => array(
+          'default' => '0',
+        ),
+        'start_zoom_adjust' => array(
+          'default' => '0',
+        ),
+        'maptype' => array(
+          'default' => 'toner',
+        ),
+        'link_text' => array(
+          'default' => 'Read more',
+        ),
+        'link_text_enabled' => array(
+          'default' => '0',
+        ),
+        'link_to_entity' => array(
+          'default' => '0',
+        ),
+      ),
+    );
     return $options;
   }
 
