@@ -106,60 +106,8 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     // Load all date_source plugins.
     ctools_include('plugins');
     $date_sources = ctools_get_plugins('views_timelinejs', 'date_sources');
-    $text_sources = ctools_get_plugins('views_timelinejs', 'text_sources');
     $media_sources = ctools_get_plugins('views_timelinejs', 'media_sources');
     $tag_sources = ctools_get_plugins('views_timelinejs', 'tag_sources');
-
-    /**
-     * Add footer, header and empty sets to the list of fields.
-     */
-    $globals = array();
-    $display_handler = $this->display->handler;
-    $headers = $display_handler->get_option('header');
-    $footers = $display_handler->get_option('footer');
-    $empties = $display_handler->get_option('empty');
-
-    foreach ($headers as $header) {
-      if ($header['field'] == 'area') {
-        $field_names['header_' . $header['field']] = 'Global: Text area ("Header: ' . $header['ui_name'] . '")';
-      }
-      if ($header['field'] == 'area_text_custom') {
-        $field_names['header_' . $header['field']] = 'Global: Unfiltered text ("Header:' . $header['ui_name'] . '")';
-      }
-      foreach ($text_sources as $source) {
-        if ($header['field'] == $source['field_type']) {
-          $text_fields['header_' . $header['field']] = $field_names['header_' . $header['field']];
-        }
-      }
-    }
-
-    foreach ($footers as $footer) {
-      if ($footer['field'] == 'area') {
-        $field_names['footer_' . $footer['field']] = 'Global: Text area ("Footer: ' . $footer['ui_name'] . '")';
-      }
-      if ($footer['field'] == 'area_text_custom') {
-        $field_names['footer_' . $footer['field']] = 'Global: Unfiltered text ("Footer: ' . $footer['ui_name'] . '")';
-      }
-      foreach ($text_sources as $source) {
-        if ($footer['field'] == $source['field_type']) {
-          $text_fields['footer_' . $footer['field']] = $field_names['footer_' . $footer['field']];
-        }
-      }
-    }
-
-    foreach ($empties as $empty) {
-      if ($empty['field'] == 'area') {
-        $field_names['empty_' . $empty['field']] = 'Global: Text area ("No results: ' . $empty['ui_name'] . '")';
-      }
-      if ($empty['field'] == 'area_text_custom') {
-        $field_names['empty_' . $empty['field']] = 'Global: Unfiltered text ("No results: ' . $empty['ui_name'] . '")';
-      }
-      foreach ($text_sources as $source) {
-        if ($empty['field'] == $source['field_type']) {
-          $text_fields['empty_' . $empty['field']] = $field_names['empty_'.$empty['field']];
-        }
-      }
-    }
 
     // Go through all the field handlers to check support.
     foreach ($handlers as $field => $handler) {
@@ -174,23 +122,14 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         $field_info = field_info_field($field_name);
       }
 
+      // Use any views field as a text source.
+      $text_fields[$field] = $field_names[$field];
+
       // Check if field is supported as a date source.
       foreach ($date_sources as $source) {
         if (get_class($handler) == $source['handler_name']) {
           if ($field_info['type'] == $source['field_type'] || $field == 'created' || $field == 'changed') {
             $date_fields[$field] = $field_names[$field];
-          }
-        }
-      }
-
-      // Check if field is a supported text source.
-      foreach ($text_sources as $source) {
-        if ($field == 'title') {
-          $text_fields[$field] = $field_names[$field];
-        }
-        elseif (get_class($handler) == $source['handler_name']) {
-          if (isset($field_info['type']) && $field_info['type'] == $source['field_type']) {
-            $text_fields[$field] = $field_names[$field];
           }
         }
       }
@@ -221,39 +160,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#description' => t('Settings for how the Timeline will behave.'),
       '#collapsible' => TRUE,
       '#collapsed' => FALSE,
-    );
-    $form['timeline_config']['link_to_entity'] = array(
-      '#type' => 'checkbox',
-      '#title' => 'Link timeline items to entity',
-      '#description' => t('If checked, headlines will be made links to entity.'),
-      '#default_value' => $this->options['timeline_config']['link_to_entity'],
-    );
-    $form['timeline_config']['link_text_enabled'] = array(
-      '#type' => 'checkbox',
-      '#title' => 'Add a link to entity after bodytext',
-      '#description' => t('Append a link to original entity to the end of the bodytext.'),
-      '#default_value' => $this->options['timeline_config']['link_text_enabled'],
-    );
-    $form['timeline_config']['link_text'] = array(
-      '#type' => 'textfield',
-      '#title' => 'Link text',
-      '#description' => t('Text that will be used in the link to entity'),
-      '#default_value' => $this->options['timeline_config']['link_text'],
-      '#states' => array(
-        'visible' => array(
-          ':input[name="style_options[timeline_config][link_to_entity]"]' => array('value' => 1),
-        ),
-      ),
-    );
-    $form['timeline_config']['strip_tags'] = array(
-      '#type' => 'select',
-      '#title' => 'Strip HTML from Body',
-      '#description' => t('Choose whether you want to strip HTML from your "Body text" field.'),
-      '#options' => array(
-        '0' => t('No'),
-        '1' => t('Yes'),
-      ),
-      '#default_value' => $this->options['timeline_config']['strip_tags'],
     );
     $form['timeline_config']['hash_bookmark'] = array(
       '#type' => 'select',
@@ -461,8 +367,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
 
     // Render if there's enough mapped fields.
     if ($has_required_mappings) {
-      $link_text = isset($this->options['timeline_config']['link_text']) ? $this->options['timeline_config']['link_text'] : t('Read more');
-      $global_areas = array('header', 'footer', 'empty');
       $rows = array();
 
       if($this->view->style_options['timeline_config']['start_at_current']){
@@ -475,77 +379,32 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       }
 
       // Build a TimelineJS friendly array from the views data.
+      $this->view->row_index = 0;
       foreach ($this->view->result as $count => $row) {
+
         $data = array();
         $data['asset'] = array();
+        $this->view->row_index = $count;
+
         // Build the data we need.
         foreach ($field_mapping as $target_field => $source_field) {
           $tmp = $this->getDefinedUsage($source_field);
 
-          $global_field = explode('_', $tmp['fieldname']);
           // Don't render fields that haven't been mapped.
-          if (!isset($this->view->field[$tmp['fieldname']]) && !in_array($global_field[0], $global_areas)) {
+          if (!isset($this->view->field[$tmp['fieldname']])) {
             continue;
           }
 
-          // Headline - plain text input, optional link to entity.
+          // Headline - can use any view field, uses views rendering.
           if ($target_field == 'headline') {
-            if (in_array($global_field[0], $global_areas)) {
-              $lines = $this->display->handler->get_option($global_field[0]);
-              $v_text = $lines[$global_field[1]]['content'];
-            }
-            else {
-              $v_text = $this->view->field[$tmp['fieldname']]->render($row);
-            }
-
-            if (is_array($v_text)) {
-              $v_text = array_shift($v_text);
-            }
-            if (!is_string($v_text)) {
-              $v_text = $v_text['value'];
-            }
-            if ($this->options['timeline_config']['link_to_entity'] && $this->view->base_table == 'node' && isset($row->_field_data[$this->view->base_field]['entity'])) {
-              $row->uri = entity_uri($row->_field_data[$this->view->base_field]['entity_type'], $row->_field_data[$this->view->base_field]['entity']);
-              $rows[$count][$target_field] = str_replace('&#039;', '&apos;', l($v_text, $row->uri['path']));
-            }
-            else {
-              $rows[$count][$target_field] = check_plain($v_text);
-            }
+            $headline_field = $this->view->style_options['timeline_fields']['headline'];
+            $rows[$count][$target_field] = decode_entities($this->view->field[$headline_field]->theme($row));
           }
 
-          // Body - HTML vs Plain text depends on a setting.
-          // Optionally append "read more" entity link.
+          // Body - can use any view field, uses views rendering.
           if ($target_field == 'text') {
-            if (in_array($global_field[0], $global_areas)) {
-              $lines = $this->display->handler->get_option($global_field[0]);
-              $field_value = array();
-              $field_value[0] = array();
-              $field_value[0]['value'] = $lines[$global_field[1]]['content'];
-            }
-            else {
-              $field_value = $this->view->field[$tmp['fieldname']]->get_value($row);
-            }
-
-            if (!empty($field_value['0'])) {
-              $v_text = $field_value['0']['value'];
-            }
-            else {
-              $v_text = '';
-            }
-            if (!empty($this->options['timeline_config']['strip_tags']) && $this->options['timeline_config']['strip_tags'] == 1) {
-              $v_text = strip_tags($v_text);
-            }
-            if ($v_text) {
-              $rows[$count][$target_field] = $v_text;
-              if (isset($this->options['timeline_config']['link_text_enabled']) && $this->options['timeline_config']['link_text_enabled'] && isset($row->uri['path'])) {
-                $rows[$count][$target_field] .= theme('views_timelinejs_link_to_entity',
-                  array(
-                    'uri' => $row->uri['path'],
-                    'link_text' => check_plain($link_text),
-                  )
-                );
-              }
-            }
+            $body_field = $this->view->style_options['timeline_fields']['bodytext'];
+            $rows[$count][$target_field] = decode_entities($this->view->field[$body_field]->theme($row));
           }
 
           // Tag.
@@ -668,6 +527,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           }
         }
       }
+      unset($this->view->row_index);
 
       // Allow other modules to alter timeline rows before rendering by
       // implementing hook_views_timelinejs_rows_alter().
@@ -744,18 +604,10 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       elseif (isset($fields['advanced'][$type])) {
         $fieldname = $fields['advanced'][$type];
       }
-      $global_fields = explode('_', $fieldname);
-      if (isset($fieldname) && $fieldname != '0' && !in_array($global_fields[0], array('header', 'footer', 'empty'))) {
+      if (isset($fieldname) && $fieldname != '0') {
         $field_information = array(
           'alias' => $this->view->field[$fieldname]->field_alias,
           'handler' => $this->view->field[$fieldname]->definition['handler'],
-          'fieldname' => $fieldname,
-        );
-      }
-      elseif (in_array($global_fields[0], array('header', 'footer', 'empty'))) {
-        $field_information = array(
-          'alias' => 'nid',
-          'handler' => 'views_' . $global_fields[1] . '_field',
           'fieldname' => $fieldname,
         );
       }
