@@ -500,6 +500,10 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
             }
             if (is_array($value)) {
               $value = array_shift($value);
+              // Allow for imagefield image style selection.
+              if ($this->view->field[$tmp['fieldname']]->options['settings']['image_style']) {
+                $value['uri'] = image_style_url($this->view->field[$tmp['fieldname']]->options['settings']['image_style'], $value['uri']);
+              }
             }
             if ($conversion_callback = views_timelinejs_get_callback($tmp['handler'], $tmp['field_type'], 'media_sources')) {
               $media['formatted'] = call_user_func($conversion_callback, $value, array('field' => $tmp));
