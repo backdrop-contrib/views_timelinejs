@@ -511,6 +511,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
 
             if ($media['formatted']) {
               $rows[$count]['asset'][$target_field] = check_plain($media['formatted']);
+              $rows[$count]['asset']['thumbnail'] = check_plain($media['formatted']);
             }
           }
 
