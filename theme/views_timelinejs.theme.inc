@@ -25,7 +25,7 @@ function template_preprocess_views_timelinejs(&$vars) {
       'height' => $height,
       'source' => $vars['rows'],
       'embed_id' => $vars['timelinejs_id'],
-      'embed_path' => base_path() . libraries_get_path('timeline') . '/compiled/',
+      'embed_path' => base_path() . libraries_get_path('timeline') . '/build/',
       'lang' => $language->language,
       'processed' => FALSE,
       'maptype' => $vars['options']['timeline_config']['maptype'],
