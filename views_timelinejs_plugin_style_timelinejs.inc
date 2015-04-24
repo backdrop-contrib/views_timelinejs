@@ -58,10 +58,13 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     );
     $options['timeline_config'] = array(
       'contains' => array(
-        'strip_tags' => array(
-          'default' => '1',
-        ),
         'hash_bookmark' => array(
+          'default' => '0',
+        ),
+        'start_at_end' => array(
+          'default' => '0',
+        ),
+        'start_at_current' => array(
           'default' => '0',
         ),
         'start_zoom_adjust' => array(
@@ -69,15 +72,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         ),
         'maptype' => array(
           'default' => 'toner',
-        ),
-        'link_text' => array(
-          'default' => 'Read more',
-        ),
-        'link_text_enabled' => array(
-          'default' => '0',
-        ),
-        'link_to_entity' => array(
-          'default' => '0',
         ),
       ),
     );
