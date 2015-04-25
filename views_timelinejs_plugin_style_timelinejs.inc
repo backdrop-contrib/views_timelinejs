@@ -363,7 +363,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     if ($has_required_mappings) {
       $rows = array();
 
-      if($this->view->style_options['timeline_config']['start_at_current']){
+      if ($this->view->style_options['timeline_config']['start_at_current']) {
         // Gives you a timestamp of the date
         $date_check = strtotime('now');
         // Holds the difference of the closest date
@@ -444,12 +444,12 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
               if (is_array($date['formatted'])) {
                 if ($target_field == 'startDate') {
                   if ($date['formatted']['value'] != "FALSE") {
-                    if($this->view->style_options['timeline_config']['start_at_current']){
+                    if ($this->view->style_options['timeline_config']['start_at_current']) {
                       // abs to get the absolute difference
                       $diff = abs($date['timestamp']['value'] - $date_check);
 
                       // If the difference is smaller than the absolute difference of the last date we need to update our values here
-                      if($difference == NULL || $diff < $difference) {
+                      if ($difference == NULL || $diff < $difference) {
                         $difference = $diff;
                         $start_at_current = $count;
                       }
@@ -540,7 +540,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           'date' => $rows,
         ),
       );
-      if($this->view->style_options['timeline_config']['start_at_current']){
+      if ($this->view->style_options['timeline_config']['start_at_current']) {
         $data['timeline']['start_at_current'] = $start_at_current;
       }
     }
