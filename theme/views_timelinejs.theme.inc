@@ -10,7 +10,7 @@
 function template_preprocess_views_timelinejs(&$vars) {
   global $language;
   $view = $vars['view'];
-  $vars['timelinejs_id'] = 'timelinejs_' . $view->name . '_' . $view->current_display;
+  $vars['timelinejs_id'] = drupal_html_id('timelinejs_' . $view->name . '_' . $view->current_display);
 
   // Load required libraries and styles.
   if (($library = libraries_load('timeline')) && !empty($library['loaded'])) {
