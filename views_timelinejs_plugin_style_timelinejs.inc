@@ -335,16 +335,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
    * Render the display.
    */
   function render() {
-    $field_mapping = array(
-      'startDate' => 'date',
-      'endDate' => 'date',
-      'headline' => 'headline',
-      'text' => 'bodytext',
-      'media' => 'media',
-      'caption' => 'caption',
-      'credit' => 'credit',
-      'tag' => 'tag',
-    );
 
     // Determine if required fields are mapped.
     $required_mappings = array(
@@ -361,7 +351,20 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
 
     // Render if there's enough mapped fields.
     if ($has_required_mappings) {
+      $field_mapping = array(
+        'startDate' => 'date',
+        'endDate' => 'date',
+        'headline' => 'headline',
+        'text' => 'bodytext',
+        'media' => 'media',
+        'caption' => 'caption',
+        'credit' => 'credit',
+        'tag' => 'tag',
+      );
       $rows = array();
+
+      // Render fields to trigger rewriting and other field processing.
+      $this->view->style_plugin->render_fields($this->view->result);
 
       if ($this->view->style_options['timeline_config']['start_at_current']) {
         // Gives you a timestamp of the date
