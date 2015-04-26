@@ -8,7 +8,6 @@
  * Preprocessor for views template.
  */
 function template_preprocess_views_timelinejs(&$vars) {
-  global $language;
   $view = $vars['view'];
   $vars['timelinejs_id'] = drupal_html_id('timelinejs_' . $view->name . '_' . $view->current_display);
 
@@ -26,11 +25,20 @@ function template_preprocess_views_timelinejs(&$vars) {
       'source' => $vars['rows'],
       'embed_id' => $vars['timelinejs_id'],
       'embed_path' => base_path() . libraries_get_path('timeline') . '/build/',
-      'lang' => $language->language,
       'processed' => FALSE,
       'maptype' => $vars['options']['timeline_config']['maptype'],
       'gmap_key' => check_plain($vars['options']['timeline_config']['gmap_key']),
+      'font' => $vars['options']['timeline_config']['font'],
+      'debug' => $vars['options']['timeline_config']['debug'] == '1' ? TRUE : FALSE,
     );
+
+    if (empty($vars['options']['timeline_config']['language'])) {
+      global $language;
+      $settings['lang'] = $language->language;
+    }
+    else {
+      $settings['lang'] = check_plain($vars['options']['timeline_config']['language']);
+    }
 
     if ($vars['options']['timeline_config']['hash_bookmark']) {
       $settings['hash_bookmark'] = TRUE;

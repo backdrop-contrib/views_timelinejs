@@ -76,6 +76,15 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         'gmap_key' => array(
           'default' => '',
         ),
+        'language' => array(
+          'default' => '',
+        ),
+        'font' => array(
+          'default' => '',
+        ),
+        'debug' => array(
+          'default' => '0',
+        ),
       ),
     );
     return $options;
@@ -247,6 +256,49 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           'select[name="style_options[timeline_config][maptype]"]' => array('value' => '0'),
         ),
       ),
+    );
+    $form['timeline_config']['language'] = array(
+      '#type' => 'textfield',
+      '#size' => 5,
+      '#title' => 'Language',
+      '#description' => t('The language <a href="https://github.com/NUKnightLab/TimelineJS#language">code</a>. Leave blank for the site language.'),
+      '#default_value' => $this->options['timeline_config']['language'],
+    );
+    $form['timeline_config']['font'] = array(
+      '#type' => 'select',
+      '#title' => 'Font',
+      '#description' => t('This setting will only have an effect if the selected font is available to the site (ie @font-face).'),
+      '#options' => array(
+        '' => t('Default'),
+        'AbrilFatface-Average' => 'AbrilFatface-Average',
+        'Arvo-PTSans' => 'Arvo-PTSans',
+        'Bevan-PotanoSans' => 'Bevan-PotanoSans',
+        'BreeSerif-OpenSans' => 'BreeSerif-OpenSans',
+        'DroidSerif-DroidSans' => 'DroidSerif-DroidSans',
+        'Georgia-Helvetica' => 'Georgia-Helvetica',
+        'Lekton-Molengo' => 'Lekton-Molengo',
+        'Merriweather-NewsCycle' => 'Merriweather-NewsCycle',
+        'NewsCycle-Merriweather' => 'NewsCycle-Merriweather',
+        'NixieOne-Ledger' => 'NixieOne-Ledger',
+        'Pacifico-Arimo' => 'Pacifico-Arimo',
+        'PlayfairDisplay-Muli' => 'PlayfairDisplay-Muli',
+        'PoiretOne-Molengo' => 'PoiretOne-Molengo',
+        'PTSerif-PTSans' => 'PTSerif-PTSans',
+        'PT' => 'PT',
+        'Rancho-Gudea' => 'Rancho-Gudea',
+        'SansitaOne-Kameron' => 'SansitaOne-Kameron',
+      ),
+      '#default_value' => $this->options['timeline_config']['font'],
+    );
+    $form['timeline_config']['debug'] = array(
+      '#type' => 'select',
+      '#title' => 'Debug to Console',
+      '#description' => t('Log events to the javascript console.'),
+      '#options' => array(
+        '0' => t('No'),
+        '1' => t('Yes'),
+      ),
+      '#default_value' => $this->options['timeline_config']['debug'],
     );
 
     // Field mapping.
