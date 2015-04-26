@@ -29,6 +29,7 @@ function template_preprocess_views_timelinejs(&$vars) {
       'lang' => $language->language,
       'processed' => FALSE,
       'maptype' => $vars['options']['timeline_config']['maptype'],
+      'gmap_key' => check_plain($vars['options']['timeline_config']['gmap_key']),
     );
 
     if ($vars['options']['timeline_config']['hash_bookmark']) {

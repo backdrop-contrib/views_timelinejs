@@ -73,6 +73,9 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         'maptype' => array(
           'default' => 'toner',
         ),
+        'gmap_key' => array(
+          'default' => '',
+        ),
       ),
     );
     return $options;
@@ -216,15 +219,16 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#type' => 'select',
       '#title' => 'Map Type',
       '#description' => t('Select the type of map.'),
-      '#options' => Array(
-        'Stamen Maps' => Array(
+      '#options' => array(
+        '0' => t('None'),
+        'Stamen Maps' => array(
           'toner' => t('Toner'),
           'toner-lines' => t('Toner Lines'),
           'toner-labels' => t('Toner Labels'),
           'watercolor' => t('Watercolor'),
           'sterrain' => t('Terrain')
         ),
-        'Google Maps' => Array(
+        'Google Maps' => array(
           'ROADMAP' => t('Roadmap'),
           'TERRAIN' => t('Terrain'),
           'HYBRID' => t('Hybrid'),
@@ -232,6 +236,17 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         )
       ),
       '#default_value' => $this->options['timeline_config']['maptype']
+    );
+    $form['timeline_config']['gmap_key'] = array(
+      '#type' => 'textfield',
+      '#title' => 'GMAP API Key',
+      '#description' => t('Due to recent changes to the Google Maps API, you need a <a href="https://developers.google.com/maps/documentation/javascript/tutorial#api_key">API Key</a> in order to use custom map types.'),
+      '#default_value' => $this->options['timeline_config']['gmap_key'],
+      '#states' => array(
+        'invisible' => array(
+          'select[name="style_options[timeline_config][maptype]"]' => array('value' => '0'),
+        ),
+      ),
     );
 
     // Field mapping.
