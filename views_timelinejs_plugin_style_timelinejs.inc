@@ -462,13 +462,13 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           // Headline - can use any view field, uses views rendering.
           if ($target_field == 'headline') {
             $headline_field = $this->view->style_options['timeline_fields']['headline'];
-            $rows[$count][$target_field] = decode_entities($this->view->field[$headline_field]->theme($row));
+            $rows[$count][$target_field] = $this->rendered_fields[$count][$headline_field];
           }
 
           // Body - can use any view field, uses views rendering.
           if ($target_field == 'text') {
             $body_field = $this->view->style_options['timeline_fields']['bodytext'];
-            $rows[$count][$target_field] = decode_entities($this->view->field[$body_field]->theme($row));
+            $rows[$count][$target_field] = $this->rendered_fields[$count][$body_field];
           }
 
           // Tag.
