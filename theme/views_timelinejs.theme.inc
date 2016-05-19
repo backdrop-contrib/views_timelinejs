@@ -12,7 +12,8 @@ function template_preprocess_views_timelinejs(&$vars) {
   $vars['timelinejs_id'] = drupal_html_id('timelinejs_' . $view->name . '_' . $view->current_display);
 
   // Load required libraries and styles.
-  if (($library = libraries_load('timeline')) && !empty($library['loaded'])) {
+  $library = drupal_add_library('views_timelinejs', 'timelinejs_cdn');
+  if ($library) {
     $width_unit = $vars['options']['timeline_theme']['width_unit'] ? '%' : '';
     $height_unit = $vars['options']['timeline_theme']['height_unit'] ? '%' : '';
 
@@ -62,7 +63,7 @@ function template_preprocess_views_timelinejs(&$vars) {
     drupal_add_js(drupal_get_path('module', 'views_timelinejs') . '/js/views_timelinejs.js');
   }
   else {
-    drupal_set_message($library['error message'], 'error', FALSE);
+    drupal_set_message(t('The TimelineJS library could not be loaded from the CDN.'), 'error', FALSE);
   }
 }
 

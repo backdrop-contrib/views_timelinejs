@@ -31,6 +31,35 @@ function views_timelinejs_theme() {
 }
 
 /**
+ * Implements hook_library().
+ */
+function views_timelinejs_library() {
+  $libraries = array();
+
+  $libraries['timelinejs_cdn'] = array(
+    'title' => 'TimelineJS CDN',
+    'website' => 'https://timeline.knightlab.com',
+    'version' => '3.3.15',
+    'js' => array(
+      'timeline.js' => array(
+        'data' => 'https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js',
+        'type' => 'external',
+        'group' => JS_LIBRARY,
+      ),
+    ),
+    'css' => array(
+      'timeline.css' => array(
+        'data' => 'https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css',
+        'type' => 'external',
+        'group' => CSS_DEFAULT,
+      ),
+    ),
+  );
+
+  return $libraries;
+}
+
+/**
  * Implements hook_libraries_info().
  */
 function views_timelinejs_libraries_info() {
