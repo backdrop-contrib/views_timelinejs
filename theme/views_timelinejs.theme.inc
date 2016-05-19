@@ -21,41 +21,39 @@ function template_preprocess_views_timelinejs(&$vars) {
     $height = check_plain($vars['options']['timeline_theme']['height']) . $height_unit;
 
     $settings = array(
-      'width' => $width,
-      'height' => $height,
+      'options' => array(
+        'width' => $width,
+        'height' => $height,
+        //'script_path' => base_path() . libraries_get_path('timeline') . '/compiled/',
+      ),
       'source' => $vars['rows'],
       'embed_id' => $vars['timelinejs_id'],
-      'embed_path' => base_path() . libraries_get_path('timeline') . '/build/',
       'processed' => FALSE,
-      'maptype' => $vars['options']['timeline_config']['maptype'],
-      'gmap_key' => check_plain($vars['options']['timeline_config']['gmap_key']),
-      'font' => $vars['options']['timeline_config']['font'],
-      'debug' => $vars['options']['timeline_config']['debug'] == '1' ? TRUE : FALSE,
     );
 
     if (empty($vars['options']['timeline_config']['language'])) {
       global $language;
-      $settings['lang'] = $language->language;
+      $settings['options']['language'] = $language->language;
     }
     else {
-      $settings['lang'] = check_plain($vars['options']['timeline_config']['language']);
+      $settings['options']['language'] = check_plain($vars['options']['timeline_config']['language']);
     }
 
     if ($vars['options']['timeline_config']['hash_bookmark']) {
-      $settings['hash_bookmark'] = TRUE;
+      $settings['options']['hash_bookmark'] = TRUE;
     }
 
     if ($vars['options']['timeline_config']['start_at_end']) {
-      $settings['start_at_end'] = TRUE;
+      $settings['options']['start_at_end'] = TRUE;
     }
 
     if ($vars['options']['timeline_config']['start_at_current']) {
-      $settings['start_at_end'] = FALSE;
-      $settings['start_at_slide'] = $vars['rows']['timeline']['start_at_current'];
+      $settings['options']['start_at_end'] = FALSE;
+      $settings['options']['start_at_slide'] = $vars['rows']['timeline']['start_at_current'];
     }
 
-    if (isset($vars['options']['timeline_config']['start_zoom_adjust'])) {
-      $settings['start_zoom_adjust'] = check_plain($vars['options']['timeline_config']['start_zoom_adjust']);
+    if (isset($vars['options']['timeline_config']['scale_factor'])) {
+      $settings['options']['scale_factor'] = check_plain($vars['options']['timeline_config']['scale_factor']);
     }
 
     // Add inline JavaScript.

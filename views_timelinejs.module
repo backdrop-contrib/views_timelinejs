@@ -70,16 +70,16 @@ function views_timelinejs_libraries_info() {
     'vendor url' => 'http://timeline.verite.co',
     'download url' => 'http://timeline.verite.co',
     'version arguments' => array(
-      'file' => 'build/js/timeline.js',
+      'file' => 'compiled/js/timeline.js',
       'pattern' => '/TimelineJS - ver. ([\d.]+)/i',
       'lines' => 5,
     ),
     'files' => array(
       'js' => array(
-        'build/js/storyjs-embed.js',
+        'compiled/js/timeline.js',
       ),
       'css' => array(
-        'build/css/timeline.css',
+        'compiled/css/timeline.css',
       ),
     ),
   );
