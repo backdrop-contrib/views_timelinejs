@@ -88,70 +88,9 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
    * Define options form.
    */
   function options_form(&$form, &$form_state) {
-    $handlers = $this->display->handler->get_handlers('field');
-    if (empty($handlers)) {
-      $form['error_markup'] = array(
-        '#prefix' => '<div class="error messages">',
-        '#markup' => t('You need at least one field before you can configure TimelineJS.'),
-        '#suffix' => '</div>',
-      );
-      return;
-    }
-
-    $media_fields = array('0' => t('None'));
-    $date_fields = array('0' => t('None'));
-    $text_fields = array('0' => t('None'));
-    $tag_fields = array('0' => t('None'));
-
-    // Load all date_source plugins.
-    ctools_include('plugins');
-    $date_sources = ctools_get_plugins('views_timelinejs', 'date_sources');
-    $media_sources = ctools_get_plugins('views_timelinejs', 'media_sources');
-    $tag_sources = ctools_get_plugins('views_timelinejs', 'tag_sources');
-
-    // Go through all the field handlers to check support.
-    foreach ($handlers as $field => $handler) {
-      // Get a nice name for the field.
-      $field_names[$field] = $handler->ui_name();
-      if ($label = $handler->label()) {
-        $field_names[$field] .= ' ("' . $label . '")';
-      }
-
-      if (isset($handler->definition['field_name'])) {
-        $field_name = $handler->definition['field_name'];
-        $field_info = field_info_field($field_name);
-      }
-
-      // Use any views field as a text source.
-      $text_fields[$field] = $field_names[$field];
-
-      // Check if field is supported as a date source.
-      foreach ($date_sources as $source) {
-        if (get_class($handler) == $source['handler_name']) {
-          if ($field_info['type'] == $source['field_type'] || $field == 'created' || $field == 'changed') {
-            $date_fields[$field] = $field_names[$field];
-          }
-        }
-      }
-
-      // Check if field is a supported media source.
-      foreach ($media_sources as $source) {
-        if (get_class($handler) == $source['handler_name']) {
-          if (isset($field_info['type']) && $field_info['type'] == $source['field_type']) {
-            $media_fields[$field] = $field_names[$field];
-          }
-        }
-      }
-
-      // Check if field is a supported tag source.
-      foreach ($tag_sources as $source) {
-        if (get_class($handler) == $source['handler_name']) {
-          if (isset($field_info['type']) && $field_info['type'] == $source['field_type']) {
-            $tag_fields[$field] = $field_names[$field];
-          }
-        }
-      }
-    }
+    $initial_labels = array('' => t('- None -'));
+    $view_fields_labels = $this->display->handler->get_field_labels();
+    $view_fields_labels = array_merge($initial_labels, $view_fields_labels);
 
     // Timeline general configuration.
     $form['timeline_config'] = array(
@@ -252,7 +191,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     );
     $form['timeline_fields']['headline'] = array(
       '#type' => 'select',
-      '#options' => $text_fields,
+      '#options' => $view_fields_labels,
       '#title' => t('Headline'),
       '#required' => TRUE,
       '#description' => t('Plain text; a high level summary.'),
@@ -260,14 +199,14 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     );
     $form['timeline_fields']['bodytext'] = array(
       '#type' => 'select',
-      '#options' => $text_fields,
+      '#options' => $view_fields_labels,
       '#title' => t('Body text'),
       '#description' => t('Plain text; a paragraph or two of optional details.'),
       '#default_value' => $this->options['timeline_fields']['bodytext'],
     );
     $form['timeline_fields']['date'] = array(
       '#type' => 'select',
-      '#options' => $date_fields,
+      '#options' => $view_fields_labels,
       '#title' => t('Start and End date'),
       '#required' => TRUE,
       '#description' => t('Required start and optional end of an event; can be a date field or timestamp.'),
@@ -275,14 +214,14 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     );
     $form['timeline_fields']['background'] = array(
       '#type' => 'select',
-      '#options' => $media_fields,
+      '#options' => $view_fields_labels,
       '#title' => t('Background image'),
       '#description' => t('Drupal core image fields and link fields are supported; must contain a raw URL to an image.'),
       '#default_value' => $this->options['timeline_fields']['background'],
     );
     $form['timeline_fields']['media'] = array(
       '#type' => 'select',
-      '#options' => $media_fields,
+      '#options' => $view_fields_labels,
       '#title' => t('Media URL'),
       '#description' => t('Drupal core image fields and link fields are supported; must contain a raw URL to an image or video.'),
       '#default_value' => $this->options['timeline_fields']['media'],
@@ -291,19 +230,19 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#type' => 'select',
       '#title' => t('Media Credit'),
       '#description' => t('Byline naming the author or attributing the source.'),
-      '#options' => $text_fields,
+      '#options' => $view_fields_labels,
       '#default_value' => $this->options['timeline_fields']['credit'],
     );
     $form['timeline_fields']['caption'] = array(
       '#type' => 'select',
       '#title' => t('Media Caption'),
       '#description' => t('Brief explanation of the media content.'),
-      '#options' => $text_fields,
+      '#options' => $view_fields_labels,
       '#default_value' => $this->options['timeline_fields']['caption'],
     );
     $form['timeline_fields']['tag'] = array(
       '#type' => 'select',
-      '#options' => $tag_fields,
+      '#options' => $view_fields_labels,
       '#title' => t('Tag'),
       '#description' => t('Content tagging; maximum of 6 tags.'),
       '#default_value' => $this->options['timeline_fields']['tag'],
