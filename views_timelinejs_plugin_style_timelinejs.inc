@@ -17,68 +17,32 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
 
     $options['timeline_theme'] = array(
       'contains' => array(
-        'width' => array(
-          'default' => '100',
-        ),
-        'width_unit' => array(
-          'default' => '1',
-        ),
-        'height' => array(
-          'default' => '500',
-        ),
-        'height_unit' => array(
-          'default' => '0',
-        ),
+        'width' => array('default' => '100'),
+        'width_unit' => array('default' => '1'),
+        'height' => array('default' => '500'),
+        'height_unit' => array('default' => '0'),
       ),
     );
     $options['timeline_fields'] = array(
       'contains' => array(
-        'caption' => array(
-          'default' => '0',
-        ),
-        'credit' => array(
-          'default' => '0',
-        ),
-        'media' => array(
-          'default' => '0',
-        ),
-        'tag' => array(
-          'default' => '0',
-        ),
-        'date' => array(
-          'default' => '0',
-        ),
-        'bodytext' => array(
-          'default' => '0',
-        ),
-        'headline' => array(
-          'default' => '0',
-        ),
-        'background' => array(
-          'default' => '0',
-        ),
+        'caption' => array('default' => ''),
+        'credit' => array('default' => ''),
+        'media' => array('default' => ''),
+        'tag' => array('default' => ''),
+        'date' => array('default' => ''),
+        'bodytext' => array('default' => ''),
+        'headline' => array('default' => ''),
+        'background' => array('default' => ''),
       ),
     );
     $options['timeline_config'] = array(
       'contains' => array(
-        'hash_bookmark' => array(
-          'default' => '0',
-        ),
-        'start_at_end' => array(
-          'default' => '0',
-        ),
-        'start_at_current' => array(
-          'default' => '0',
-        ),
-        'scale_factor' => array(
-          'default' => '2',
-        ),
-        'language' => array(
-          'default' => '',
-        ),
-        /*'font' => array(
-          'default' => '',
-        ),*/
+        'hash_bookmark' => array('default' => '0'),
+        'start_at_end' => array('default' => '0'),
+        'start_at_current' => array('default' => '0'),
+        'scale_factor' => array('default' => '2'),
+        'language' => array('default' => ''),
+        /*'font' => array('default' => ''),*/
       ),
     );
     return $options;
