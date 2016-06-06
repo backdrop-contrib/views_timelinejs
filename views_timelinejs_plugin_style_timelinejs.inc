@@ -28,7 +28,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         'caption' => array('default' => ''),
         'credit' => array('default' => ''),
         'media' => array('default' => ''),
-        'tag' => array('default' => ''),
+        'group' => array('default' => ''),
         'date' => array('default' => ''),
         'text' => array('default' => ''),
         'headline' => array('default' => ''),
@@ -204,12 +204,12 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#options' => $view_fields_labels,
       '#default_value' => $this->options['timeline_fields']['caption'],
     );
-    $form['timeline_fields']['tag'] = array(
+    $form['timeline_fields']['group'] = array(
       '#type' => 'select',
       '#options' => $view_fields_labels,
-      '#title' => t('Tag'),
-      '#description' => t('Content tagging; maximum of 6 tags.'),
-      '#default_value' => $this->options['timeline_fields']['tag'],
+      '#title' => t('Group'),
+      '#description' => t('Any text. If present, TimelineJS will organize events with the same value for group to be in the same row or adjacent rows, separate from events in other groups. The common value for the group will be shown as a label at the left edge of the navigation.'),
+      '#default_value' => $this->options['timeline_fields']['group'],
     );
 
     // Timeline display configuration.
@@ -354,6 +354,10 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       $slide['text']['text'] = $this->get_field($row_index, $this->options['timeline_fields']['text']);
     }
 
+    if ($this->options['timeline_fields']['group']) {
+      $slide['group'] = $this->get_field($row_index, $this->options['timeline_fields']['group']);
+    }
+
     $field_mapping = array(
       'start_date' => 'date',
       'end_date' => 'date',
@@ -361,7 +365,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       'media' => 'media',
       'caption' => 'caption',
       'credit' => 'credit',
-      'group' => 'tag',
     );
 
     // Build the data we need.
@@ -371,25 +374,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       // Don't render fields that haven't been mapped.
       if (!isset($this->view->field[$tmp['fieldname']])) {
         continue;
-      }
-
-      // Tag.
-      if ($target_field == 'group') {
-        $value = '';
-        // Check if if a tag exists.
-        if (isset($this->view->field[$tmp['fieldname']])) {
-          $value = $this->view->field[$tmp['fieldname']]->get_value($row);
-          if (is_array($value)) {
-            $value = array_shift($value);
-          }
-
-          if ($conversion_callback = views_timelinejs_get_callback($tmp['handler'], $tmp['field_type'], 'tag_sources')) {
-            $value = call_user_func($conversion_callback, $value, array(
-              'field' => $tmp,
-            ));
-          }
-        }
-        $slide[$target_field] = check_plain($value);
       }
 
       // Start and End date.
