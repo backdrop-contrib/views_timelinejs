@@ -346,10 +346,13 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $slide['text'] = array();
     $slide['media'] = array();
 
+    if ($this->options['timeline_fields']['headline']) {
+      $slide['text']['headline'] = $this->get_field($row_index, $this->options['timeline_fields']['headline']);
+    }
+
     $field_mapping = array(
       'start_date' => 'date',
       'end_date' => 'date',
-      'headline' => 'headline',
       'text' => 'bodytext',
       'background' => 'background',
       'media' => 'media',
@@ -365,12 +368,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       // Don't render fields that haven't been mapped.
       if (!isset($this->view->field[$tmp['fieldname']])) {
         continue;
-      }
-
-      // Headline - can use any view field, uses views rendering.
-      if ($target_field == 'headline') {
-        $headline_field = $this->view->style_options['timeline_fields']['headline'];
-        $slide['text'][$target_field] = $this->rendered_fields[$row_index][$headline_field];
       }
 
       // Body - can use any view field, uses views rendering.
