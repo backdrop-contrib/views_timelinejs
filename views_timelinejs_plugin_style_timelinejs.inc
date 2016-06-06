@@ -30,7 +30,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         'media' => array('default' => ''),
         'tag' => array('default' => ''),
         'date' => array('default' => ''),
-        'bodytext' => array('default' => ''),
+        'text' => array('default' => ''),
         'headline' => array('default' => ''),
         'background' => array('default' => ''),
       ),
@@ -161,12 +161,12 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#description' => t('Plain text; a high level summary.'),
       '#default_value' => $this->options['timeline_fields']['headline'],
     );
-    $form['timeline_fields']['bodytext'] = array(
+    $form['timeline_fields']['text'] = array(
       '#type' => 'select',
       '#options' => $view_fields_labels,
       '#title' => t('Body text'),
       '#description' => t('Plain text; a paragraph or two of optional details.'),
-      '#default_value' => $this->options['timeline_fields']['bodytext'],
+      '#default_value' => $this->options['timeline_fields']['text'],
     );
     $form['timeline_fields']['date'] = array(
       '#type' => 'select',
@@ -350,10 +350,13 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       $slide['text']['headline'] = $this->get_field($row_index, $this->options['timeline_fields']['headline']);
     }
 
+    if ($this->options['timeline_fields']['text']) {
+      $slide['text']['text'] = $this->get_field($row_index, $this->options['timeline_fields']['text']);
+    }
+
     $field_mapping = array(
       'start_date' => 'date',
       'end_date' => 'date',
-      'text' => 'bodytext',
       'background' => 'background',
       'media' => 'media',
       'caption' => 'caption',
@@ -368,12 +371,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       // Don't render fields that haven't been mapped.
       if (!isset($this->view->field[$tmp['fieldname']])) {
         continue;
-      }
-
-      // Body - can use any view field, uses views rendering.
-      if ($target_field == 'text') {
-        $body_field = $this->view->style_options['timeline_fields']['bodytext'];
-        $slide['text'][$target_field] = $this->rendered_fields[$row_index][$body_field];
       }
 
       // Tag.
