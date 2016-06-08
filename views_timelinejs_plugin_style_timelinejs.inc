@@ -199,7 +199,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#type' => 'select',
       '#options' => $view_fields_labels,
       '#title' => t('Media URL'),
-      '#description' => t('Drupal core image fields and link fields are supported; must contain a raw URL to an image or video.'),
+      '#description' => t('The selected field should contain a raw URL to a media resource.  See the <a href="@media-documentation">media types documentation</a> for a list of supported types.  Blockquote and iframe HTML are not currently supported by this plugin.  Special handling is included for Image fields because they have no raw URL formatter.', array('@media-documentation' => 'https://timeline.knightlab.com/docs/media-types.html')),
       '#default_value' => $this->options['timeline_fields']['media'],
     );
     $form['timeline_fields']['credit'] = array(
@@ -401,8 +401,24 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       }
     }
 
+    // @todo: Add support for text containing a blockquote or iframe.
+    if ($this->options['timeline_fields']['media']) {
+      $media_url_value = $this->get_field($row_index, $this->options['timeline_fields']['media']);
+
+      // Special handling because core Image fields have no raw URL formatter.
+      // Check to see if we don't have a raw URL.
+      if (!filter_var($media_url_value, FILTER_VALIDATE_URL)) {
+        // Attempt to extract a URL from the string.
+        $media_url_value = $this->extract_url($media_url_value);
+      }
+
+      if (!empty($media_url_value)) {
+        $slide['media']['url'] = $media_url_value;
+        $slide['media']['thumbnail'] = $media_url_value;
+      }
+    }
+
     $field_mapping = array(
-      'media' => 'media',
       'caption' => 'caption',
       'credit' => 'credit',
     );
@@ -414,40 +430,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       // Don't render fields that haven't been mapped.
       if (!isset($this->view->field[$tmp['fieldname']])) {
         continue;
-      }
-
-      // Media URL.
-      if ($target_field == 'media' && isset($row->_field_data[$this->view->field[$tmp['fieldname']]->field_alias])) {
-        $value = $this->view->field[$tmp['fieldname']]->get_value($row);
-        if (empty($value) && !empty($this->view->field[$tmp['fieldname']]->options['empty'])) {
-          $token = $this->view->field[$tmp['fieldname']]->options['empty'];
-          $token = substr($token, 0, strpos($token, ']'));
-          $token = str_replace(array('[', ']'), '', $token);
-
-          // We've got to replace the $tmp information for proper handling.
-          $tmp['fieldname'] = $token;
-          $tmp['field_type'] = $this->view->field[$token]->field_info['type'];
-          $tmp['handler'] = $this->view->field[$token]->definition['handler'];
-          $tmp['alias'] = $this->view->field[$token]->field_alias;
-
-          $value = $this->view->field[$token]->get_value($row);
-        }
-
-        if (is_array($value)) {
-          $value = array_shift($value);
-          // Allow for imagefield image style selection.
-          if (isset($this->view->field[$tmp['fieldname']]->options['settings']['image_style']) && !empty($value['uri'])) {
-            $value['uri'] = image_style_url($this->view->field[$tmp['fieldname']]->options['settings']['image_style'], $value['uri']);
-          }
-        }
-        if ($conversion_callback = views_timelinejs_get_callback($tmp['handler'], $tmp['field_type'], 'media_sources')) {
-          $media['formatted'] = call_user_func($conversion_callback, $value, array('field' => $tmp));
-        }
-
-        if ($media['formatted']) {
-          $slide[$target_field]['url'] = check_plain($media['formatted']);
-          $slide[$target_field]['thumbnail'] = check_plain($media['formatted']);
-        }
       }
 
       // Media Caption, Media Credit - both plain text.
