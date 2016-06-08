@@ -7,3 +7,5 @@ php = 5.3.0
 core = 7.x
 
 files[] = views_timelinejs_plugin_style_timelinejs.inc
+files[] = src/TimelineDate.php
+files[] = src/TimelineDateInterface.php

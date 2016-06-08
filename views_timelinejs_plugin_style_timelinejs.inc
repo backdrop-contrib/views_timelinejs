@@ -10,6 +10,11 @@
 class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
 
   /**
+   * The row index of the slide at which the timeline should first be rendered.
+   */
+  protected $start_slide_index;
+
+  /**
    * Define option defaults.
    */
   function option_definition() {
@@ -168,13 +173,20 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#description' => t('Plain text; a paragraph or two of optional details.'),
       '#default_value' => $this->options['timeline_fields']['text'],
     );
-    $form['timeline_fields']['date'] = array(
+    $form['timeline_fields']['start_date'] = array(
       '#type' => 'select',
       '#options' => $view_fields_labels,
-      '#title' => t('Start and End date'),
+      '#title' => t('Start date'),
       '#required' => TRUE,
-      '#description' => t('Required start and optional end of an event; can be a date field or timestamp.'),
-      '#default_value' => $this->options['timeline_fields']['date'],
+      '#description' => t('The selected field should contain a string representing a date conforming to a <a href="@php-manual">PHP supported date and time format</a>.', array('@php-manual' => 'http://php.net/manual/en/datetime.formats.php')),
+      '#default_value' => $this->options['timeline_fields']['start_date'],
+    );
+    $form['timeline_fields']['end_date'] = array(
+      '#type' => 'select',
+      '#options' => $view_fields_labels,
+      '#title' => t('End date'),
+      '#description' => t('The selected field should contain a string representing a date conforming to a <a href="@php-manual">PHP supported date and time format</a>.', array('@php-manual' => 'http://php.net/manual/en/datetime.formats.php')),
+      '#default_value' => $this->options['timeline_fields']['end_date'],
     );
     $form['timeline_fields']['background'] = array(
       '#type' => 'select',
@@ -256,7 +268,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $errors = parent::validate();
 
     // Validate that fields have been assigned to the required options.
-    foreach (array('date', 'headline') as $required_option) {
+    foreach (array('start_date', 'headline') as $required_option) {
       if (empty($this->options['timeline_fields'][$required_option])) {
         $errors[] = t('The TimelineJS plugin requires specifying which views fields to use for the event slides.');
         break;
@@ -273,15 +285,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
 
     // Render fields to trigger rewriting and other field processing.
     $this->view->style_plugin->render_fields($this->view->result);
-
-    if (!empty($this->view->style_options['timeline_config']['start_at_current'])) {
-      // Gives you a timestamp of the date
-      $date_check = strtotime('now');
-      // Holds the difference of the closest date
-      $difference = NULL;
-      // Holds the index in the array
-      $start_at_current = NULL;
-    }
 
     // Render slide arrays from the views data.
     foreach ($this->view->result as $row_index => $row) {
@@ -308,8 +311,8 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       'scale' => 'human',
       'events' => $slides,
     );
-    if (!empty($this->view->style_options['timeline_config']['start_at_current'])) {
-      $data['timeline']['start_at_current'] = $start_at_current;
+    if (!empty($this->options['timeline_config']['start_at_current'])) {
+      $data['timeline']['start_at_current'] = $this->start_slide_index;
     }
 
     // Allow other modules to alter timeline data before rendering by
@@ -358,9 +361,32 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       $slide['group'] = $this->get_field($row_index, $this->options['timeline_fields']['group']);
     }
 
+    if ($this->options['timeline_fields']['start_date']) {
+      $start_date_value = $this->get_field($row_index, $this->options['timeline_fields']['start_date']);
+      if (!empty($start_date_value)) {
+        // Format the date for TimelineJS3.
+        $start_date = new TimelineDate($start_date_value);
+        $slide['start_date'] = $start_date->getTimelineDateArray();
+
+        // Check to see if this slide should be the start slide.
+        $this->check_start_slide($start_date);
+      }
+    }
+
+    if ($this->options['timeline_fields']['end_date'] && !empty($start_date_value)) {
+      $end_date_value = $this->get_field($row_index, $this->options['timeline_fields']['end_date']);
+
+      // Don't render end dates that are the same as the start date.  TimelineJS
+      // won't display them anyway, but skipping them can make the rendered data
+      // array smaller.
+      if (!empty($end_date_value) && $start_date_value !== $end_date_value) {
+        // Format the date for TimelineJS3.
+        $end_date = new TimelineDate($end_date_value);
+        $slide['end_date'] = $end_date->getTimelineDateArray();
+      }
+    }
+
     $field_mapping = array(
-      'start_date' => 'date',
-      'end_date' => 'date',
       'background' => 'background',
       'media' => 'media',
       'caption' => 'caption',
@@ -374,96 +400,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       // Don't render fields that haven't been mapped.
       if (!isset($this->view->field[$tmp['fieldname']])) {
         continue;
-      }
-
-      // Start and End date.
-      if (in_array($target_field, array('start_date', 'end_date'))) {
-        $date = array();
-        // Load field data.
-        $value = $this->view->field[$tmp['fieldname']]->get_value($row);
-        // If it's a date field, we have an array.
-        if (is_array($value)) {
-          $value = array_shift($value);
-        }
-
-
-        // Make sure created and changed fields work as date sources.
-        if ($tmp['fieldname'] == 'created' || $tmp['fieldname'] == 'changed') {
-          $tmp['field_type'] = 'date';
-        }
-
-        if ($conversion_callback = views_timelinejs_get_callback($tmp['handler'], $tmp['field_type'], 'date_sources')) {
-          $date['formatted'] = call_user_func($conversion_callback, $value, 'csv', array('field' => $tmp));
-          $date['timestamp'] = call_user_func($conversion_callback, $value, 'timestamp', array('field' => $tmp));
-          if (!empty($date['timestamp']['value'])) {
-            $date['start']['fields'] = localtime($date['timestamp']['value'], true);
-          }
-          if (!empty($date['timestamp']['value2'])) {
-            $date['end']['fields'] = localtime($date['timestamp']['value2'], true);
-          }
-        }
-
-        if (isset($date) && $date) {
-          if (!empty($date['start']['fields']) && $target_field == 'start_date') {
-            $slide[$target_field] = array();
-            $slide[$target_field]['year'] = $date['start']['fields']['tm_year'] + 1900;
-            $slide[$target_field]['month'] = $date['start']['fields']['tm_mon'] + 1;
-            $slide[$target_field]['day'] = $date['start']['fields']['tm_mday'];
-            $slide[$target_field]['hour'] = $date['start']['fields']['tm_hour'];
-            $slide[$target_field]['minute'] = $date['start']['fields']['tm_min'];
-            $slide[$target_field]['second'] = $date['start']['fields']['tm_sec'];
-          }
-          elseif (!empty($date['end']['fields']) && $target_field == 'end_date') {
-            $slide[$target_field] = array();
-            $slide[$target_field]['year'] = $date['end']['fields']['tm_year'] + 1900;
-            $slide[$target_field]['month'] = $date['end']['fields']['tm_mon'] + 1;
-            $slide[$target_field]['day'] = $date['end']['fields']['tm_mday'];
-            $slide[$target_field]['hour'] = $date['end']['fields']['tm_hour'];
-            $slide[$target_field]['minute'] = $date['end']['fields']['tm_min'];
-            $slide[$target_field]['second'] = $date['end']['fields']['tm_sec'];
-          }
-          else {
-            unset($slide[$target_field]);
-          }
-
-          if (is_array($date['formatted'])) {
-            if ($target_field == 'start_date') {
-
-              if ($date['formatted']['value'] != "FALSE") {
-                if (!empty($this->view->style_options['timeline_config']['start_at_current'])) {
-                  // abs to get the absolute difference
-                  $diff = abs($date['timestamp']['value'] - $date_check);
-
-                  // If the difference is smaller than the absolute difference of the last date we need to update our values here
-                  if ($difference == NULL || $diff < $difference) {
-                    $difference = $diff;
-                    $start_at_current = $row_index;
-                  }
-                }
-
-                //$slide[$target_field]['display_date'] = check_plain($date['formatted']['value']);
-                $rendered_date = strip_tags($this->rendered_fields[$row_index][$tmp['fieldname']]);
-                $slide[$target_field]['display_date'] = preg_replace('/(\sto.*)$/', '', $rendered_date);
-              }
-              else {
-                watchdog('views_timelinejs', "Could not format date for field %field in node @nid. This event will not appear in the timeline.", array('@nid' => $row->nid, '%field' => $tmp['fieldname']), WATCHDOG_WARNING);
-                unset($slide[$target_field]);
-              }
-            }
-            elseif (($target_field == 'end_date') && isset($date['formatted']['value2'])) {
-              //$slide[$target_field]['display_date'] = check_plain($date['formatted']['value2']);
-              $rendered_date = strip_tags($this->rendered_fields[$row_index][$tmp['fieldname']]);
-              $slide[$target_field]['display_date'] = preg_replace('/^(.+?to\s*)/', '', $rendered_date);
-
-              if ($date['formatted']['value2'] == "FALSE") {
-                watchdog('views_timelinejs', "Could not format date for field %field in node @nid.", array('@nid' => $row->nid, '%field' => $tmp['fieldname']), WATCHDOG_WARNING);
-              }
-            }
-          }
-          else {
-            $slide[$target_field]['display_date'] = strip_tags($this->rendered_fields[$row_index][$tmp['fieldname']]);
-          }
-        }
       }
 
       // Background URL.
@@ -552,6 +488,34 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     }
 
     return $slide;
+  }
+
+  /**
+   * Checks a slide date to see if it should be displayed first in the timeline.
+   *
+   * @param DateTime $date
+   *   A date from a TimelineJS slide.
+   */
+  protected function check_start_slide(DateTime $date) {
+    static $smallest_difference;
+    if (!isset($smallest_difference)) {
+      $smallest_difference = NULL;
+    }
+
+    $timestamp = $date->getTimestamp();
+    // Return if the date was prior to the UNIX Epoch.
+    if ($timestamp === FALSE) {
+      return;
+    }
+
+    // Calculate the absolute difference between the current time and the date.
+    $difference = abs(time() - $timestamp);
+
+    // Update the start slide index if this date is closer to the current time.
+    if ($smallest_difference == NULL || $difference < $smallest_difference) {
+      $smallest_difference = $difference;
+      $this->start_slide_index = $this->view->row_index;
+    }
   }
 
   /**
