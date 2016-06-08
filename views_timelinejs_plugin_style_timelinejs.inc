@@ -192,7 +192,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#type' => 'select',
       '#options' => $view_fields_labels,
       '#title' => t('Background image'),
-      '#description' => t('Drupal core image fields and link fields are supported; must contain a raw URL to an image.'),
+      '#description' => t('The selected field should contain a raw URL to an image.  Special handling is included for Image fields because they have no raw URL formatter.'),
       '#default_value' => $this->options['timeline_fields']['background'],
     );
     $form['timeline_fields']['media'] = array(
@@ -386,8 +386,22 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       }
     }
 
+    if ($this->options['timeline_fields']['background']) {
+      $background_url_value = $this->get_field($row_index, $this->options['timeline_fields']['background']);
+
+      // Special handling because core Image fields have no raw URL formatter.
+      // Check to see if we don't have a raw URL.
+      if (!filter_var($background_url_value, FILTER_VALIDATE_URL)) {
+        // Attempt to extract a URL from the string.
+        $background_url_value = $this->extract_url($background_url_value);
+      }
+
+      if (!empty($background_url_value)) {
+        $slide['background']['url'] = $background_url_value;
+      }
+    }
+
     $field_mapping = array(
-      'background' => 'background',
       'media' => 'media',
       'caption' => 'caption',
       'credit' => 'credit',
@@ -401,40 +415,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       if (!isset($this->view->field[$tmp['fieldname']])) {
         continue;
       }
-
-      // Background URL.
-      if ($target_field == 'background' && isset($row->_field_data[$this->view->field[$tmp['fieldname']]->field_alias])) {
-        $value = $this->view->field[$tmp['fieldname']]->get_value($row);
-        if (empty($value) && !empty($this->view->field[$tmp['fieldname']]->options['empty'])) {
-          $token = $this->view->field[$tmp['fieldname']]->options['empty'];
-          $token = substr($token, 0, strpos($token, ']'));
-          $token = str_replace(array('[', ']'), '', $token);
-
-          // We've got to replace the $tmp information for proper handling.
-          $tmp['fieldname'] = $token;
-          $tmp['field_type'] = $this->view->field[$token]->field_info['type'];
-          $tmp['handler'] = $this->view->field[$token]->definition['handler'];
-          $tmp['alias'] = $this->view->field[$token]->field_alias;
-
-          $value = $this->view->field[$token]->get_value($row);
-        }
-
-        if (is_array($value)) {
-          $value = array_shift($value);
-          // Allow for imagefield image style selection.
-          if ($this->view->field[$tmp['fieldname']]->options['settings']['image_style'] && !empty($value['uri'])) {
-            $value['uri'] = image_style_url($this->view->field[$tmp['fieldname']]->options['settings']['image_style'], $value['uri']);
-          }
-        }
-        if ($conversion_callback = views_timelinejs_get_callback($tmp['handler'], $tmp['field_type'], 'media_sources')) {
-          $media['formatted'] = call_user_func($conversion_callback, $value, array('field' => $tmp));
-        }
-
-        if ($media['formatted']) {
-          $slide[$target_field]['url'] = check_plain($media['formatted']);
-        }
-      }
-
 
       // Media URL.
       if ($target_field == 'media' && isset($row->_field_data[$this->view->field[$tmp['fieldname']]->field_alias])) {
@@ -516,6 +496,45 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       $smallest_difference = $difference;
       $this->start_slide_index = $this->view->row_index;
     }
+  }
+
+  /**
+   * Searches a string for HTML attributes that contain URLs and returns them.
+   *
+   * This will search a string which is presumed to contain HTML for anchor or
+   * image tags.  It will return the href or src attribute of the first one it
+   * finds.
+   *
+   * This is basically special handling for core Image fields.  There is no
+   * built-in field formatter for outputting a raw URL from an image.  This
+   * method allows image fields to "just work" as sources for TimelineJS media
+   * and background image URLs.  Anchor tag handling was added for people who
+   * forget to output link fields as plain text URLs.
+   *
+   * @param string $html
+   *   A string that contains HTML.
+   *
+   * @return string
+   *   A URL if one was found in the input string, empty if not.
+   */
+  protected function extract_url($html) {
+    if (!empty($html)) {
+      $document = new DOMDocument();
+      $document->loadHTML($html);
+
+      // Check for anchor tags.
+      $anchor_tags = $document->getElementsByTagName('a');
+      if ($anchor_tags->length) {
+        return $anchor_tags->item(0)->getAttribute('href');
+      }
+
+      // Check for image tags.
+      $image_tags = $document->getElementsByTagName('img');
+      if ($image_tags->length) {
+        return $image_tags->item(0)->getAttribute('src');
+      }
+    }
+    return '';
   }
 
   /**
