@@ -14,11 +14,8 @@ function template_preprocess_views_timelinejs(&$vars) {
   // Load required libraries and styles.
   $library = drupal_add_library('views_timelinejs', 'timelinejs_cdn');
   if ($library) {
-    $width_unit = $vars['options']['timeline_theme']['width_unit'] ? '%' : '';
-    $height_unit = $vars['options']['timeline_theme']['height_unit'] ? '%' : '';
-
-    $width = check_plain($vars['options']['timeline_theme']['width']) . $width_unit;
-    $height = check_plain($vars['options']['timeline_theme']['height']) . $height_unit;
+    $width = check_plain($vars['options']['timeline_config']['width']);
+    $height = check_plain($vars['options']['timeline_config']['height']);
 
     $settings = array(
       'options' => array(
@@ -47,7 +44,7 @@ function template_preprocess_views_timelinejs(&$vars) {
       $settings['options']['start_at_end'] = TRUE;
     }
 
-    if ($vars['options']['timeline_config']['start_at_current']) {
+    if ($vars['options']['additional_config']['start_at_current']) {
       $settings['options']['start_at_end'] = FALSE;
       $settings['options']['start_at_slide'] = $vars['rows']['timeline']['start_at_current'];
     }
@@ -57,8 +54,8 @@ function template_preprocess_views_timelinejs(&$vars) {
     }
 
     // Add alternate font CSS.
-    if ($vars['options']['timeline_config']['font']) {
-      drupal_add_library('views_timelinejs', 'timelinejs_cdn_' . $vars['options']['timeline_config']['font']);
+    if ($vars['options']['additional_config']['font']) {
+      drupal_add_library('views_timelinejs', 'timelinejs_cdn_' . $vars['options']['additional_config']['font']);
     }
 
     // Add inline JavaScript.

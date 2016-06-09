@@ -18,12 +18,20 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
   function option_definition() {
     $options = parent::option_definition();
 
-    $options['timeline_theme'] = array(
+    $options['timeline_config'] = array(
       'contains' => array(
-        'width' => array('default' => '100'),
-        'width_unit' => array('default' => '1'),
-        'height' => array('default' => '500'),
-        'height_unit' => array('default' => '0'),
+        'width' => array('default' => '100%'),
+        'height' => array('default' => '500px'),
+        'hash_bookmark' => array('default' => ''),
+        'start_at_end' => array('default' => ''),
+        'scale_factor' => array('default' => '2'),
+        'language' => array('default' => ''),
+      ),
+    );
+    $options['additional_config'] = array(
+      'contains' => array(
+        'font' => array('default' => ''),
+        'start_at_current' => array('default' => ''),
       ),
     );
     $options['timeline_fields'] = array(
@@ -36,16 +44,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         'text' => array('default' => ''),
         'headline' => array('default' => ''),
         'background' => array('default' => ''),
-      ),
-    );
-    $options['timeline_config'] = array(
-      'contains' => array(
-        'hash_bookmark' => array('default' => '0'),
-        'start_at_end' => array('default' => '0'),
-        'start_at_current' => array('default' => '0'),
-        'scale_factor' => array('default' => '2'),
-        'language' => array('default' => ''),
-        'font' => array('default' => ''),
       ),
     );
     return $options;
@@ -62,44 +60,37 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     // Timeline general configuration.
     $form['timeline_config'] = array(
       '#type' => 'fieldset',
-      '#title' => t('General configuration'),
-      '#description' => t('Settings for how the Timeline will behave.'),
+      '#title' => t('TimelineJS Options'),
+      '#description' => t('Each of these settings maps directly to one of the TimelineJS presentation options.  See the <a href="@options-doc">options documentation page</a> for additional information.', array('@options-doc' => 'https://timeline.knightlab.com/docs/options.html')),
       '#collapsible' => TRUE,
       '#collapsed' => FALSE,
     );
+    $form['timeline_config']['width'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Width of the timeline'),
+      '#description' => t('The width of the timeline, e.g. "100%" or "650px".'),
+      '#default_value' => $this->options['timeline_config']['width'],
+      '#size' => 10,
+      '#maxlength' => 10,
+    );
+    $form['timeline_config']['height'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Height of the timeline'),
+      '#description' => t('The height of the timeline, e.g. "100%" or "650px".'),
+      '#default_value' => $this->options['timeline_config']['height'],
+      '#size' => 10,
+      '#maxlength' => 10,
+    );
     $form['timeline_config']['hash_bookmark'] = array(
-      '#type' => 'select',
-      '#title' => 'Hash Bookmarks',
+      '#type' => 'checkbox',
+      '#title' => t('Add hash bookmarks'),
       '#description' => t('On each slide, a # will be added to the end of the url in the url bar. These urls are bookmarkable, so you can share or return to the same place in the timeline later.'),
-      '#options' => array(
-        '0' => t('No'),
-        '1' => t('Yes'),
-      ),
+      '#return_value' => TRUE,
       '#default_value' => $this->options['timeline_config']['hash_bookmark'],
-    );
-    $form['timeline_config']['start_at_end'] = array(
-      '#type' => 'select',
-      '#title' => 'Start at the end',
-      '#description' => t('The most recent event will be shown first.'),
-      '#options' => array(
-        '0' => t('No'),
-        '1' => t('Yes'),
-      ),
-      '#default_value' => $this->options['timeline_config']['start_at_end'],
-    );
-    $form['timeline_config']['start_at_current'] = array(
-      '#type' => 'select',
-      '#title' => 'Start at Current',
-      '#description' => t('The slide closest to current time.'),
-      '#options' => array(
-        '0' => t('No'),
-        '1' => t('Yes'),
-      ),
-      '#default_value' => $this->options['timeline_config']['start_at_current'],
     );
     $form['timeline_config']['scale_factor'] = array(
       '#type' => 'select',
-      '#title' => 'Scale factor',
+      '#title' => t('Scale factor'),
       '#description' => t('How many screen widths wide the timeline should be at first presentation.'),
       '#options' => array(
         '1' => t('1'),
@@ -114,26 +105,49 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       ),
       '#default_value' => $this->options['timeline_config']['scale_factor'],
     );
+    $form['timeline_config']['start_at_end'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Start at the end'),
+      '#description' => t('Loads the timeline on the last slide.'),
+      '#return_value' => TRUE,
+      '#default_value' => $this->options['timeline_config']['start_at_end'],
+    );
     $form['timeline_config']['language'] = array(
       '#type' => 'textfield',
       '#size' => 5,
-      '#title' => 'Language',
-      '#description' => t('The language <a href="https://github.com/NUKnightLab/TimelineJS#language">code</a>. Leave blank for the site language.'),
+      '#title' => t('Language'),
+      '#description' => t('The <a href="@language-list">language code</a>. Leave blank for the site language.', array('@language-list' => 'https://github.com/NUKnightLab/TimelineJS#language')),
       '#default_value' => $this->options['timeline_config']['language'],
     );
-    $form['timeline_config']['font'] = array(
+
+    // Timeline additional configuration.
+    $form['additional_config'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Additional Options'),
+      '#description' => t('These settings include extra options to control the TimelineJS presentation or options unique to this plugin.'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+    );
+    $form['additional_config']['font'] = array(
       '#type' => 'select',
       '#title' => t('Font set'),
       '#description' => t('TimelineJS3 offers several pre-selected font sets.  If a set is selected its CSS file will be downloaded from the CDN.'),
       '#options' => array_merge($initial_labels, _views_timelinejs_list_font_sets()),
-      '#default_value' => $this->options['timeline_config']['font'],
+      '#default_value' => $this->options['additional_config']['font'],
+    );
+    $form['additional_config']['start_at_current'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Start at Current'),
+      '#description' => t('Loads the timeline on the slide closest to the current time.'),
+      '#return_value' => TRUE,
+      '#default_value' => $this->options['additional_config']['start_at_current'],
     );
 
     // Field mapping.
     $form['timeline_fields'] = array(
       '#type' => 'fieldset',
       '#title' => t('Field mappings'),
-      '#description' => t('Fields used to construct the timeline events.'),
+      '#description' => t('Map your Views data fields to TimelineJS slide object properties.'),
       '#collapsible' => TRUE,
       '#collapsed' => FALSE,
     );
@@ -142,14 +156,14 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#options' => $view_fields_labels,
       '#title' => t('Headline'),
       '#required' => TRUE,
-      '#description' => t('Plain text; a high level summary.'),
+      '#description' => t('The selected field may contain any text, including HTML markup.'),
       '#default_value' => $this->options['timeline_fields']['headline'],
     );
     $form['timeline_fields']['text'] = array(
       '#type' => 'select',
       '#options' => $view_fields_labels,
       '#title' => t('Body text'),
-      '#description' => t('Plain text; a paragraph or two of optional details.'),
+      '#description' => t('The selected field may contain any text, including HTML markup.'),
       '#default_value' => $this->options['timeline_fields']['text'],
     );
     $form['timeline_fields']['start_date'] = array(
@@ -184,14 +198,14 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $form['timeline_fields']['credit'] = array(
       '#type' => 'select',
       '#title' => t('Media Credit'),
-      '#description' => t('Byline naming the author or attributing the source.'),
+      '#description' => t('The selected field may contain any text, including HTML markup.'),
       '#options' => $view_fields_labels,
       '#default_value' => $this->options['timeline_fields']['credit'],
     );
     $form['timeline_fields']['caption'] = array(
       '#type' => 'select',
       '#title' => t('Media Caption'),
-      '#description' => t('Brief explanation of the media content.'),
+      '#description' => t('The selected field may contain any text, including HTML markup.'),
       '#options' => $view_fields_labels,
       '#default_value' => $this->options['timeline_fields']['caption'],
     );
@@ -199,44 +213,8 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#type' => 'select',
       '#options' => $view_fields_labels,
       '#title' => t('Group'),
-      '#description' => t('Any text. If present, TimelineJS will organize events with the same value for group to be in the same row or adjacent rows, separate from events in other groups. The common value for the group will be shown as a label at the left edge of the navigation.'),
+      '#description' => t('The selected field may contain any text. If present, TimelineJS will organize events with the same value for group to be in the same row or adjacent rows, separate from events in other groups. The common value for the group will be shown as a label at the left edge of the navigation.'),
       '#default_value' => $this->options['timeline_fields']['group'],
-    );
-
-    // Timeline display configuration.
-    $units = array(0 => 'px', 1 => '%');
-    $form['timeline_theme'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Display configuration'),
-      '#description' => t('Settings for how the Timeline will look.'),
-      '#collapsible' => TRUE,
-      '#collapsed' => FALSE,
-    );
-    $form['timeline_theme']['width'] = array(
-      '#type' => 'textfield',
-      '#title' => 'Width of the timeline',
-      '#description' => t('The width of the timeline.'),
-      '#default_value' => $this->options['timeline_theme']['width'],
-    );
-    $form['timeline_theme']['width_unit'] = array(
-      '#type' => 'radios',
-      '#title' => t('Units for the width'),
-      '#description' => t('Choose which units will be used to define the width of the timeline.'),
-      '#default_value' => $this->options['timeline_theme']['width_unit'],
-      '#options' => $units,
-    );
-    $form['timeline_theme']['height'] = array(
-      '#type' => 'textfield',
-      '#title' => 'Height of the timeline',
-      '#description' => t('The height of the timeline.'),
-      '#default_value' => $this->options['timeline_theme']['height'],
-    );
-    $form['timeline_theme']['height_unit'] = array(
-      '#type' => 'radios',
-      '#title' => t('Units for the height'),
-      '#description' => t('Choose which units will be used to define the height of the timeline.'),
-      '#default_value' => $this->options['timeline_theme']['height_unit'],
-      '#options' => $units,
     );
   }
 
@@ -278,7 +256,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       'scale' => 'human',
       'events' => $slides,
     );
-    if (!empty($this->options['timeline_config']['start_at_current'])) {
+    if (!empty($this->options['additional_config']['start_at_current'])) {
       $data['timeline']['start_at_current'] = $this->start_slide_index;
     }
 
