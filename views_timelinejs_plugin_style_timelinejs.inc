@@ -57,7 +57,11 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $view_fields_labels = $this->display->handler->get_field_labels();
     $view_fields_labels = array_merge($initial_labels, $view_fields_labels);
 
-    // Timeline general configuration.
+    // Timeline general configuration.  Values within this fieldset will be
+    // passed directly to the TimelineJS settings object.  As a result, form
+    // element keys should be given the same ID as TimelineJS settings, e.g.
+    // $form['timeline_config']['id_of_timelinejs_option'].  See the list of
+    // options at https://timeline.knightlab.com/docs/options.html.
     $form['timeline_config'] = array(
       '#type' => 'fieldset',
       '#title' => t('TimelineJS Options'),
@@ -138,7 +142,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $form['additional_config']['start_at_current'] = array(
       '#type' => 'checkbox',
       '#title' => t('Start at Current'),
-      '#description' => t('Loads the timeline on the slide closest to the current time.'),
+      '#description' => t('Loads the timeline on the slide closest to the current time.  Overrides the "Start at the End" setting.'),
       '#return_value' => TRUE,
       '#default_value' => $this->options['additional_config']['start_at_current'],
     );
@@ -256,18 +260,19 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       'scale' => 'human',
       'events' => $slides,
     );
-    if (!empty($this->options['additional_config']['start_at_current'])) {
-      $data['timeline']['start_at_current'] = $this->start_slide_index;
-    }
 
     // Skip theming if the view is being edited or previewed.
     if ($this->view->editing) {
       return '<pre>' . print_r($data, 1) . '</pre>';
     }
 
+    // Prepare the options array.
+    $this->prepare_timeline_options();
+
     return theme('views_timelinejs', array(
       'view' => $this->view,
-      'options' => $this->options,
+      'timeline_options' => $this->options['timeline_config'],
+      'timeline_font' => $this->options['additional_config']['font'],
       'rows' => $data,
     ));
   }
@@ -438,6 +443,25 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       }
     }
     return '';
+  }
+
+  /**
+   * Processes timeline options before theming.
+   */
+  protected function prepare_timeline_options() {
+    // Set the language option to the site's default if it is empty.
+    if (empty($this->options['timeline_config']['language'])) {
+      global $language;
+      $this->options['timeline_config']['language'] = $language->language;
+    }
+
+    // If the custom start_at_current option is set, then set the timeline's
+    // start_at_slide option to the start_slide_index and override the
+    // start_at_end option.
+    if ($this->options['additional_config']['start_at_current']) {
+      $this->options['timeline_config']['start_at_slide'] = $this->start_slide_index;
+      $this->options['timeline_config']['start_at_end'] = FALSE;
+    }
   }
 
 }
