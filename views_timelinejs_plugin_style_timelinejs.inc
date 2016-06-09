@@ -262,30 +262,18 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
   function render() {
     $slides = array();
 
-    // Render fields to trigger rewriting and other field processing.
-    $this->view->style_plugin->render_fields($this->view->result);
-
     // Render slide arrays from the views data.
     foreach ($this->view->result as $row_index => $row) {
       $this->view->row_index = $row_index;
-      $slides[] = $this->render_slide($row);
+      $slide = $this->render_slide($row);
+      // Ensure the slide has a start date.
+      if (!empty($slide['start_date'])) {
+        $slides[] = $slide;
+      }
     }
     unset($this->view->row_index);
 
-    // Allow other modules to alter timeline slides before rendering by
-    // implementing hook_views_timelinejs_rows_alter().
-    drupal_alter('views_timelinejs_rows', $slides, clone $this->view);
-
-    // Ensure all slides still have a start date after the drupal alter.
-    foreach ($slides as $i => $slide) {
-      if (empty($slide['start_date'])) {
-        unset($slides[$i]);
-      }
-    }
-    // Reset the indices.
-    $slides = array_values($slides);
-
-    // Prepare data array that TimelineJS understands.
+    // Prepare a data array that TimelineJS3 understands.
     $data = array(
       'scale' => 'human',
       'events' => $slides,
@@ -294,21 +282,16 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       $data['timeline']['start_at_current'] = $this->start_slide_index;
     }
 
-    // Allow other modules to alter timeline data before rendering by
-    // implementing hook_views_timelinejs_data_alter().
-    drupal_alter('views_timelinejs_data', $data, clone $this->view);
-
     // Skip theming if the view is being edited or previewed.
-    if (!$this->view->editing) {
-      return theme('views_timelinejs', array(
-        'view' => $this->view,
-        'options' => $this->options,
-        'rows' => $data,
-      ));
-    }
-    else {
+    if ($this->view->editing) {
       return '<pre>' . print_r($data, 1) . '</pre>';
     }
+
+    return theme('views_timelinejs', array(
+      'view' => $this->view,
+      'options' => $this->options,
+      'rows' => $data,
+    ));
   }
 
   /**
@@ -325,8 +308,6 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $row_index = $this->view->row_index;
 
     $slide = array();
-    $slide['text'] = array();
-    $slide['media'] = array();
 
     if ($this->options['timeline_fields']['headline']) {
       $slide['text']['headline'] = $this->get_field($row_index, $this->options['timeline_fields']['headline']);
