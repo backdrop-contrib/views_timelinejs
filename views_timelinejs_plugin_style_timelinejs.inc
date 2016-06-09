@@ -1,11 +1,9 @@
 <?php
-/**
- * @file
- * Views Style.
- */
 
 /**
- * Unformatted style plugin.
+ * Style plugin to render items as TimelineJS3 slides.
+ *
+ * @ingroup views_style_plugins
  */
 class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
 
@@ -15,7 +13,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
   protected $start_slide_index;
 
   /**
-   * Define option defaults.
+   * {@inheritdoc}
    */
   function option_definition() {
     $options = parent::option_definition();
@@ -54,7 +52,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
   }
 
   /**
-   * Define options form.
+   * {@inheritdoc}
    */
   function options_form(&$form, &$form_state) {
     $initial_labels = array('' => t('- None -'));
@@ -259,7 +257,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
   }
 
   /**
-   * Render the display.
+   * {@inheritdoc}
    */
   function render() {
     $slides = array();
