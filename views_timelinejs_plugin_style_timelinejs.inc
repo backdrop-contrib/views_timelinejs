@@ -417,9 +417,14 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         $slide['media']['thumbnail'] = $media_url_value;
       }
     }
+    if ($this->options['timeline_fields']['caption'] && !empty($media_url_value)) {
+      $caption_value = $this->get_field($row_index, $this->options['timeline_fields']['caption']);
+      if (!empty($caption_value)) {
+        $slide['media']['caption'] = $this->get_field($row_index, $this->options['timeline_fields']['caption']);
+      }
+    }
 
     $field_mapping = array(
-      'caption' => 'caption',
       'credit' => 'credit',
     );
 
