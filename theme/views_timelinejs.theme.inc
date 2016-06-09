@@ -48,10 +48,3 @@ function sanitize_timeline_options($options) {
   // Remove empty values from the options before returning.
   return array_filter($options);
 }
-
-/**
- * Add "read more" link after event body text.
- */
-function theme_views_timelinejs_link_to_entity($vars) {
-  return '<p class="read-more">' . l($vars['link_text'], $vars['uri']) . '</p>';
-}

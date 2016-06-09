@@ -15,22 +15,6 @@ function views_timelinejs_views_api() {
 }
 
 /**
- * Implements hook_theme().
- */
-function views_timelinejs_theme() {
-  $base = array('file' => 'theme/views_timelinejs.theme.inc');
-  return array(
-    'views_timelinejs_nodata' => $base + array(),
-    'views_timelinejs_link_to_entity' => $base + array(
-      'arguments' => array(
-        'uri' => NULL,
-        'link_text' => NULL,
-      ),
-    ),
-  );
-}
-
-/**
  * Implements hook_library().
  */
 function views_timelinejs_library() {
