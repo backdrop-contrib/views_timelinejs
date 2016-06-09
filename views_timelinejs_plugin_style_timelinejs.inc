@@ -417,6 +417,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         $slide['media']['thumbnail'] = $media_url_value;
       }
     }
+
     if ($this->options['timeline_fields']['caption'] && !empty($media_url_value)) {
       $caption_value = $this->get_field($row_index, $this->options['timeline_fields']['caption']);
       if (!empty($caption_value)) {
@@ -424,33 +425,10 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       }
     }
 
-    $field_mapping = array(
-      'credit' => 'credit',
-    );
-
-    // Build the data we need.
-    foreach ($field_mapping as $target_field => $source_field) {
-      $tmp = $this->getDefinedUsage($source_field);
-
-      // Don't render fields that haven't been mapped.
-      if (!isset($this->view->field[$tmp['fieldname']])) {
-        continue;
-      }
-
-      // Media Caption, Media Credit - both plain text.
-      if (in_array($target_field, array('caption', 'credit'))) {
-        if ($tmp['handler'] != NULL) {
-          $v_text = $this->view->field[$tmp['fieldname']]->get_value($row);
-          if (is_array($v_text)) {
-            $v_text = array_shift($v_text);
-          }
-          if (!is_string($v_text)) {
-            $v_text = $v_text['value'];
-          }
-          if ($v_text) {
-            $slide['media'][$target_field] = check_plain($v_text);
-          }
-        }
+    if ($this->options['timeline_fields']['credit'] && !empty($media_url_value)) {
+      $credit_value = $this->get_field($row_index, $this->options['timeline_fields']['credit']);
+      if (!empty($credit_value)) {
+        $slide['media']['credit'] = $this->get_field($row_index, $this->options['timeline_fields']['credit']);
       }
     }
 
