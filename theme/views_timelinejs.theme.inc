@@ -56,6 +56,11 @@ function template_preprocess_views_timelinejs(&$vars) {
       $settings['options']['scale_factor'] = check_plain($vars['options']['timeline_config']['scale_factor']);
     }
 
+    // Add alternate font CSS.
+    if ($vars['options']['timeline_config']['font']) {
+      drupal_add_library('views_timelinejs', 'timelinejs_cdn_' . $vars['options']['timeline_config']['font']);
+    }
+
     // Add inline JavaScript.
     drupal_add_js(array('timelineJS' => array($settings)), 'setting');
     drupal_add_js(drupal_get_path('module', 'views_timelinejs') . '/js/views_timelinejs.js');

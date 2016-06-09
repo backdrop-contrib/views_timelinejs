@@ -47,7 +47,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         'start_at_current' => array('default' => '0'),
         'scale_factor' => array('default' => '2'),
         'language' => array('default' => ''),
-        /*'font' => array('default' => ''),*/
+        'font' => array('default' => ''),
       ),
     );
     return $options;
@@ -123,32 +123,13 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#description' => t('The language <a href="https://github.com/NUKnightLab/TimelineJS#language">code</a>. Leave blank for the site language.'),
       '#default_value' => $this->options['timeline_config']['language'],
     );
-    /*$form['timeline_config']['font'] = array(
+    $form['timeline_config']['font'] = array(
       '#type' => 'select',
-      '#title' => 'Font',
-      '#description' => t('This setting will only have an effect if the selected font is available to the site (ie @font-face).'),
-      '#options' => array(
-        '' => t('Default'),
-        'AbrilFatface-Average' => 'AbrilFatface-Average',
-        'Arvo-PTSans' => 'Arvo-PTSans',
-        'Bevan-PotanoSans' => 'Bevan-PotanoSans',
-        'BreeSerif-OpenSans' => 'BreeSerif-OpenSans',
-        'DroidSerif-DroidSans' => 'DroidSerif-DroidSans',
-        'Georgia-Helvetica' => 'Georgia-Helvetica',
-        'Lekton-Molengo' => 'Lekton-Molengo',
-        'Merriweather-NewsCycle' => 'Merriweather-NewsCycle',
-        'NewsCycle-Merriweather' => 'NewsCycle-Merriweather',
-        'NixieOne-Ledger' => 'NixieOne-Ledger',
-        'Pacifico-Arimo' => 'Pacifico-Arimo',
-        'PlayfairDisplay-Muli' => 'PlayfairDisplay-Muli',
-        'PoiretOne-Molengo' => 'PoiretOne-Molengo',
-        'PTSerif-PTSans' => 'PTSerif-PTSans',
-        'PT' => 'PT',
-        'Rancho-Gudea' => 'Rancho-Gudea',
-        'SansitaOne-Kameron' => 'SansitaOne-Kameron',
-      ),
+      '#title' => t('Font set'),
+      '#description' => t('TimelineJS3 offers several pre-selected font sets.  If a set is selected its CSS file will be downloaded from the CDN.'),
+      '#options' => array_merge($initial_labels, _views_timelinejs_list_font_sets()),
       '#default_value' => $this->options['timeline_config']['font'],
-    );*/
+    );
 
     // Field mapping.
     $form['timeline_fields'] = array(

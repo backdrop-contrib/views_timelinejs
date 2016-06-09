@@ -51,10 +51,26 @@ function views_timelinejs_library() {
       'timeline.css' => array(
         'data' => 'https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css',
         'type' => 'external',
-        'group' => CSS_DEFAULT,
+        'group' => 200,
       ),
     ),
   );
+
+  // Create a library for each TimelineJS3 alternate font set.
+  foreach (array_keys(_views_timelinejs_list_font_sets()) as $set) {
+    $libraries['timelinejs_cdn_' . $set] = array(
+      'title' => 'TimelineJS CDN ' . $set,
+      'website' => 'https://timeline.knightlab.com',
+      'version' => '3.3.15',
+      'css' => array(
+        'font.' . $set . '.css' => array(
+          'data' => 'https://cdn.knightlab.com/libs/timeline3/latest/css/fonts/font.' . $set . '.css',
+          'type' => 'external',
+          'group' => 201,
+        ),
+      ),
+    );
+  }
 
   return $libraries;
 }
@@ -85,4 +101,37 @@ function views_timelinejs_libraries_info() {
   );
 
   return $libraries;
+}
+
+/**
+ * Returns an array of font set options that are supported by TimelineJS3.
+ *
+ * @return array
+ *   An array of font set names, keyed by the name section of the set's CSS
+ *   filename, i.e. 'font.set-name.css'.
+ */
+function _views_timelinejs_list_font_sets() {
+  return array(
+    'abril-droidsans' => 'Abril Fatface & Droid Sans',
+    'amatic-andika' => 'Amatic & Andika',
+    'bevan-pontanosans' => 'Bevan & Pontano Sans',
+    'bitter-raleway' => 'Bitter & Raleway',
+    'clicker-garamond' => 'Clicker & Garamond',
+    'dancing-ledger' => 'Dancing & Ledger',
+    'default' => 'Default',
+    'fjalla-average' => 'Fjalla & Average',
+    'georgia-helvetica' => 'Georgia & Helvetica',
+    'knightlab' => 'Knight Lab',
+    'lustria-lato' => 'Lustria Lato',
+    'medula-lato' => 'Medula One & Lato',
+    'oldstandard' => 'Old Standard',
+    'opensans-gentiumbook' => 'Open Sans & Gentium Book Basic',
+    'playfair-faunaone' => 'Playfair & Fauna One',
+    'playfair' => 'Playfair SC & Playfair',
+    'pt' => 'PT Sans / PT Serif / PT Sans Narrow',
+    'roboto-megrim' => 'Roboto Slab & Megrim',
+    'rufina-sintony' => 'Rufina & Sintony',
+    'ubuntu' => 'Ubuntu',
+    'unicaone-vollkorn' => 'Unica One & Vollkorn',
+  );
 }
