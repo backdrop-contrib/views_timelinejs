@@ -135,7 +135,7 @@ class TimelineSlide implements TimelineSlideInterface {
     // Don't render end dates that are the same as the start date.  TimelineJS
     // won't display them anyway, but skipping them can make the rendered data
     // array smaller.
-    if (!empty($this->end_date) && $this->start_date->getTimestamp() != $this->end_date->getTimestamp()) {
+    if (!empty($this->end_date) && $this->start_date != $this->end_date) {
       $slide['end_date'] = $this->end_date->buildArray();
     }
     if (!empty($this->text)) {
