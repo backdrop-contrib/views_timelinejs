@@ -19,20 +19,13 @@ class TimelineDate extends DateTime implements TimelineDateInterface {
       throw new Exception('Empty date strings are not allowed.');
     }
 
-    try {
-      parent::__construct($date_string, $timezone);
-    }
-    catch (Exception $e) {
-      // @todo Decouple this error message from Drupal.  It should probably be
-      // moved to the plugin class.
-      drupal_set_message(t('The date "@date" does not conform to a <a href="@php-manual">PHP supported date and time format</a>.', array('@date' => $date_string, '@php-manual' => 'http://php.net/manual/en/datetime.formats.php')), 'warning');
-    }
+    parent::__construct($date_string, $timezone);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getTimelineDateArray() {
+  public function buildArray() {
     // The TimelineJS documentation doesn't say anything specific about whether
     // leading zeros should be included in date parts, but the examples do not
     // include them.  Therefore, they are omitted here.
