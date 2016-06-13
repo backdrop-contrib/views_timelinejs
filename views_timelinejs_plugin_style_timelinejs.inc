@@ -242,28 +242,22 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
    * {@inheritdoc}
    */
   function render() {
-    $slides = array();
+    $timeline = new Timeline();
 
     // Render slide arrays from the views data.
     foreach ($this->view->result as $row_index => $row) {
       $this->view->row_index = $row_index;
-      $slide = $this->render_slide($row);
-      // Ensure the slide has a start date.
-      if (!empty($slide['start_date'])) {
-        $slides[] = $slide;
+      $slide = $this->build_slide($row);
+      // Ensure the slide was built.
+      if (!empty($slide)) {
+        $timeline->addEvent($slide);
       }
     }
     unset($this->view->row_index);
 
-    // Prepare a data array that TimelineJS3 understands.
-    $data = array(
-      'scale' => 'human',
-      'events' => $slides,
-    );
-
     // Skip theming if the view is being edited or previewed.
     if ($this->view->editing) {
-      return '<pre>' . print_r($data, 1) . '</pre>';
+      return '<pre>' . print_r($timeline->buildArray(), 1) . '</pre>';
     }
 
     // Prepare the options array.
@@ -273,109 +267,152 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       'view' => $this->view,
       'timeline_options' => $this->options['timeline_config'],
       'timeline_font' => $this->options['additional_config']['font'],
-      'rows' => $data,
+      'rows' => $timeline->buildArray(),
     ));
   }
 
   /**
-   * Renders a TimelineJS slide from a views data row.
+   * Builds a timeline slide from the current views data row.
    *
    * @param type $row
    *   A views result row.
    *
-   * @return array
-   *   A array representing an individual TimelineJS slide.
+   * @return TimelineSlideInterface|NULL
+   *   A slide object or NULL if the start date could not be parsed.
    */
-  protected function render_slide($row) {
-    // Store the row index so the code is a little easier to read.
-    $row_index = $this->view->row_index;
-
-    $slide = array();
-
-    if ($this->options['timeline_fields']['headline']) {
-      $slide['text']['headline'] = $this->get_field($row_index, $this->options['timeline_fields']['headline']);
+  protected function build_slide($row) {
+    $start_date = $this->build_date($this->options['timeline_fields']['start_date']);
+    // Return NULL if the slide has no start date.
+    if (empty($start_date)) {
+      return NULL;
     }
+    $end_date = $this->build_date($this->options['timeline_fields']['end_date']);
+    $text = $this->build_text();
+    $slide = new TimelineSlide($start_date, $end_date, $text);
 
-    if ($this->options['timeline_fields']['text']) {
-      $slide['text']['text'] = $this->get_field($row_index, $this->options['timeline_fields']['text']);
-    }
+    // Check to see if this slide should be the start slide.
+    $this->check_start_slide($start_date);
 
-    if ($this->options['timeline_fields']['group']) {
-      $slide['group'] = $this->get_field($row_index, $this->options['timeline_fields']['group']);
-    }
+    $slide->setGroup($this->build_group());
 
-    if ($this->options['timeline_fields']['start_date']) {
-      $start_date_value = $this->get_field($row_index, $this->options['timeline_fields']['start_date']);
-      if (!empty($start_date_value)) {
-        // Format the date for TimelineJS3.
-        $start_date = new TimelineDate($start_date_value);
-        $slide['start_date'] = $start_date->getTimelineDateArray();
+    $slide->setBackground($this->build_background());
 
-        // Check to see if this slide should be the start slide.
-        $this->check_start_slide($start_date);
-      }
-    }
-
-    if ($this->options['timeline_fields']['end_date'] && !empty($start_date_value)) {
-      $end_date_value = $this->get_field($row_index, $this->options['timeline_fields']['end_date']);
-
-      // Don't render end dates that are the same as the start date.  TimelineJS
-      // won't display them anyway, but skipping them can make the rendered data
-      // array smaller.
-      if (!empty($end_date_value) && $start_date_value !== $end_date_value) {
-        // Format the date for TimelineJS3.
-        $end_date = new TimelineDate($end_date_value);
-        $slide['end_date'] = $end_date->getTimelineDateArray();
-      }
-    }
-
-    if ($this->options['timeline_fields']['background']) {
-      $background_url_value = $this->get_field($row_index, $this->options['timeline_fields']['background']);
-
-      // Special handling because core Image fields have no raw URL formatter.
-      // Check to see if we don't have a raw URL.
-      if (!filter_var($background_url_value, FILTER_VALIDATE_URL)) {
-        // Attempt to extract a URL from the string.
-        $background_url_value = $this->extract_url($background_url_value);
-      }
-
-      if (!empty($background_url_value)) {
-        $slide['background']['url'] = $background_url_value;
-      }
-    }
-
-    // @todo: Add support for text containing a blockquote or iframe.
-    if ($this->options['timeline_fields']['media']) {
-      $media_url_value = $this->get_field($row_index, $this->options['timeline_fields']['media']);
-
-      // Special handling because core Image fields have no raw URL formatter.
-      // Check to see if we don't have a raw URL.
-      if (!filter_var($media_url_value, FILTER_VALIDATE_URL)) {
-        // Attempt to extract a URL from the string.
-        $media_url_value = $this->extract_url($media_url_value);
-      }
-
-      if (!empty($media_url_value)) {
-        $slide['media']['url'] = $media_url_value;
-        $slide['media']['thumbnail'] = $media_url_value;
-      }
-    }
-
-    if ($this->options['timeline_fields']['caption'] && !empty($media_url_value)) {
-      $caption_value = $this->get_field($row_index, $this->options['timeline_fields']['caption']);
-      if (!empty($caption_value)) {
-        $slide['media']['caption'] = $this->get_field($row_index, $this->options['timeline_fields']['caption']);
-      }
-    }
-
-    if ($this->options['timeline_fields']['credit'] && !empty($media_url_value)) {
-      $credit_value = $this->get_field($row_index, $this->options['timeline_fields']['credit']);
-      if (!empty($credit_value)) {
-        $slide['media']['credit'] = $this->get_field($row_index, $this->options['timeline_fields']['credit']);
-      }
+    $media = $this->build_media();
+    if (!empty($media)) {
+      $slide->setMedia($media);
     }
 
     return $slide;
+  }
+
+  /**
+   * Builds a timeline date from the current data row.
+   *
+   * @param string $field
+   *   The machine name of the date field.
+   *
+   * @return TimelineDate|NULL
+   *   A date object or NULL if the start date could not be parsed.
+   */
+  protected function build_date($field) {
+    try {
+      $date_string = $this->get_field($this->view->row_index, $field);
+      $date = new TimelineDate($date_string);
+    }
+    catch (Exception $e) {
+      // Return NULL if the field didn't contain a parseable date string.
+      views_debug('The date "@date" does not conform to a <a href="@php-manual">PHP supported date and time format</a>.', array('@date' => $date_string, '@php-manual' => 'http://php.net/manual/en/datetime.formats.php'));
+      return NULL;
+    }
+    return $date;
+  }
+
+  /**
+   * Builds timeline text from the current data row.
+   *
+   * @return TimelineText
+   *   A text object.
+   */
+  protected function build_text() {
+    $headline = '';
+    if ($this->options['timeline_fields']['headline']) {
+      $headline = $this->get_field($this->view->row_index, $this->options['timeline_fields']['headline']);
+    }
+
+    $text = '';
+    if ($this->options['timeline_fields']['text']) {
+      $text = $this->get_field($this->view->row_index, $this->options['timeline_fields']['text']);
+    }
+    return new TimelineText($headline, $text);
+  }
+
+  /**
+   * Builds a timeline group from the current data row.
+   *
+   * @return string
+   *   The group name.
+   */
+  protected function build_group() {
+    $group = '';
+    if ($this->options['timeline_fields']['group']) {
+      $group = $this->get_field($this->view->row_index, $this->options['timeline_fields']['group']);
+    }
+    return $group;
+  }
+
+  /**
+   * Builds a timeline background from the current data row.
+   *
+   * @return TimelineBackground
+   *   A background object.
+   */
+  protected function build_background() {
+    $url = '';
+    if ($this->options['timeline_fields']['background']) {
+      $url = $this->get_field($this->view->row_index, $this->options['timeline_fields']['background']);
+
+      // Special handling because core Image fields have no raw URL formatter.
+      // Check to see if we don't have a raw URL.
+      if (!filter_var($url, FILTER_VALIDATE_URL)) {
+        // Attempt to extract a URL from an img or anchor tag in the string.
+        $url = $this->extract_url($url);
+      }
+    }
+    return new TimelineBackground($url);
+  }
+
+  /**
+   * Builds timeline media from the current data row.
+   *
+   * @return TimelineMedia|NULL
+   *   A media object or NULL if the URL is empty.
+   */
+  protected function build_media() {
+    $url = '';
+    if ($this->options['timeline_fields']['media']) {
+      $url = $this->get_field($this->view->row_index, $this->options['timeline_fields']['media']);
+
+      // Special handling because core Image fields have no raw URL formatter.
+      // Check to see if we don't have a raw URL.
+      if (!filter_var($url, FILTER_VALIDATE_URL)) {
+        // Attempt to extract a URL from an img or anchor tag in the string.
+        $url = $this->extract_url($url);
+      }
+    }
+    // Return NULL if the URL is empty.
+    if (empty($url)) {
+      return NULL;
+    }
+
+    $media = new TimelineMedia($url);
+    $media->setThumbnail($url);
+    if ($this->options['timeline_fields']['caption']) {
+      $media->setCaption($this->get_field($this->view->row_index, $this->options['timeline_fields']['caption']));
+    }
+    if ($this->options['timeline_fields']['credit']) {
+      $media->setCredit($this->get_field($this->view->row_index, $this->options['timeline_fields']['credit']));
+    }
+    return $media;
   }
 
   /**
@@ -423,7 +460,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
    *   A string that contains HTML.
    *
    * @return string
-   *   A URL if one was found in the input string, empty if not.
+   *   A URL if one was found in the input string, the original string if not.
    */
   protected function extract_url($html) {
     if (!empty($html)) {
@@ -442,7 +479,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         return $image_tags->item(0)->getAttribute('src');
       }
     }
-    return '';
+    return $html;
   }
 
   /**
