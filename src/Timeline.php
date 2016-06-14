@@ -102,7 +102,7 @@ class Timeline implements TimelineInterface {
   public function buildArray() {
     $timeline = array('scale' => $this->scale);
     if (!empty($this->title_slide)) {
-      $timeline['title'] = $this->title_slide;
+      $timeline['title'] = $this->title_slide->buildArray();
     }
     foreach ($this->events as $event) {
       $timeline['events'][] = $event->buildArray();

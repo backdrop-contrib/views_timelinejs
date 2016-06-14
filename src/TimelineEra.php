@@ -43,7 +43,7 @@ class TimelineEra implements TimelineEraInterface {
       'end_date' => $this->end_date->buildArray(),
     );
     if (!empty($this->text)) {
-      $era['text'] = $this->text;
+      $era['text'] = $this->text->buildArray();
     }
     return $era;
   }
