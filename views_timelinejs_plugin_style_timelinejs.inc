@@ -47,6 +47,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         'headline' => array('default' => ''),
         'background' => array('default' => ''),
         'type' => array('default' => ''),
+        'unique_id' => array('default' => ''),
       ),
     );
     return $options;
@@ -237,6 +238,13 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#description' => t('Determines the type of timeline entity that is rendered: event, title slide, or era.  This plugin recognizes a limited set of string values to determine the type.  "title" or "timeline_title_slide" will cause a views data row to be rendered as a TimelineJS title slide.  Only one title slide can be created per timeline.  Additional title slides will overwrite previous slides.  "era" or "timeline_era" rows will be rendered as TimelineJS eras.  By default, a row with an empty value or any other input will be rendered as a regular event slide.'),
       '#default_value' => $this->options['timeline_fields']['type'],
     );
+    $form['timeline_fields']['unique_id'] = array(
+      '#type' => 'select',
+      '#options' => $view_fields_labels,
+      '#title' => t('Unique ID'),
+      '#description' => t('The selected field should contain a string value which is unique among all slides in your timeline, e.g. a node ID. If not specified, TimelineJS will construct an ID based on the headline, but if you later edit your headline, the ID will change. Unique IDs are used when the hash_bookmark option is used.'),
+      '#default_value' => $this->options['timeline_fields']['unique_id'],
+    );
   }
 
   /**
@@ -348,6 +356,8 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       $slide->setMedia($media);
     }
 
+    $slide->setUniqueId($this->build_unique_id());
+
     return $slide;
   }
 
@@ -367,6 +377,8 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     if (!empty($media)) {
       $slide->setMedia($media);
     }
+
+    $slide->setUniqueId($this->build_unique_id());
 
     return $slide;
   }
@@ -515,6 +527,20 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       $media->setCredit($this->get_field($this->view->row_index, $this->options['timeline_fields']['credit']));
     }
     return $media;
+  }
+
+  /**
+   * Builds a timeline unique id from the current data row.
+   *
+   * @return string
+   *   A unique ID for a slide.
+   */
+  protected function build_unique_id() {
+    $unique_id = '';
+    if ($this->options['timeline_fields']['unique_id']) {
+      $unique_id = $this->get_field($this->view->row_index, $this->options['timeline_fields']['unique_id']);
+    }
+    return $unique_id;
   }
 
   /**
