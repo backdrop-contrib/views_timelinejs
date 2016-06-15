@@ -40,7 +40,9 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         'credit' => array('default' => ''),
         'media' => array('default' => ''),
         'group' => array('default' => ''),
-        'date' => array('default' => ''),
+        'start_date' => array('default' => ''),
+        'end_date' => array('default' => ''),
+        'display_date' => array('default' => ''),
         'text' => array('default' => ''),
         'headline' => array('default' => ''),
         'background' => array('default' => ''),
@@ -186,6 +188,13 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#description' => t('The selected field should contain a string representing a date conforming to a <a href="@php-manual">PHP supported date and time format</a>.', array('@php-manual' => 'http://php.net/manual/en/datetime.formats.php')),
       '#default_value' => $this->options['timeline_fields']['end_date'],
     );
+    $form['timeline_fields']['display_date'] = array(
+      '#type' => 'select',
+      '#options' => $view_fields_labels,
+      '#title' => t('Display date'),
+      '#description' => t('The selected field should contain a string.  TimelineJS will display this value instead of the values of the start and end date fields.'),
+      '#default_value' => $this->options['timeline_fields']['display_date'],
+    );
     $form['timeline_fields']['background'] = array(
       '#type' => 'select',
       '#options' => $view_fields_labels,
@@ -328,6 +337,8 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     // Check to see if this slide should be the start slide.
     $this->check_start_slide($start_date);
 
+    $slide->setDisplayDate($this->build_display_date());
+
     $slide->setGroup($this->build_group());
 
     $slide->setBackground($this->build_background());
@@ -401,6 +412,21 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       return NULL;
     }
     return $date;
+  }
+
+  /**
+   * Builds a timeline display date from the current data row.
+   *
+   * @return string
+   *   A string which contains the text to be displayed instead of the start
+   *   and end dates of a slide.
+   */
+  protected function build_display_date() {
+    $display_date = '';
+    if ($this->options['timeline_fields']['display_date']) {
+      $display_date = $this->get_field($this->view->row_index, $this->options['timeline_fields']['display_date']);
+    }
+    return $display_date;
   }
 
   /**
