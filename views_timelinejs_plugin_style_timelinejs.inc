@@ -44,6 +44,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         'text' => array('default' => ''),
         'headline' => array('default' => ''),
         'background' => array('default' => ''),
+        'type' => array('default' => ''),
       ),
     );
     return $options;
@@ -220,6 +221,13 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#description' => t('The selected field may contain any text. If present, TimelineJS will organize events with the same value for group to be in the same row or adjacent rows, separate from events in other groups. The common value for the group will be shown as a label at the left edge of the navigation.'),
       '#default_value' => $this->options['timeline_fields']['group'],
     );
+    $form['timeline_fields']['type'] = array(
+      '#type' => 'select',
+      '#options' => $view_fields_labels,
+      '#title' => t('Type'),
+      '#description' => t('Determines the type of timeline entity that is rendered: event, title slide, or era.  This plugin recognizes a limited set of string values to determine the type.  "title" or "timeline_title" will cause a views data row to be rendered as a TimelineJS title slide.  Only one title slide can be created per timeline.  Additional title slides will overwrite previous slides.  "era" or "timeline_era" rows will be rendered as TimelineJS eras.  By default, a row with an empty value or any other input will be rendered as a regular event slide.'),
+      '#default_value' => $this->options['timeline_fields']['type'],
+    );
   }
 
   /**
@@ -244,13 +252,43 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
   function render() {
     $timeline = new Timeline();
 
+    // Render the fields.  If it isn't done now then the row_index will be unset
+    // the first time that get_field() is called, resulting in an undefined
+    // property exception.
+    $this->render_fields($this->view->result);
+
     // Render slide arrays from the views data.
     foreach ($this->view->result as $row_index => $row) {
       $this->view->row_index = $row_index;
-      $slide = $this->build_slide($row);
-      // Ensure the slide was built.
-      if (!empty($slide)) {
-        $timeline->addEvent($slide);
+
+      // Determine the type of timeline entity to build.
+      $type = 'event';
+      if ($this->options['timeline_fields']['type']) {
+        $type = $this->get_field($row_index, $this->options['timeline_fields']['type']);
+      }
+      switch ($type) {
+        case 'title':
+        case 'timeline_title':
+          $slide = $this->build_title_slide();
+          // Ensure the slide was built.
+          if (!empty($slide)) {
+            $timeline->setTitleSlide($slide);
+          }
+          break;
+        case 'era':
+        case 'timeline_era':
+          $era = $this->build_era();
+          // Ensure the era was built.
+          if (!empty($era)) {
+            $timeline->addEra($era);
+          }
+          break;
+        default:
+          $slide = $this->build_slide();
+          // Ensure the slide was built.
+          if (!empty($slide)) {
+            $timeline->addEvent($slide);
+          }
       }
     }
     unset($this->view->row_index);
@@ -274,13 +312,10 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
   /**
    * Builds a timeline slide from the current views data row.
    *
-   * @param type $row
-   *   A views result row.
-   *
    * @return TimelineSlideInterface|NULL
    *   A slide object or NULL if the start date could not be parsed.
    */
-  protected function build_slide($row) {
+  protected function build_slide() {
     $start_date = $this->build_date($this->options['timeline_fields']['start_date']);
     // Return NULL if the slide has no start date.
     if (empty($start_date)) {
@@ -303,6 +338,47 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     }
 
     return $slide;
+  }
+
+  /**
+   * Builds a timeline title slide from the current views data row.
+   *
+   * @return TimelineSlideInterface
+   *   A slide object.
+   */
+  protected function build_title_slide() {
+    $text = $this->build_text();
+    $slide = new TimelineTitleSlide($text);
+
+    $slide->setBackground($this->build_background());
+
+    $media = $this->build_media();
+    if (!empty($media)) {
+      $slide->setMedia($media);
+    }
+
+    return $slide;
+  }
+
+  /**
+   * Builds a timeline era from the current views data row.
+   *
+   * @return TimelineEra|NULL
+   *   An era object or NULL if the start or end date could not be parsed.
+   */
+  protected function build_era() {
+    $start_date = $this->build_date($this->options['timeline_fields']['start_date']);
+    // Return NULL if the era has no start date.
+    if (empty($start_date)) {
+      return NULL;
+    }
+    $end_date = $this->build_date($this->options['timeline_fields']['end_date']);
+    // Return NULL if the era has no end date.
+    if (empty($end_date)) {
+      return NULL;
+    }
+    $text = $this->build_text();
+    return new TimelineEra($start_date, $end_date, $text);
   }
 
   /**
