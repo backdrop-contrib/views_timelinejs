@@ -225,7 +225,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#type' => 'select',
       '#options' => $view_fields_labels,
       '#title' => t('Type'),
-      '#description' => t('Determines the type of timeline entity that is rendered: event, title slide, or era.  This plugin recognizes a limited set of string values to determine the type.  "title" or "timeline_title" will cause a views data row to be rendered as a TimelineJS title slide.  Only one title slide can be created per timeline.  Additional title slides will overwrite previous slides.  "era" or "timeline_era" rows will be rendered as TimelineJS eras.  By default, a row with an empty value or any other input will be rendered as a regular event slide.'),
+      '#description' => t('Determines the type of timeline entity that is rendered: event, title slide, or era.  This plugin recognizes a limited set of string values to determine the type.  "title" or "timeline_title_slide" will cause a views data row to be rendered as a TimelineJS title slide.  Only one title slide can be created per timeline.  Additional title slides will overwrite previous slides.  "era" or "timeline_era" rows will be rendered as TimelineJS eras.  By default, a row with an empty value or any other input will be rendered as a regular event slide.'),
       '#default_value' => $this->options['timeline_fields']['type'],
     );
   }
@@ -268,7 +268,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       }
       switch ($type) {
         case 'title':
-        case 'timeline_title':
+        case 'timeline_title_slide':
           $slide = $this->build_title_slide();
           // Ensure the slide was built.
           if (!empty($slide)) {
