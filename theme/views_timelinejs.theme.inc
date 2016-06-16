@@ -11,13 +11,10 @@ function template_preprocess_views_timelinejs(&$vars) {
   $view = $vars['view'];
   $vars['timelinejs_id'] = drupal_html_id('timelinejs_' . $view->name . '_' . $view->current_display);
 
+  $library_name = variable_get('views_timelinejs_library', 'timeline_cdn');
+
   // Load required libraries and styles.
-  $library = drupal_add_library('views_timelinejs', 'timelinejs_cdn');
-  if ($library === FALSE) {
-    watchdog('views_timelinejs', 'The TimelineJS library could not be loaded from the CDN.', NULL, WATCHDOG_ERROR);
-    drupal_set_message(t('The timeline could not be loaded.  Refresh the page to try again.'), 'error', FALSE);
-    return;
-  }
+  $library = drupal_add_library('views_timelinejs', $library_name);
 
   // Add inline JavaScript.
   $settings = array(
@@ -31,11 +28,7 @@ function template_preprocess_views_timelinejs(&$vars) {
 
   // Add alternate font CSS.
   if ($vars['timeline_font']) {
-    $font_library = drupal_add_library('views_timelinejs', 'timelinejs_cdn_' . $vars['timeline_font']);
-    if ($font_library === FALSE) {
-      watchdog('views_timelinejs', 'The TimelineJS font library could not be loaded from the CDN.', NULL, WATCHDOG_ERROR);
-      return;
-    }
+    $font_library = drupal_add_library('views_timelinejs', $library_name . '_' . $vars['timeline_font']);
   }
 }
 

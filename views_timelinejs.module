@@ -18,6 +18,7 @@ function views_timelinejs_views_api() {
  * Implements hook_library().
  */
 function views_timelinejs_library() {
+  global $base_url;
   $libraries = array();
 
   $libraries['timelinejs_cdn'] = array(
@@ -39,6 +40,25 @@ function views_timelinejs_library() {
       ),
     ),
   );
+  $libraries['timelinejs'] = array(
+    'title' => 'TimelineJS',
+    'website' => 'https://timeline.knightlab.com',
+    'version' => '3.3.15',
+    'js' => array(
+      'timeline.js' => array(
+        'data' => $base_url . '/sites/all/libraries/TimelineJS3/compiled/js/timeline.js',
+        'type' => 'external',
+        'group' => JS_LIBRARY,
+      ),
+    ),
+    'css' => array(
+      'timeline.css' => array(
+        'data' => $base_url . '/sites/all/libraries/TimelineJS3/compiled/css/timeline.css',
+        'type' => 'external',
+        'group' => 200,
+      ),
+    ),
+  );
 
   // Create a library for each TimelineJS3 alternate font set.
   foreach (array_keys(_views_timelinejs_list_font_sets()) as $set) {
@@ -54,35 +74,19 @@ function views_timelinejs_library() {
         ),
       ),
     );
-  }
-
-  return $libraries;
-}
-
-/**
- * Implements hook_libraries_info().
- */
-function views_timelinejs_libraries_info() {
-  $libraries = array();
-
-  $libraries['timeline'] = array(
-    'name' => 'timeline',
-    'vendor url' => 'http://timeline.verite.co',
-    'download url' => 'http://timeline.verite.co',
-    'version arguments' => array(
-      'file' => 'compiled/js/timeline.js',
-      'pattern' => '/TimelineJS - ver. ([\d.]+)/i',
-      'lines' => 5,
-    ),
-    'files' => array(
-      'js' => array(
-        'compiled/js/timeline.js',
-      ),
+    $libraries['timelinejs_' . $set] = array(
+      'title' => 'TimelineJS ' . $set,
+      'website' => 'https://timeline.knightlab.com',
+      'version' => '3.3.15',
       'css' => array(
-        'compiled/css/timeline.css',
+        'font.' . $set . '.css' => array(
+          'data' => $base_url . '/sites/all/libraries/TimelineJS3/compiled/css/fonts/font.' . $set . '.css',
+          'type' => 'external',
+          'group' => 201,
+        ),
       ),
-    ),
-  );
+    );
+  }
 
   return $libraries;
 }
@@ -118,4 +122,50 @@ function _views_timelinejs_list_font_sets() {
     'ubuntu' => 'Ubuntu',
     'unicaone-vollkorn' => 'Unica One & Vollkorn',
   );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function views_timelinejs_menu() {
+  $items['admin/config/development/views_timelinejs'] = array(
+    'title' => 'Views TimelineJS',
+    'description' => 'Configure settings related to the TimelineJS library.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('views_timelinejs_settings_form'),
+    'access arguments' => array('administer site configuration'),
+  );
+
+  return $items;
+}
+
+/**
+ * Admin settings menu callback.
+ *
+ * @see views_timelinejs_menu()
+ */
+function views_timelinejs_settings_form() {
+  $form['views_timelinejs_library'] = array(
+    '#type' => 'radios',
+    '#title' => t('TimelineJS library location'),
+    '#description' => t('If serving the files from a local path, the library MUST be located in sites/all/libraries/TimelineJS3.  See the module README file for more information.'),
+    '#options' => array(
+      'timelinejs_cdn' => t('NU Knight Lab CDN'),
+      'timelinejs' => t('Local path (sites/all/libraries)'),
+    ),
+    '#default_value' => variable_get('views_timelinejs_library', 'timelinejs_cdn'),
+  );
+
+  return system_settings_form($form);
+}
+
+/**
+ * Implements hook_help().
+ */
+function views_timelinejs_help($path, $arg) {
+  switch ($path) {
+    // Help for the settings form.
+    case 'admin/config/development/views_timelinejs':
+      return '<p>' . t('Configure how the Views TimelineJS plugin behaves on the site. Select whether to use a CDN or serve the library locally.') . '</p>';
+  }
 }
