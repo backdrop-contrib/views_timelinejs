@@ -7,16 +7,6 @@
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
- * Implements hook_views_api().
- */
-function views_timelinejs_views_api() {
-  return array(
-    'api' => '3',
-    'path' => drupal_get_path('module', 'views_timelinejs'),
-  );
-}
-
-/**
  * Implements hook_library().
  */
 function views_timelinejs_library() {
