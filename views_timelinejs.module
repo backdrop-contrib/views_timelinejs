@@ -40,7 +40,7 @@ function views_timelinejs_library() {
       ),
     ),
   );
-  $libraries['timelinejs'] = array(
+  $libraries['timelinejs_local'] = array(
     'title' => 'TimelineJS',
     'website' => 'https://timeline.knightlab.com',
     'version' => '3.3.15',

@@ -8,13 +8,14 @@
  * Preprocessor for views template.
  */
 function template_preprocess_views_timelinejs(&$vars) {
+  $config = \Drupal::config('views_timelinejs.settings');
   $view = $vars['view'];
   $vars['timelinejs_id'] = drupal_html_id('timelinejs_' . $view->name . '_' . $view->current_display);
 
-  $library_name = variable_get('views_timelinejs_library', 'timeline_cdn');
+  $library_location = $config->get('library_location');
 
   // Load required libraries and styles.
-  $library = drupal_add_library('views_timelinejs', $library_name);
+  $library = drupal_add_library('views_timelinejs', 'timelinejs_' . $library_location);
 
   // Add inline JavaScript.
   $settings = array(
@@ -28,7 +29,7 @@ function template_preprocess_views_timelinejs(&$vars) {
 
   // Add alternate font CSS.
   if ($vars['timeline_font']) {
-    $font_library = drupal_add_library('views_timelinejs', $library_name . '_' . $vars['timeline_font']);
+    $font_library = drupal_add_library('views_timelinejs', 'timelinejs_' . $library_location . '_' . $vars['timeline_font']);
   }
 }
 
