@@ -1,32 +1,38 @@
 <?php
 
+namespace Drupal\views_timelinejs\TimelineJS;
+
+use Drupal\views_timelinejs\TimelineJS\DateInterface;
+use Drupal\views_timelinejs\TimelineJS\EraInterface;
+use Drupal\views_timelinejs\TimelineJS\TextInterface;
+
 /**
  * Defines a TimelineJS3 era.
  */
-class TimelineEra implements TimelineEraInterface {
+class Era implements EraInterface {
 
   /**
    * The era start date.
    *
-   * @var TimelineDateInterface
+   * @var DateInterface
    */
   protected $start_date;
 
   /**
    * The era end date.
    *
-   * @var TimelineDateInterface
+   * @var DateInterface
    */
   protected $end_date;
 
   /**
    * The era headline and text.
    *
-   * @var TimelineTextInterface
+   * @var TextInterface
    */
   protected $text;
 
-  public function __construct(TimelineDateInterface $start_date, TimelineDateInterface $end_date, TimelineTextInterface $text = NULL) {
+  public function __construct(DateInterface $start_date, DateInterface $end_date, TextInterface $text = NULL) {
     $this->start_date = $start_date;
     $this->end_date = $end_date;
     if (!empty($text)) {

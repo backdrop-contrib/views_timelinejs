@@ -1,17 +1,23 @@
 <?php
 
+namespace Drupal\views_timelinejs\TimelineJS;
+
+use Drupal\views_timelinejs\TimelineJS\BackgroundInterface;
+use Drupal\views_timelinejs\TimelineJS\MediaInterface;
+use Drupal\views_timelinejs\TimelineJS\ObjectInterface;
+
 /**
  * Provides an interface for defining TimelineJS3 slides.
  */
-interface TimelineSlideInterface extends TimelineObjectInterface {
+interface SlideInterface extends ObjectInterface {
 
   /**
    * Sets the media for this slide.
    *
-   * @param TimelineMediaInterface $media
+   * @param MediaInterface $media
    *   The media object.
    */
-  public function setMedia(TimelineMediaInterface $media);
+  public function setMedia(MediaInterface $media);
 
   /**
    * Sets the group for this slide.
@@ -32,10 +38,10 @@ interface TimelineSlideInterface extends TimelineObjectInterface {
   /**
    * Sets the background for this slide.
    *
-   * @param TimelineBackgroundInterface $backgound
+   * @param BackgroundInterface $backgound
    *   The background object.
    */
-  public function setBackground(TimelineBackgroundInterface $backgound);
+  public function setBackground(BackgroundInterface $backgound);
 
   /**
    * Sets the unique ID for this slide.

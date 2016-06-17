@@ -1,11 +1,16 @@
 <?php
 
+namespace Drupal\views_timelinejs\TimelineJS;
+
+use Drupal\views_timelinejs\TimelineJS\Slide;
+use Drupal\views_timelinejs\TimelineJS\TextInterface;
+
 /**
  * Defines a TimelineJS3 title slide.
  */
-class TimelineTitleSlide extends TimelineSlide {
+class TitleSlide extends Slide {
 
-  public function __construct(TimelineTextInterface $text = NULL) {
+  public function __construct(TextInterface $text = NULL) {
     if (!empty($text)) {
       $this->text = $text;
     }

@@ -1,9 +1,13 @@
 <?php
 
+namespace Drupal\views_timelinejs\TimelineJS;
+
+use Drupal\views_timelinejs\TimelineJS\TextInterface;
+
 /**
  * Defines a TimelineJS3 text object.
  */
-class TimelineText implements TimelineTextInterface {
+class Text implements TextInterface {
 
   /**
    * The text object headline.

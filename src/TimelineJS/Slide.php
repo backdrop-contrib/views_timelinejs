@@ -1,35 +1,43 @@
 <?php
 
+namespace Drupal\views_timelinejs\TimelineJS;
+
+use Drupal\views_timelinejs\TimelineJS\BackgroundInterface;
+use Drupal\views_timelinejs\TimelineJS\DateInterface;
+use Drupal\views_timelinejs\TimelineJS\MediaInterface;
+use Drupal\views_timelinejs\TimelineJS\SlideInterface;
+use Drupal\views_timelinejs\TimelineJS\TextInterface;
+
 /**
  * Defines a TimelineJS3 slide.
  */
-class TimelineSlide implements TimelineSlideInterface {
+class Slide implements SlideInterface {
 
   /**
    * The slide start date.
    *
-   * @var TimelineDateInterface
+   * @var DateInterface
    */
   protected $start_date;
 
   /**
    * The slide end date.
    *
-   * @var TimelineDateInterface
+   * @var DateInterface
    */
   protected $end_date;
 
   /**
    * The slide headline and text.
    *
-   * @var TimelineTextInterface
+   * @var TextInterface
    */
   protected $text;
 
   /**
    * The slide media and its metadata.
    *
-   * @var TimelineMediaInterface
+   * @var MediaInterface
    */
   protected $media;
 
@@ -50,7 +58,7 @@ class TimelineSlide implements TimelineSlideInterface {
   /**
    * The slide background url and color.
    *
-   * @var TimelineBackgroundInterface
+   * @var BackgroundInterface
    */
   protected $background;
 
@@ -68,7 +76,7 @@ class TimelineSlide implements TimelineSlideInterface {
    */
   protected $unique_id;
 
-  public function __construct(TimelineDateInterface $start_date, TimelineDateInterface $end_date = NULL, TimelineTextInterface $text = NULL) {
+  public function __construct(DateInterface $start_date, DateInterface $end_date = NULL, TextInterface $text = NULL) {
     $this->start_date = $start_date;
     if (!empty($end_date)) {
       $this->end_date = $end_date;
@@ -81,7 +89,7 @@ class TimelineSlide implements TimelineSlideInterface {
   /**
    * {@inheritdoc}
    */
-  public function setMedia(\TimelineMediaInterface $media) {
+  public function setMedia(MediaInterface $media) {
     $this->media = $media;
   }
 
@@ -102,7 +110,7 @@ class TimelineSlide implements TimelineSlideInterface {
   /**
    * {@inheritdoc}
    */
-  public function setBackground(\TimelineBackgroundInterface $backgound) {
+  public function setBackground(BackgroundInterface $backgound) {
     $this->background = $backgound;
   }
 

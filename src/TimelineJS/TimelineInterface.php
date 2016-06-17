@@ -1,54 +1,60 @@
 <?php
 
+namespace Drupal\views_timelinejs\TimelineJS;
+
+use Drupal\views_timelinejs\TimelineJS\EraInterface;
+use Drupal\views_timelinejs\TimelineJS\ObjectInterface;
+use Drupal\views_timelinejs\TimelineJS\SlideInterface;
+
 /**
  * Provides an interface for defining TimelineJS3 timelines.
  */
-interface TimelineInterface extends TimelineObjectInterface {
+interface TimelineInterface extends ObjectInterface {
 
   /**
    * Adds a new slide to the timeline's events array.
    *
-   * @param TimelineSlideInterface $slide
+   * @param SlideInterface $slide
    *   The new slide.
    */
-  public function addEvent(TimelineSlideInterface $slide);
+  public function addEvent(SlideInterface $slide);
 
   /**
    * Returns the timeline's array of event slides.
    *
    * @return array
-   *   An array of TimelineSlideInterface objects.
+   *   An array of SlideInterface objects.
    */
   public function getEvents();
 
   /**
    * Adds a new era to the timeline's eras array.
    *
-   * @param TimelineEraInterface $era
+   * @param EraInterface $era
    *   The new era.
    */
-  public function addEra(TimelineEraInterface $era);
+  public function addEra(EraInterface $era);
 
   /**
    * Returns the timeline's array of eras.
    *
    * @return array
-   *   An array of TimelineEraInterface objects.
+   *   An array of EraInterface objects.
    */
   public function getEras();
 
   /**
    * Sets the timeline's title slide.
    *
-   * @param TimelineSlideInterface $slide
+   * @param SlideInterface $slide
    *   The new slide.
    */
-  public function setTitleSlide(TimelineSlideInterface $slide);
+  public function setTitleSlide(SlideInterface $slide);
 
   /**
    * Returns the timeline's title slide.
    *
-   * @return TimelineSlideInterface
+   * @return SlideInterface
    *   The title slide.
    */
   public function getTitleSlide();

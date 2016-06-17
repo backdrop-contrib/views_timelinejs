@@ -1,5 +1,11 @@
 <?php
 
+namespace Drupal\views_timelinejs\TimelineJS;
+
+use Drupal\views_timelinejs\TimelineJS\EraInterface;
+use Drupal\views_timelinejs\TimelineJS\SlideInterface;
+use Drupal\views_timelinejs\TimelineJS\TimelineInterface;
+
 /**
  * Defines a TimelineJS3 timeline.
  */
@@ -15,7 +21,7 @@ class Timeline implements TimelineInterface {
   /**
    * The timeline's title slide.
    *
-   * @var TimelineSlideInterface
+   * @var SlideInterface
    */
   protected $title_slide;
 
@@ -36,7 +42,7 @@ class Timeline implements TimelineInterface {
   /**
    * {@inheritdoc}
    */
-  public function setTitleSlide(\TimelineSlideInterface $slide) {
+  public function setTitleSlide(SlideInterface $slide) {
     $this->title_slide = $slide;
   }
 
@@ -50,7 +56,7 @@ class Timeline implements TimelineInterface {
   /**
    * {@inheritdoc}
    */
-  public function addEvent(\TimelineSlideInterface $slide) {
+  public function addEvent(SlideInterface $slide) {
     $this->events[] = $slide;
   }
 
@@ -64,7 +70,7 @@ class Timeline implements TimelineInterface {
   /**
    * {@inheritdoc}
    */
-  public function addEra(\TimelineEraInterface $era) {
+  public function addEra(EraInterface $era) {
     $this->eras[] = $era;
   }
 

@@ -1,9 +1,13 @@
 <?php
 
+namespace Drupal\views_timelinejs\TimelineJS;
+
+use Drupal\views_timelinejs\TimelineJS\MediaInterface;
+
 /**
  * Defines a TimelineJS3 media object.
  */
-class TimelineMedia implements TimelineMediaInterface {
+class Media implements MediaInterface {
 
   /**
    * The media url, blockquote, or iframe.

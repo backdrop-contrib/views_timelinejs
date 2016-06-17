@@ -1,9 +1,13 @@
 <?php
 
+namespace Drupal\views_timelinejs\TimelineJS;
+
+use Drupal\views_timelinejs\TimelineJS\BackgroundInterface;
+
 /**
  * Defines a TimelineJS3 background object.
  */
-class TimelineBackground implements TimelineBackgroundInterface {
+class Background implements BackgroundInterface {
 
   /**
    * The background image url.
