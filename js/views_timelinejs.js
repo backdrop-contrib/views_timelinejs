@@ -4,9 +4,9 @@
  */
 
 (function ($) {
-  Drupal.behaviors.timelineJS = {
+  Drupal.behaviors.TimelineJS = {
     attach: function(context, settings) {
-      $.each(Drupal.settings.timelineJS, function(key, timeline) {
+      $.each(drupalSettings.TimelineJS, function(key, timeline) {
         if (timeline['processed'] != true) {
           window.timeline = new TL.Timeline(timeline['embed_id'], timeline['source'], timeline['options']);
         }

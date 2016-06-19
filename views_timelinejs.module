@@ -4,7 +4,9 @@
  * Views TimelineJS API, theming, libraries, etc.
  */
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Template\Attribute;
 
 /**
  * Implements hook_library_info_build().
@@ -90,4 +92,51 @@ function views_timelinejs_help($route_name, RouteMatchInterface $route_match) {
     case 'views_timelinejs.admin':
       return '<p>' . t('Configure how the Views TimelineJS plugin behaves on the site. Select whether to use a CDN or serve the library locally.') . '</p>';
   }
+}
+
+/**
+ * Prepares variables for the TimelineJS style template.
+ *
+ * Default template: views-timelinejs-view-timelinejs.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - view: A ViewExecutable object.
+ *   - rows: The raw row data.
+ *   - timeline_options: TimelineJS presentation options.
+ *   - timeline_font: The name of a TimelineJS font set.
+ */
+function template_preprocess_views_timelinejs_view_timelinejs(&$vars) {
+  $config = \Drupal::config('views_timelinejs.settings');
+  $library_location = $config->get('library_location');
+  $view = $vars['view'];
+
+  // Set a unique id attribute for the timeline embed div.
+  $id = Html::getId('timelinejs_' . $view->storage->id() . '_' . $view->current_display);
+  $vars['attributes'] = new Attribute(['id' => $id]);
+
+  // Load required libraries and styles.
+  $vars['#attached']['library'][] = 'views_timelinejs/timelinejs.' . $library_location;
+  $vars['#attached']['library'][] = 'views_timelinejs/create_timeline';
+  $vars['#attached']['drupalSettings']['TimelineJS'][] = [
+    'options' => _sanitize_timeline_options($vars['options']['timeline_options']),
+    'source' => $vars['rows'],
+    'embed_id' => $id,
+    'processed' => FALSE,
+  ];
+
+  // Add alternate font CSS.
+  if ($vars['options']['timeline_font']) {
+    $vars['#attached']['library'][] = 'views_timelinejs/timelinejs.' . $vars['options']['timeline_font'] . '.' . $library_location;
+  }
+}
+
+/**
+ * Sanitizes the timeline options.
+ */
+function _sanitize_timeline_options($options) {
+  // Sanitize the options.
+  $options = array_map(['Drupal\Component\Utility\Html', 'escape'], $options);
+  // Remove empty values from the options before returning.
+  return array_filter($options);
 }

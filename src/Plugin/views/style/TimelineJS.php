@@ -360,8 +360,10 @@ class TimelineJS extends StylePluginBase {
     return [
       '#theme' => $this->themeFunctions(),
       '#view' => $this->view,
-      '#timeline_options' => $this->options['timeline_config'],
-      '#timeline_font' => $this->options['additional_config']['font'],
+      '#options' => [
+        'timeline_options' => $this->options['timeline_config'],
+        'timeline_font' => $this->options['additional_config']['font'],
+      ],
       '#rows' => $timeline->buildArray(),
     ];
   }
