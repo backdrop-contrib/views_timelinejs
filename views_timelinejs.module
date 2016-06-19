@@ -21,7 +21,7 @@ function views_timelinejs_library() {
   global $base_url;
   $libraries = array();
 
-  $libraries['timelinejs_cdn'] = array(
+  $libraries['timelinejs.cdn'] = array(
     'title' => 'TimelineJS CDN',
     'website' => 'https://timeline.knightlab.com',
     'version' => '3.3.15',
@@ -40,7 +40,7 @@ function views_timelinejs_library() {
       ),
     ),
   );
-  $libraries['timelinejs'] = array(
+  $libraries['timelinejs.local'] = array(
     'title' => 'TimelineJS',
     'website' => 'https://timeline.knightlab.com',
     'version' => '3.3.15',
@@ -62,7 +62,7 @@ function views_timelinejs_library() {
 
   // Create a library for each TimelineJS3 alternate font set.
   foreach (array_keys(_views_timelinejs_list_font_sets()) as $set) {
-    $libraries['timelinejs_cdn_' . $set] = array(
+    $libraries['timelinejs.' . $set . '.cdn'] = array(
       'title' => 'TimelineJS CDN ' . $set,
       'website' => 'https://timeline.knightlab.com',
       'version' => '3.3.15',
@@ -74,7 +74,7 @@ function views_timelinejs_library() {
         ),
       ),
     );
-    $libraries['timelinejs_' . $set] = array(
+    $libraries['timelinejs.' . $set . '.local'] = array(
       'title' => 'TimelineJS ' . $set,
       'website' => 'https://timeline.knightlab.com',
       'version' => '3.3.15',
@@ -150,10 +150,10 @@ function views_timelinejs_settings_form() {
     '#title' => t('TimelineJS library location'),
     '#description' => t('If serving the files from a local path, the library MUST be located in sites/all/libraries/TimelineJS3.  See the module README file for more information.'),
     '#options' => array(
-      'timelinejs_cdn' => t('NU Knight Lab CDN'),
-      'timelinejs' => t('Local path (sites/all/libraries)'),
+      'cdn' => t('NU Knight Lab CDN'),
+      'local' => t('Local path (sites/all/libraries)'),
     ),
-    '#default_value' => variable_get('views_timelinejs_library', 'timelinejs_cdn'),
+    '#default_value' => variable_get('views_timelinejs_library', 'cdn'),
   );
 
   return system_settings_form($form);
