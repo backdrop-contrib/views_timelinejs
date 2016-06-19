@@ -111,9 +111,12 @@ function template_preprocess_views_timelinejs_view_timelinejs(&$vars) {
   $library_location = $config->get('library_location');
   $view = $vars['view'];
 
-  // Set a unique id attribute for the timeline embed div.
+  // Set a unique id attribute for the timeline embed div.  Also set a width and
+  // height for the div.  This is required for proper styling of the timeline.
+  // See https://timeline.knightlab.com/docs/instantiate-a-timeline.html.
   $id = Html::getId('timelinejs_' . $view->storage->id() . '_' . $view->current_display);
-  $vars['attributes'] = new Attribute(['id' => $id]);
+  $style = 'width: ' . $vars['options']['timeline_options']['width'] . '; height: ' . $vars['options']['timeline_options']['height'] . ';';
+  $vars['attributes'] = new Attribute(['id' => $id, 'style' => $style]);
 
   // Load required libraries and styles.
   $vars['#attached']['library'][] = 'views_timelinejs/timelinejs.' . $library_location;
