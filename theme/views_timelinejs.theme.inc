@@ -10,6 +10,8 @@
 function template_preprocess_views_timelinejs(&$vars) {
   $view = $vars['view'];
   $vars['timelinejs_id'] = drupal_html_id('timelinejs_' . $view->name . '_' . $view->current_display);
+  $vars['width'] = $vars['timeline_options']['width'];
+  $vars['height'] = $vars['timeline_options']['height'];
 
   $library_name = variable_get('views_timelinejs_library', 'timeline_cdn');
 
