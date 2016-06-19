@@ -61,16 +61,16 @@ class TimelineJS extends StylePluginBase {
       'contains' => [
         'width' => ['default' => '100%'],
         'height' => ['default' => '500px'],
-        'hash_bookmark' => ['default' => ''],
-        'start_at_end' => ['default' => ''],
-        'scale_factor' => ['default' => '2'],
+        'hash_bookmark' => ['default' => FALSE],
+        'start_at_end' => ['default' => FALSE],
+        'scale_factor' => ['default' => 2],
         'language' => ['default' => ''],
       ],
     ];
     $options['additional_config'] = [
       'contains' => [
         'font' => ['default' => ''],
-        'start_at_current' => ['default' => ''],
+        'start_at_current' => ['default' => FALSE],
       ],
     ];
     $options['timeline_fields'] = [
@@ -132,31 +132,18 @@ class TimelineJS extends StylePluginBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Add hash bookmarks'),
       '#description' => $this->t('On each slide, a # will be added to the end of the url in the url bar. These urls are bookmarkable, so you can share or return to the same place in the timeline later.'),
-      '#return_value' => TRUE,
       '#default_value' => $this->options['timeline_config']['hash_bookmark'],
     ];
     $form['timeline_config']['scale_factor'] = [
-      '#type' => 'select',
+      '#type' => 'number',
       '#title' => $this->t('Scale factor'),
       '#description' => $this->t('How many screen widths wide the timeline should be at first presentation.'),
-      '#options' => [
-        '1' => $this->t('1'),
-        '2' => $this->t('2'),
-        '3' => $this->t('3'),
-        '4' => $this->t('4'),
-        '5' => $this->t('5'),
-        '6' => $this->t('6'),
-        '7' => $this->t('7'),
-        '8' => $this->t('8'),
-        '9' => $this->t('9'),
-      ],
       '#default_value' => $this->options['timeline_config']['scale_factor'],
     ];
     $form['timeline_config']['start_at_end'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Start at the end'),
       '#description' => $this->t('Loads the timeline on the last slide.'),
-      '#return_value' => TRUE,
       '#default_value' => $this->options['timeline_config']['start_at_end'],
     ];
     $form['timeline_config']['language'] = [
@@ -186,7 +173,6 @@ class TimelineJS extends StylePluginBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Start at Current'),
       '#description' => $this->t('Loads the timeline on the slide closest to the current time.  Overrides the "Start at the End" setting.'),
-      '#return_value' => TRUE,
       '#default_value' => $this->options['additional_config']['start_at_current'],
     ];
 
