@@ -668,8 +668,8 @@ class TimelineJS extends StylePluginBase {
   protected function prepareTimelineOptions() {
     // Set the language option to the site's default if it is empty.
     if (empty($this->options['timeline_config']['language'])) {
-      global $language;
-      $this->options['timeline_config']['language'] = $language->language;
+      $language = \Drupal::languageManager()->getCurrentLanguage();
+      $this->options['timeline_config']['language'] = $language->getId();
     }
 
     // If the custom start_at_current option is set, then set the timeline's
