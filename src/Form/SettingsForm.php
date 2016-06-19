@@ -33,10 +33,10 @@ class SettingsForm extends ConfigFormBase {
   $form['library_location'] = array(
     '#type' => 'radios',
     '#title' => t('TimelineJS library location'),
-    '#description' => t('If serving the files from a local path, the library MUST be located in vendor/TimelineJS3.  See the module README file for more information.'),
+    '#description' => t('If serving the files from a local path, the library MUST be located in libraries/TimelineJS3.  See the module README file for more information.'),
     '#options' => array(
       'cdn' => t('NU Knight Lab CDN'),
-      'local' => t('Local path (vendor/TimelineJS3)'),
+      'local' => t('Local path (libraries/TimelineJS3)'),
     ),
     '#default_value' => $config->get('library_location'),
   );
