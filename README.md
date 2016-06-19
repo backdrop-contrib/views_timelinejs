@@ -1,7 +1,7 @@
 Views TimelineJS
 ================
 This module adds a new style plugin for Views which renders result rows as
-TimelineJS slides and eras.  The 7.x-3.x branch was created to work with the
+TimelineJS slides and eras.  The 8.x-3.x branch was created to work with the
 TimelineJS3 version of the library.  For more information about TimelineJS visit
 https://timeline.knightlab.com/index.html or the GitHub repository
 https://github.com/NUKnightLab/TimelineJS3.
@@ -46,7 +46,7 @@ plugin has received a lot of updates in order to take full advantage of the new
 library.  Some settings have been changed or removed.  New settings have been
 added.  The fact that the Date field setting has been split into separate Start
 date and End date field settings means that all existing views that were built
-with version 7.x-1.x will need to be reconfigured for 7.x-3.x.
+with version 7.x-1.x will need to be reconfigured for 8.x-3.x.
 
 Using the Plugin
 ----------------
