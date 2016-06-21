@@ -80,7 +80,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           'default' => '',
         ),
         'font' => array(
-          'default' => '',
+          'default' => 'default',
         ),
         'debug' => array(
           'default' => '0',
@@ -269,7 +269,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#title' => 'Font',
       '#description' => t('This setting will only have an effect if the selected font is available to the site (ie @font-face).'),
       '#options' => array(
-        '' => t('Default'),
+        'default' => t('Default'),
         'AbrilFatface-Average' => 'AbrilFatface-Average',
         'Arvo-PTSans' => 'Arvo-PTSans',
         'Bevan-PotanoSans' => 'Bevan-PotanoSans',
