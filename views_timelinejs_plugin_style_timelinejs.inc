@@ -206,8 +206,8 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $form['timeline_fields']['media'] = array(
       '#type' => 'select',
       '#options' => $view_fields_labels,
-      '#title' => t('Media URL'),
-      '#description' => t('The selected field should contain a raw URL to a media resource.  See the <a href="@media-documentation">media types documentation</a> for a list of supported types.  Blockquote and iframe HTML are not currently supported by this plugin.  Special handling is included for Image fields because they have no raw URL formatter.', array('@media-documentation' => 'https://timeline.knightlab.com/docs/media-types.html')),
+      '#title' => t('Media'),
+      '#description' => t('The selected field should contain a raw URL to a media resource, an HTML blockquote, or an HTML iframe.  See the <a href="@media-documentation">media types documentation</a> for a list of supported types.  Special handling is included for Image fields because they have no raw URL formatter.', array('@media-documentation' => 'https://timeline.knightlab.com/docs/media-types.html')),
       '#default_value' => $this->options['timeline_fields']['media'],
     );
     $form['timeline_fields']['credit'] = array(
