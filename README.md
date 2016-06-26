@@ -121,8 +121,8 @@ you could use.
   Of course, Link fields or Text fields will work for this mapping, along with
   any other field that can output a string containing a raw URL to an image.
 
-* Media URL - The selected field should contain a raw URL to a media resource.
-  See the [media types documentation]
+* Media - The selected field should contain a raw URL to a media resource, an
+  HTML blockquote, or an HTML iframe.  See the [media types documentation]
   (https://timeline.knightlab.com/docs/media-types.html) for a list of supported
   types. Special handling is included for Image fields because they have no raw
   URL formatter.
@@ -186,25 +186,25 @@ with the community by posting an issue in our queue!
 
 For the purposes of thinking about how to implement media fields they can be
 divided into at least four categories:
- * Images - If you're planning on linking exclusively to external images, then
-   you can simply treat the Image as you would any other Embeddable media (see
-   below).  Otherwise, you will need some means to upload the images into your
-   Drupal site.
+* Images - If you're planning on linking exclusively to external images, then
+  you can simply treat the Image as you would any other Embeddable media (see
+  below).  Otherwise, you will need some means to upload the images into your
+  Drupal site.
 
- * Embeddable media - Most of the media types supported by TimelineJS fall into
-   this category.  Provide TimelineJS with a URL to a media resource that it
-   recognizes and it will use that resource's API to embed it for you.
+* Embeddable media - Most of the media types supported by TimelineJS fall into
+  this category.  Provide TimelineJS with a URL to a media resource that it
+  recognizes and it will use that resource's API to embed it for you.
 
- * Blockquote - TimelineJS can display text as media, provided that you wrap
-   the text in HTML blockquote tags, ```<blockquote>...</blockquote>```.
+* Blockquote - TimelineJS can display text as media, provided that you wrap the
+  text in HTML blockquote tags, ```<blockquote>...</blockquote>```.
 
- * iframe - TimelineJS recommends using ```<iframe>``` elements to embed media
-   for which it doesn't have native support.  You can use the same text field
-   as you use for blockquotes, but it is listed here separately because there
-   may be security issues associated with allowing content to be embedded from
-   untrusted sources.  Consult web security experts for more information.  Limit
-   the ability to add iframes by giving only trusted user roles permission to
-   use text formats that allow iframes in HTML!
+* iframe - TimelineJS recommends using ```<iframe>``` elements to embed media
+  for which it doesn't have native support.  You can use the same text field as
+  you use for blockquotes, but it is listed here separately because there may
+  be security issues associated with allowing content to be embedded from
+  untrusted sources.  Consult web security experts for more information.  Limit
+  the ability to add iframes by giving only trusted user roles permission to use
+  text formats that allow iframes in HTML!
 
 Here are some configuration recipes for implementing media.
 
@@ -214,27 +214,27 @@ with a single field.  You can paste URLs, enter HTML, and even upload images
 directly into the field.  Unfortunately, there are drawbacks.
 
 Pros:
- * One field may be better UX for content creators than multiple specialized
-   fields.
+* One field may be better UX for content creators than multiple specialized
+  fields.
 
- * Fewer fields to configure in Views.
+* Fewer fields to configure in Views.
 
 Cons:
- * CKEditor loves to do things like wrap nearly everything with HTML tags.
-   After all, it is a WYSIWYG editor.  This can lead to unexpected behavior when
-   entering your data.  You can get around it by switching the editor into
-   "Source" mode, but that isn't an ideal solution.  If the content is edited
-   later, the field won't be in Source mode.  The editor will re-wrap text with
-   HTML and escape HTML entities.  The media may be broken without anyone
-   realizing it!
+* CKEditor loves to do things like wrap nearly everything with HTML tags.  After
+  all, it is a WYSIWYG editor.  This can lead to unexpected behavior when
+  entering your data.  You can get around it by switching the editor into
+  "Source" mode, but that isn't an ideal solution.  If the content is edited
+  later, the field won't be in Source mode.  The editor will re-wrap text with
+  HTML and escape HTML entities.  The media may be broken without anyone
+  realizing it!
 
- * URLs pasted directly into the editor may or may not work.  In testing, a
-   URL to a Google map was successfully embedded, but a URL to a YouTube video
-   was not.
+* URLs pasted directly into the editor may or may not work.  In testing, a URL
+  to a Google map was successfully embedded, but a URL to a YouTube video was
+  not.
 
- * You can't apply styles to images uploaded via the editor.
+* You can't apply styles to images uploaded via the editor.
 
- * URLs are not validated.
+* URLs are not validated.
 
 ### Separate Link, Image, and Text fields
 Using multiple fields is possible if you properly configure your view.  You have
@@ -262,22 +262,22 @@ this configuration the Link and Image fields can be placed in either order, but
 the Text field must be added last.
 
 Pros:
- * Discrete data fields for images and links, including whatever benefits they
-   may provide, such as image styles and URL validation.
+* Discrete data fields for images and links, including whatever benefits they
+  may provide, such as image styles and URL validation.
 
- * Little to no need for dealing with annoying text editor settings every time
-   you enter or edit data.  The bulk of the work is done only once in the back
-   end through Views configuration.
+* Little to no need for dealing with annoying text editor settings every time
+  you enter or edit data.  The bulk of the work is done only once in the back
+  end through Views configuration.
 
 Cons:
- * Multiple fields may be confusing for content creators, resulting in bad UX.
-   Field Help Text should clearly indicate which fields override others.  In the
-   first example, the Image field overrides the Link field.  If both fields have
-   data then the image will be displayed and any URL in the Link field will be
-   ignored.
+* Multiple fields may be confusing for content creators, resulting in bad UX.
+  Field Help Text should clearly indicate which fields override others.  In the
+  first example, the Image field overrides the Link field.  If both fields have
+  data then the image will be displayed and any URL in the Link field will be
+  ignored.
 
- * Getting the field configuration working in Views may be a challenge for some
-   site builders.
+* Getting the field configuration working in Views may be a challenge for some
+  site builders.
 
 Maintainers
 -----------
