@@ -441,7 +441,14 @@ class TimelineJS extends StylePluginBase {
   protected function buildDate($field) {
     try {
       $date_markup = $this->getField($this->view->row_index, $field);
-      $date = $date_markup ? new Date($date_markup->__toString()) : NULL;
+      if (empty($date_markup)) {
+        return NULL;
+      }
+      // Store the date string so that it can be used in the error message, if
+      // necessary.  Strip HTML tags from dates so users don't run into problems
+      // like Date fields wrapping their output with metadata.
+      $date_string = strip_tags($date_markup->__toString());
+      $date = new Date($date_string);
     }
     catch (Exception $e) {
       // Return NULL if the field didn't contain a parseable date string.
