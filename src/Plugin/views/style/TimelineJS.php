@@ -106,11 +106,10 @@ class TimelineJS extends StylePluginBase {
     // $form['timeline_config']['id_of_timelinejs_option'].  See the list of
     // options at https://timeline.knightlab.com/docs/options.html.
     $form['timeline_config'] = [
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => $this->t('TimelineJS Options'),
       '#description' => $this->t('Each of these settings maps directly to one of the TimelineJS presentation options.  See the <a href="@options-doc">options documentation page</a> for additional information.', ['@options-doc' => 'https://timeline.knightlab.com/docs/options.html']),
-      '#collapsible' => TRUE,
-      '#collapsed' => FALSE,
+      '#open' => TRUE,
     ];
     $form['timeline_config']['width'] = [
       '#type' => 'textfield',
@@ -156,11 +155,10 @@ class TimelineJS extends StylePluginBase {
 
     // Timeline additional configuration.
     $form['additional_config'] = [
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => $this->t('Additional Options'),
       '#description' => $this->t('These settings include extra options to control the TimelineJS presentation or options unique to this plugin.'),
-      '#collapsible' => TRUE,
-      '#collapsed' => FALSE,
+      '#open' => TRUE,
     ];
     $form['additional_config']['font'] = [
       '#type' => 'select',
@@ -178,11 +176,10 @@ class TimelineJS extends StylePluginBase {
 
     // Field mapping.
     $form['timeline_fields'] = [
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => $this->t('Field mappings'),
       '#description' => $this->t('Map your Views data fields to TimelineJS slide object properties.'),
-      '#collapsible' => TRUE,
-      '#collapsed' => FALSE,
+      '#open' => TRUE,
     ];
     $form['timeline_fields']['headline'] = [
       '#type' => 'select',
