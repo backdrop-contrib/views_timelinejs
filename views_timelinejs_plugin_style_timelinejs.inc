@@ -431,9 +431,9 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       $rows = array();
 
       // Render fields to trigger rewriting and other field processing.
-      $this->view->style_plugin->render_fields($this->view->result);
+      $this->render_fields($this->view->result);
 
-      if ($this->view->style_options['timeline_config']['start_at_current']) {
+      if ($this->options['timeline_config']['start_at_current']) {
         // Gives you a timestamp of the date
         $date_check = strtotime('now');
         // Holds the difference of the closest date
@@ -461,13 +461,13 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
 
           // Headline - can use any view field, uses views rendering.
           if ($target_field == 'headline') {
-            $headline_field = $this->view->style_options['timeline_fields']['headline'];
+            $headline_field = $this->options['timeline_fields']['headline'];
             $rows[$count][$target_field] = $this->rendered_fields[$count][$headline_field];
           }
 
           // Body - can use any view field, uses views rendering.
           if ($target_field == 'text') {
-            $body_field = $this->view->style_options['timeline_fields']['bodytext'];
+            $body_field = $this->options['timeline_fields']['bodytext'];
             $rows[$count][$target_field] = $this->rendered_fields[$count][$body_field];
           }
 
@@ -514,7 +514,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
               if (is_array($date['formatted'])) {
                 if ($target_field == 'startDate') {
                   if ($date['formatted']['value'] != "FALSE") {
-                    if ($this->view->style_options['timeline_config']['start_at_current']) {
+                    if ($this->options['timeline_config']['start_at_current']) {
                       // abs to get the absolute difference
                       $diff = abs($date['timestamp']['value'] - $date_check);
 
@@ -610,7 +610,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           'date' => $rows,
         ),
       );
-      if ($this->view->style_options['timeline_config']['start_at_current']) {
+      if ($this->options['timeline_config']['start_at_current']) {
         $data['timeline']['start_at_current'] = $start_at_current;
       }
     }
@@ -661,11 +661,10 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
    */
   protected function getDefinedUsage($type) {
     // If it's not mapped at all, don't do anything.
-    if (!isset($this->view->style_options['timeline_fields'])) {
+    if (!isset($this->options['timeline_fields'])) {
       return FALSE;
     }
-
-    if ($fields = $this->view->style_options['timeline_fields']) {
+    if ($fields = $this->options['timeline_fields']) {
       $fieldname = '';
       if (isset($fields[$type])) {
         $fieldname = $fields[$type];
