@@ -433,7 +433,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       // Render fields to trigger rewriting and other field processing.
       $this->render_fields($this->view->result);
 
-      if ($this->options['timeline_config']['start_at_current']) {
+      if (!empty($this->options['timeline_config']['start_at_current'])) {
         // Gives you a timestamp of the date
         $date_check = strtotime('now');
         // Holds the difference of the closest date
@@ -514,7 +514,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
               if (is_array($date['formatted'])) {
                 if ($target_field == 'startDate') {
                   if ($date['formatted']['value'] != "FALSE") {
-                    if ($this->options['timeline_config']['start_at_current']) {
+                    if (!empty($this->options['timeline_config']['start_at_current'])) {
                       // abs to get the absolute difference
                       $diff = abs($date['timestamp']['value'] - $date_check);
 
@@ -610,7 +610,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
           'date' => $rows,
         ),
       );
-      if ($this->options['timeline_config']['start_at_current']) {
+      if (!empty($this->options['timeline_config']['start_at_current'])) {
         $data['timeline']['start_at_current'] = $start_at_current;
       }
     }
@@ -674,8 +674,8 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       }
       if (isset($fieldname) && $fieldname != '0') {
         $field_information = array(
-          'alias' => $this->view->field[$fieldname]->field_alias,
-          'handler' => $this->view->field[$fieldname]->definition['handler'],
+          'alias' => isset($this->view->field[$fieldname]) ? $this->view->field[$fieldname]->field_alias : NULL,
+          'handler' => isset($this->view->field[$fieldname]) ? $this->view->field[$fieldname]->definition['handler'] : NULL,
           'fieldname' => $fieldname,
         );
       }
