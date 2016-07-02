@@ -415,7 +415,9 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
    */
   protected function build_date($field) {
     try {
-      $date_string = $this->get_field($this->view->row_index, $field);
+      // Strip HTML tags from dates so users don't run into problems like Date
+      // fields wrapping their output with metadata.
+      $date_string = strip_tags($this->get_field($this->view->row_index, $field));
       $date = new TimelineDate($date_string);
     }
     catch (Exception $e) {
