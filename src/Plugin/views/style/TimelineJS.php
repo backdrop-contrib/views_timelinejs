@@ -146,10 +146,10 @@ class TimelineJS extends StylePluginBase {
       '#default_value' => $this->options['timeline_config']['start_at_end'],
     ];
     $form['timeline_config']['language'] = [
-      '#type' => 'textfield',
-      '#size' => 5,
+      '#type' => 'select',
       '#title' => $this->t('Language'),
-      '#description' => $this->t('The <a href="@language-list">language code</a>. Leave blank for the site language.', ['@language-list' => 'https://github.com/NUKnightLab/TimelineJS#language']),
+      '#description' => $this->t("By default, the timeline will be displayed in the site's current language if it is supported by TimelineJS. Selecting a language in this setting will force the timeline to always be displayed in the chosen language."),
+      '#options' => array_merge($initial_labels, _views_timelinejs_list_languages()),
       '#default_value' => $this->options['timeline_config']['language'],
     ];
 
@@ -658,10 +658,10 @@ class TimelineJS extends StylePluginBase {
    * Processes timeline options before theming.
    */
   protected function prepareTimelineOptions() {
-    // Set the language option to the site's default if it is empty.
+    // Set the language option to the site's default if it is empty and the
+    // language is supported.
     if (empty($this->options['timeline_config']['language'])) {
-      $language = \Drupal::languageManager()->getCurrentLanguage();
-      $this->options['timeline_config']['language'] = $language->getId();
+      $this->prepareLanguageOption();
     }
 
     // If the custom start_at_current option is set, then set the timeline's
@@ -670,6 +670,26 @@ class TimelineJS extends StylePluginBase {
     if ($this->options['additional_config']['start_at_current']) {
       $this->options['timeline_config']['start_at_slide'] = $this->startSlideIndex;
       $this->options['timeline_config']['start_at_end'] = FALSE;
+    }
+  }
+
+  /**
+   * Sets the timeline language option to the site's current language.
+   */
+  protected function prepareLanguageOption() {
+    $supported_languages = _views_timelinejs_list_languages();
+    $language_map = _views_timelinejs_language_map();
+    $current_language = \Drupal::languageManager()->getCurrentLanguage()->getId();
+
+    // Check for the site's current language in the list of languages that are
+    // supported by TimelineJS.
+    if (isset($supported_languages[$current_language])) {
+      $this->options['timeline_config']['language'] = $current_language;
+    }
+    // Check for the site's current language in the list of language codes
+    // that are different in Drupal than they are in TimelineJS.
+    elseif (isset($language_map[$current_language])) {
+      $this->options['timeline_config']['language'] = $language_map[$current_language];
     }
   }
 
