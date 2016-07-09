@@ -29,5 +29,6 @@ create_timeline:
   js:
     js/views_timelinejs.js: { }
   dependencies:
+    - core/drupal
     - core/drupalSettings
-
+    - core/jquery
