@@ -60,7 +60,7 @@ class TimelineJS extends StylePluginBase {
     $options['timeline_config'] = [
       'contains' => [
         'width' => ['default' => '100%'],
-        'height' => ['default' => '500px'],
+        'height' => ['default' => '40em'],
         'hash_bookmark' => ['default' => FALSE],
         'start_at_end' => ['default' => FALSE],
         'scale_factor' => ['default' => 2],
@@ -122,7 +122,7 @@ class TimelineJS extends StylePluginBase {
     $form['timeline_config']['height'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Height of the timeline'),
-      '#description' => $this->t('The height of the timeline, e.g. "100%" or "650px".'),
+      '#description' => $this->t('The height of the timeline, e.g. "40em" or "650px".  Percent values are not recommended for the height.'),
       '#default_value' => $this->options['timeline_config']['height'],
       '#size' => 10,
       '#maxlength' => 10,
