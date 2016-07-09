@@ -21,7 +21,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $options['timeline_config'] = array(
       'contains' => array(
         'width' => array('default' => '100%'),
-        'height' => array('default' => '500px'),
+        'height' => array('default' => '40em'),
         'hash_bookmark' => array('default' => ''),
         'start_at_end' => array('default' => ''),
         'scale_factor' => array('default' => '2'),
@@ -84,7 +84,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $form['timeline_config']['height'] = array(
       '#type' => 'textfield',
       '#title' => t('Height of the timeline'),
-      '#description' => t('The height of the timeline, e.g. "100%" or "650px".'),
+      '#description' => t('The height of the timeline, e.g. "40em" or "650px".  Percent values are not recommended for the height.'),
       '#default_value' => $this->options['timeline_config']['height'],
       '#size' => 10,
       '#maxlength' => 10,
