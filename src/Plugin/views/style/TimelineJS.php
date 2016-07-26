@@ -78,6 +78,7 @@ class TimelineJS extends StylePluginBase {
         'caption' => ['default' => ''],
         'credit' => ['default' => ''],
         'media' => ['default' => ''],
+        'thumbnail' => ['default' => ''],
         'group' => ['default' => ''],
         'start_date' => ['default' => ''],
         'end_date' => ['default' => ''],
@@ -229,7 +230,7 @@ class TimelineJS extends StylePluginBase {
     $form['timeline_fields']['background_color'] = [
       '#type' => 'select',
       '#options' => $view_fields_labels,
-      '#title' => $this->t('Background_color'),
+      '#title' => $this->t('Background color'),
       '#description' => $this->t('The selected field should contain a string representing a CSS color, in hexadecimal (e.g. #0f9bd1) or a valid <a href="@color-keywords">CSS color keyword</a>.', ['@color-keywords' => 'https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#Color_keywords']),
       '#default_value' => $this->options['timeline_fields']['background_color'],
     ];
@@ -253,6 +254,13 @@ class TimelineJS extends StylePluginBase {
       '#description' => $this->t('The selected field may contain any text, including HTML markup.'),
       '#options' => $view_fields_labels,
       '#default_value' => $this->options['timeline_fields']['caption'],
+    ];
+    $form['timeline_fields']['thumbnail'] = [
+      '#type' => 'select',
+      '#options' => $view_fields_labels,
+      '#title' => $this->t('Media thumbnail'),
+      '#description' => $this->t('The selected field should contain a raw URL for an image to use in the timenav marker for this event. If omitted, TimelineJS will use an icon based on the type of media.  Special handling is included for Image fields because they have no raw URL formatter.'),
+      '#default_value' => $this->options['timeline_fields']['thumbnail'],
     ];
     $form['timeline_fields']['group'] = [
       '#type' => 'select',
@@ -572,7 +580,18 @@ class TimelineJS extends StylePluginBase {
     }
 
     $media = new Media($url);
-    $media->setThumbnail($url);
+    if ($this->options['timeline_fields']['thumbnail']) {
+      $thumbnail_markup = $this->getField($this->view->row_index, $this->options['timeline_fields']['thumbnail']);
+      $thumbnail = $thumbnail_markup ? $thumbnail_markup->__toString() : '';
+
+      // Special handling because core Image fields have no raw URL formatter.
+      // Check to see if we don't have a raw URL.
+      if (!filter_var($thumbnail, FILTER_VALIDATE_URL)) {
+        // Attempt to extract a URL from an img or anchor tag in the string.
+        $thumbnail = $this->extractUrl($thumbnail);
+      }
+      $media->setThumbnail($thumbnail);
+    }
     if ($this->options['timeline_fields']['caption']) {
       $caption_markup = $this->getField($this->view->row_index, $this->options['timeline_fields']['caption']);
       $caption = $caption_markup ? $caption_markup->__toString() : '';

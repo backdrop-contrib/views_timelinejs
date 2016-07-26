@@ -140,6 +140,11 @@ you could use.
 
 * Media credit - The selected field may contain any text, including HTML markup.
 
+* Media thumbnail - The selected field should contain a raw URL for an image to
+  use in the timenav marker for this event. If omitted, Timeline will use an
+  icon based on the type of media.  Special handling is included for Image
+  fields because they have no raw URL formatter.
+
 * Group - The selected field may contain any text.
 
   The TimelineJS documentation makes no mention of HTML being allowed in group
