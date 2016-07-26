@@ -126,6 +126,10 @@ you could use.
   Of course, Link fields or Text fields will work for this mapping, along with
   any other field that can output a string containing a raw URL to an image.
 
+* Background color - The selected field should contain a string representing a
+  CSS color, in hexadecimal (e.g. #0f9bd1) or a valid [CSS color keyword]
+  (https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#Color_keywords).
+
 * Media - The selected field should contain a raw URL to a media resource, an
   HTML blockquote, or an HTML iframe.  See the [media types documentation]
   (https://timeline.knightlab.com/docs/media-types.html) for a list of supported

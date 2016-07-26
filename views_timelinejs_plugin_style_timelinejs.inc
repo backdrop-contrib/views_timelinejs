@@ -46,6 +46,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         'text' => array('default' => ''),
         'headline' => array('default' => ''),
         'background' => array('default' => ''),
+        'background_color' => array('default' => ''),
         'type' => array('default' => ''),
         'unique_id' => array('default' => ''),
       ),
@@ -202,6 +203,13 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#title' => t('Background image'),
       '#description' => t('The selected field should contain a raw URL to an image.  Special handling is included for Image fields because they have no raw URL formatter.'),
       '#default_value' => $this->options['timeline_fields']['background'],
+    );
+    $form['timeline_fields']['background_color'] = array(
+      '#type' => 'select',
+      '#options' => $view_fields_labels,
+      '#title' => t('Background_color'),
+      '#description' => t('The selected field should contain a string representing a CSS color, in hexadecimal (e.g. #0f9bd1) or a valid <a href="@color-keywords">CSS color keyword</a>.', array('@color-keywords' => 'https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#Color_keywords')),
+      '#default_value' => $this->options['timeline_fields']['background_color'],
     );
     $form['timeline_fields']['media'] = array(
       '#type' => 'select',
@@ -494,7 +502,12 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         $url = $this->extract_url($url);
       }
     }
-    return new TimelineBackground($url);
+
+    $color = '';
+    if ($this->options['timeline_fields']['background_color']) {
+      $color = $this->get_field($this->view->row_index, $this->options['timeline_fields']['background_color']);
+    }
+    return new TimelineBackground($url, $color);
   }
 
   /**
