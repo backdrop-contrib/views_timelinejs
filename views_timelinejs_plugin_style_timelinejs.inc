@@ -39,6 +39,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
         'caption' => array('default' => ''),
         'credit' => array('default' => ''),
         'media' => array('default' => ''),
+        'thumbnail' => array('default' => ''),
         'group' => array('default' => ''),
         'start_date' => array('default' => ''),
         'end_date' => array('default' => ''),
@@ -207,7 +208,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     $form['timeline_fields']['background_color'] = array(
       '#type' => 'select',
       '#options' => $view_fields_labels,
-      '#title' => t('Background_color'),
+      '#title' => t('Background color'),
       '#description' => t('The selected field should contain a string representing a CSS color, in hexadecimal (e.g. #0f9bd1) or a valid <a href="@color-keywords">CSS color keyword</a>.', array('@color-keywords' => 'https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#Color_keywords')),
       '#default_value' => $this->options['timeline_fields']['background_color'],
     );
@@ -231,6 +232,13 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#description' => t('The selected field may contain any text, including HTML markup.'),
       '#options' => $view_fields_labels,
       '#default_value' => $this->options['timeline_fields']['caption'],
+    );
+    $form['timeline_fields']['thumbnail'] = array(
+      '#type' => 'select',
+      '#options' => $view_fields_labels,
+      '#title' => t('Media thumbnail'),
+      '#description' => t('The selected field should contain a raw URL for an image to use in the timenav marker for this event. If omitted, TimelineJS will use an icon based on the type of media.  Special handling is included for Image fields because they have no raw URL formatter.'),
+      '#default_value' => $this->options['timeline_fields']['thumbnail'],
     );
     $form['timeline_fields']['group'] = array(
       '#type' => 'select',
@@ -534,7 +542,17 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     }
 
     $media = new TimelineMedia($url);
-    $media->setThumbnail($url);
+    if ($this->options['timeline_fields']['thumbnail']) {
+      $thumbnail = $this->get_field($this->view->row_index, $this->options['timeline_fields']['thumbnail']);
+
+      // Special handling because core Image fields have no raw URL formatter.
+      // Check to see if we don't have a raw URL.
+      if (!filter_var($thumbnail, FILTER_VALIDATE_URL)) {
+        // Attempt to extract a URL from an img or anchor tag in the string.
+        $thumbnail = $this->extract_url($thumbnail);
+      }
+      $media->setThumbnail($thumbnail);
+    }
     if ($this->options['timeline_fields']['caption']) {
       $media->setCaption($this->get_field($this->view->row_index, $this->options['timeline_fields']['caption']));
     }
