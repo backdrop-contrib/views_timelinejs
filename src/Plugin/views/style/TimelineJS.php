@@ -187,7 +187,6 @@ class TimelineJS extends StylePluginBase {
       '#type' => 'select',
       '#options' => $view_fields_labels,
       '#title' => $this->t('Headline'),
-      '#required' => TRUE,
       '#description' => $this->t('The selected field may contain any text, including HTML markup.'),
       '#default_value' => $this->options['timeline_fields']['headline'],
     ];
@@ -203,14 +202,14 @@ class TimelineJS extends StylePluginBase {
       '#options' => $view_fields_labels,
       '#title' => $this->t('Start date'),
       '#required' => TRUE,
-      '#description' => $this->t('The selected field should contain a string representing a date conforming to a <a href="@php-manual">PHP supported date and time format</a>.', ['@php-manual' => 'http://php.net/manual/en/datetime.formats.php']),
+      '#description' => $this->t('The selected field should contain a string representing a date conforming to a <a href="@php-manual">PHP supported date and time format</a>.  Start dates are required by event slides and eras.  If this mapping is not configured or if the field does not output dates in a valid format, then the slides or eras will not be added to the timeline.', ['@php-manual' => 'http://php.net/manual/en/datetime.formats.php']),
       '#default_value' => $this->options['timeline_fields']['start_date'],
     ];
     $form['timeline_fields']['end_date'] = [
       '#type' => 'select',
       '#options' => $view_fields_labels,
       '#title' => $this->t('End date'),
-      '#description' => $this->t('The selected field should contain a string representing a date conforming to a <a href="@php-manual">PHP supported date and time format</a>.', ['@php-manual' => 'http://php.net/manual/en/datetime.formats.php']),
+      '#description' => $this->t('The selected field should contain a string representing a date conforming to a <a href="@php-manual">PHP supported date and time format</a>.  End dates are required by eras.  If this mapping is not configured or if the field does not output dates in a valid format, then the eras will not be added to the timeline.', ['@php-manual' => 'http://php.net/manual/en/datetime.formats.php']),
       '#default_value' => $this->options['timeline_fields']['end_date'],
     ];
     $form['timeline_fields']['display_date'] = [
@@ -288,23 +287,12 @@ class TimelineJS extends StylePluginBase {
   /**
    * {@inheritdoc}
    */
-  function validate() {
-    $errors = parent::validate();
-
-    // Validate that fields have been assigned to the required options.
-    foreach (['start_date', 'headline'] as $required_option) {
-      if (empty($this->options['timeline_fields'][$required_option])) {
-        $errors[] = $this->t('The TimelineJS plugin requires specifying which views fields to use for the event slides.');
-        break;
-      }
-    }
-    return $errors;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   function render() {
+    // Return if the start date field mapping is not configured.
+    if (empty($this->options['timeline_fields']['start_date'])) {
+      drupal_set_message(t('The Start date field mapping must be configured in the TimelineJS format settings before any slides or eras can be rendered.'), 'warning');
+      return;
+    }
     $timeline = new Timeline();
 
     // Render the fields.  If it isn't done now then the row_index will be unset

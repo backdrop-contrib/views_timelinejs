@@ -60,10 +60,11 @@ Using the Plugin
    you want to strip tags from the body text, use the "Rewrite results" ->
    "Strip HTML tags" option in that field's settings.
 4. Click the Settings link in the Format section.  Edit the general
-   configuration of the timeline display.  Then add field mappings.  If you do
-   not select a field mapping for all the required elements, you will get errors
-   on the view.  See the section on "Configuring the Plugin" for more
-   information.
+   configuration of the timeline display.  Then add field mappings.  Start dates
+   are required by event slides and eras.  End dates are also required by eras.
+   If these mappings are not configured or if the fields do not contain dates in
+   a valid format, then the slides or eras will not be added to the timeline.
+   See the section on "Configuring the Plugin" for more information.
 5. Click "Save" in the view to complete the configuration. The preview display
    on the Views edit interface shows the data used by TimelineJS.  To see the
    TimelineJS display, access the view page that was just created.
@@ -93,9 +94,17 @@ you could use.
   conforming to a [PHP supported date and time format]
   (http://php.net/manual/en/datetime.formats.php).
 
+  Start dates are required by event slides and eras.  If this mapping is not
+  configured or if the field does not output dates in a valid format, then the
+  slides or eras will not be added to the timeline.
+
 * End date - The selected field should contain a string representing a date
   conforming to a [PHP supported date and time format]
   (http://php.net/manual/en/datetime.formats.php).
+
+  End dates are required by eras.  If this mapping is not configured or if the
+  field does not output dates in a valid format, then the eras will not be added
+  to the timeline.
 
 * Display date - The selected field should contain a string.  TimelineJS will
   display this value instead of the values of the start and end date fields.
