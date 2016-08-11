@@ -257,27 +257,52 @@ Cons:
 ### Separate Link, Image, and Text fields
 Using multiple fields is possible if you properly configure your view.  You have
 to set up your fields so that if one field is empty, it will fall back to
-the output of another field.  You do this by editing the No Results Behavior of
-a field in Views.
+the output of another field, in successive order.  You do this by editing the No
+Results Behavior of a field in Views.
 
-For example, if you know that you will only need to embed images and supported
-media, add an Image field and a Link field to your entity.  Add the link field
-to your view, then the image field.  The order is important!  Change the No
-Results Behavior of the image field, pasting the Replacement Pattern for the
-link field, e.g. ```{{ field_timeline_media_url }}```, into the No Results Text
-and uncheck "Hide rewriting if empty."  If the image field is empty, it will
-fall back to outputting the URL that is given by the link field.
+For example, if you know that you will only need to embed supported media and
+images, follow these steps:
 
-You can do the same thing with a Link, Image, and Text field in order to support
-all possible media, but it will require you to download and enable the Image URL
-Formatter module.  If you try to override an empty field with the output from an
-Image field, then the Image field's HTML will not be embeddable by the timeline.
-Image URL Formatter will give you a raw URL that will work just like a raw URL
-from a Link field.  Replacing an empty field with the output from a Text field
-won't work for the exact same reason.  The HTML entities will be escaped and
-won't be embeddable.  So once again, the order of the fields is important.  In
-this configuration the Link and Image fields can be placed in either order, but
-the Text field must be added last.
+1. Add a Link field and Image field to your slide entity.
+2. When you create your view, add those fields.  Place the Link field above the
+   Image field in the field list.  The order is important!
+3. Change the No Results Behavior of the image field, pasting the Replacement
+   Pattern for the link field, e.g. ```{{ field_timeline_media_url }}```, into
+   the No Results Text.
+4. In the Format settings, change the Media field mapping to map to your Image
+   field.
+
+With this configuration if the image field is empty, it will fall back to
+outputting the URL that is given by the link field.
+
+Why was the order of the fields important?  The reason is that Views will
+escape HTML entities in fields that are used as replacement patterns.  If any
+replacement field outputs HTML, then TimelineJS will not be able to render the
+media.  Getting around this problem is the tricky part of setting up the view.
+You can only have one media field that outputs HTML; other fields used as
+replacement values must output a raw URL.  That one HTML field must be placed
+below the other media fields in the list.  The last field is the one that gets
+mapped in the Format settings.
+
+Here is another example with a Link, Image, and Text field in order to support
+all possible media, including ```<blockquote>```.  Because there are two fields
+that will output HTML you will have to do some extra configuration.
+
+1. Download an enable the [Image URL Formatter]
+(https://www.drupal.org/project/image_url_formatter) module.  It will allow you
+to output your Image field as a raw URL.
+2. Add a Link field, an Image field, and a Text field to your slide entity.
+3. Add your new fields to the view.  The Link and Image field can go in any
+   order, but the Text field must be placed below them in the list because it is
+   the one field that will output HTML.
+4. Edit the Image field's settings.  Change the Formatter to Image URL.
+5. Assuming the Link field is first in the field list, paste its replacement
+   pattern, e.g. ```{{ field_timeline_media_url }}```, into the Image field's No
+   Results Text.
+6. Paste the Image field's replacement pattern, e.g.
+   ```{{ field_timeline_media_image }}``` into the Text field's No Results Text.
+7. In the Format settings, change the Media field mapping to map to your Text
+   field.
 
 Pros:
 * Discrete data fields for images and links, including whatever benefits they
