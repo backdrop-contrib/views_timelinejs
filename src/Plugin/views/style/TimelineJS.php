@@ -62,8 +62,13 @@ class TimelineJS extends StylePluginBase {
         'width' => ['default' => '100%'],
         'height' => ['default' => '40em'],
         'hash_bookmark' => ['default' => FALSE],
-        'start_at_end' => ['default' => FALSE],
         'scale_factor' => ['default' => 2],
+        'timenav_position' => ['default' => 'bottom'],
+        'timenav_height' => ['default' => ''],
+        'timenav_height_percentage' => ['default' => ''],
+        'timenav_mobile_height_percentage' => ['default' => ''],
+        'timenav_height_min' => ['default' => ''],
+        'start_at_end' => ['default' => FALSE],
         'language' => ['default' => ''],
       ],
     ];
@@ -115,7 +120,7 @@ class TimelineJS extends StylePluginBase {
     ];
     $form['timeline_config']['width'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Width of the timeline'),
+      '#title' => $this->t('Timeline width'),
       '#description' => $this->t('The width of the timeline, e.g. "100%" or "650px".'),
       '#default_value' => $this->options['timeline_config']['width'],
       '#size' => 10,
@@ -123,7 +128,7 @@ class TimelineJS extends StylePluginBase {
     ];
     $form['timeline_config']['height'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Height of the timeline'),
+      '#title' => $this->t('Timeline height'),
       '#description' => $this->t('The height of the timeline, e.g. "40em" or "650px".  Percent values are not recommended for the height.'),
       '#default_value' => $this->options['timeline_config']['height'],
       '#size' => 10,
@@ -140,6 +145,47 @@ class TimelineJS extends StylePluginBase {
       '#title' => $this->t('Scale factor'),
       '#description' => $this->t('How many screen widths wide the timeline should be at first presentation.'),
       '#default_value' => $this->options['timeline_config']['scale_factor'],
+    ];
+    $form['timeline_config']['timenav_position'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Timeline navigation position'),
+      '#options' => [
+        'bottom' => $this->t('Bottom'),
+        'top' => $this->t('Top'),
+      ],
+      '#default_value' => $this->options['timeline_config']['timenav_position'],
+    ];
+    $form['timeline_config']['timenav_height'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Timeline navigation height'),
+      '#description' => $this->t('The height of the timeline navigation, in pixels.  Enter an integer value.'),
+      '#default_value' => $this->options['timeline_config']['timenav_height'],
+      '#size' => 10,
+      '#maxlength' => 10,
+    ];
+    $form['timeline_config']['timenav_height_percentage'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Timeline navigation height percentage'),
+      '#description' => $this->t('The height of the timeline navigation, in percent.  Enter an integer value.  Overridden by the Timeline navigation height setting.'),
+      '#default_value' => $this->options['timeline_config']['timenav_height_percentage'],
+      '#size' => 10,
+      '#maxlength' => 10,
+    ];
+    $form['timeline_config']['timenav_mobile_height_percentage'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Timeline navigation mobile height percentage'),
+      '#description' => $this->t('The height of the timeline navigation on mobile device screens, in percent.  Enter an integer value.'),
+      '#default_value' => $this->options['timeline_config']['timenav_mobile_height_percentage'],
+      '#size' => 10,
+      '#maxlength' => 10,
+    ];
+    $form['timeline_config']['timenav_height_min'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Timeline navigation height minimum'),
+      '#description' => $this->t('The minimum height of the timeline navigation, in pixels.  Enter an integer value.'),
+      '#default_value' => $this->options['timeline_config']['timenav_height_min'],
+      '#size' => 10,
+      '#maxlength' => 10,
     ];
     $form['timeline_config']['start_at_end'] = [
       '#type' => 'checkbox',
