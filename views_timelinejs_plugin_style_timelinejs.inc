@@ -226,14 +226,14 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#options' => $view_fields_labels,
       '#title' => t('Start date'),
       '#required' => TRUE,
-      '#description' => t('The selected field should contain a string representing a date conforming to a <a href="@php-manual">PHP supported date and time format</a>.  Start dates are required by event slides and eras.  If this mapping is not configured or if the field does not output dates in a valid format, then the slides or eras will not be added to the timeline.', ['@php-manual' => 'http://php.net/manual/en/datetime.formats.php']),
+      '#description' => t('The selected field should contain a string representing a date conforming to a <a href="@php-manual">PHP supported date and time format</a>.  Start dates are required by event slides and eras.  If this mapping is not configured or if the field does not output dates in a valid format, then the slides or eras will not be added to the timeline.', array('@php-manual' => 'http://php.net/manual/en/datetime.formats.php')),
       '#default_value' => $this->options['timeline_fields']['start_date'],
     );
     $form['timeline_fields']['end_date'] = array(
       '#type' => 'select',
       '#options' => $view_fields_labels,
       '#title' => t('End date'),
-      '#description' => t('The selected field should contain a string representing a date conforming to a <a href="@php-manual">PHP supported date and time format</a>.  End dates are required by eras.  If this mapping is not configured or if the field does not output dates in a valid format, then the eras will not be added to the timeline.', ['@php-manual' => 'http://php.net/manual/en/datetime.formats.php']),
+      '#description' => t('The selected field should contain a string representing a date conforming to a <a href="@php-manual">PHP supported date and time format</a>.  End dates are required by eras.  If this mapping is not configured or if the field does not output dates in a valid format, then the eras will not be added to the timeline.', array('@php-manual' => 'http://php.net/manual/en/datetime.formats.php')),
       '#default_value' => $this->options['timeline_fields']['end_date'],
     );
     $form['timeline_fields']['display_date'] = array(
