@@ -703,8 +703,19 @@ class TimelineJS extends StylePluginBase {
    */
   protected function extractUrl($html) {
     if (!empty($html)) {
+      // Disable libxml errors.
+      $previous_use_errors = libxml_use_internal_errors(TRUE);
+
       $document = new DOMDocument();
       $document->loadHTML($html);
+
+      // Handle XML errors.
+      foreach (libxml_get_errors() as $error) {
+        $this->handleXmlErrors($error, $html);
+      }
+
+      // Restore the previous error setting.
+      libxml_use_internal_errors($previous_use_errors);
 
       // Check for anchor tags.
       $anchor_tags = $document->getElementsByTagName('a');
@@ -719,6 +730,19 @@ class TimelineJS extends StylePluginBase {
       }
     }
     return $html;
+  }
+
+  /**
+   * Sets Drupal messages to inform users of HTML parsing errors.
+   *
+   * @param \LibXMLError $error
+   *   Contains information about the XML parsing error.
+   * @param type $html
+   *   Contains the original HTML that was parsed.
+   */
+  protected function handleXmlErrors(\LibXMLError $error, $html) {
+    $message = $this->t('A media field has an error in its HTML.<br>Error message: @message<br>Views result row: @row<br>HTML: <pre>@html</pre>', ['@message' => $error->message, '@row' => $this->view->row_index, '@html' => $html]);
+    drupal_set_message($message, 'warning');
   }
 
   /**
