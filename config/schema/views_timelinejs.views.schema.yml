@@ -21,7 +21,7 @@ views.style.timelinejs:
           type: boolean
           label: 'Initialize the timeline on the last slide'
         scale_factor:
-          type: integer
+          type: float
           label: 'How many screen widths wide the timeline should be upon first presentation'
         language:
           type: string

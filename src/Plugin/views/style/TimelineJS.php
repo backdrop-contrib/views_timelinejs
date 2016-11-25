@@ -145,6 +145,9 @@ class TimelineJS extends StylePluginBase {
       '#title' => $this->t('Scale factor'),
       '#description' => $this->t('How many screen widths wide the timeline should be at first presentation.'),
       '#default_value' => $this->options['timeline_config']['scale_factor'],
+      '#min' => 0,
+      '#max' => 10,
+      '#step' => 0.25,
     ];
     $form['timeline_config']['timenav_position'] = [
       '#type' => 'select',

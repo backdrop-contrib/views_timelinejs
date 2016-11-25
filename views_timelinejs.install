@@ -1,0 +1,12 @@
+<?php
+/**
+ * @file
+ * Contains install, uninstall, and update hooks for Views TimelineJS.
+ */
+
+/**
+ * Flushes all caches following the plugin scale_factor option schema change.
+ */
+function views_timelinejs_update_8301() {
+  drupal_flush_all_caches();
+}
