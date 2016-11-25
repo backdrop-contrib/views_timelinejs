@@ -108,6 +108,8 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
       '#title' => t('Scale factor'),
       '#description' => t('How many screen widths wide the timeline should be at first presentation.'),
       '#options' => array(
+        '0.25' => t('0.25'),
+        '0.5' => t('0.5'),
         '1' => t('1'),
         '2' => t('2'),
         '3' => t('3'),
