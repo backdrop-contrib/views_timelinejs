@@ -6,7 +6,7 @@ timelinejs.cdn:
     url: https://github.com/NUKnightLab/TimelineJS3/blob/master/LICENSE
     gpl-compatible: false
   css:
-    theme:
+    component:
       https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css: { type: external }
   js:
     https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js: { type: external }
@@ -19,7 +19,7 @@ timelinejs.local:
     url: https://github.com/NUKnightLab/TimelineJS3/blob/master/LICENSE
     gpl-compatible: false
   css:
-    theme:
+    component:
       /libraries/TimelineJS3/compiled/css/timeline.css: { }
   js:
     /libraries/TimelineJS3/compiled/js/timeline.js: { }

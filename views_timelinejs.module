@@ -26,7 +26,7 @@ function views_timelinejs_library_info_build() {
         'gpl-compatible' => FALSE,
       ],
       'css' => [
-        'theme' => [
+        'component' => [
           'https://cdn.knightlab.com/libs/timeline3/latest/css/fonts/font.' . $set . '.css' => ['type' => 'external'],
         ],
       ],
@@ -40,7 +40,7 @@ function views_timelinejs_library_info_build() {
         'gpl-compatible' => FALSE,
       ],
       'css' => [
-        'theme' => [
+        'component' => [
           '/libraries/TimelineJS3/compiled/css/fonts/font.' . $set . '.css' => [],
         ],
       ],
@@ -48,6 +48,56 @@ function views_timelinejs_library_info_build() {
   }
 
   return $libraries;
+}
+
+/**
+ * Implements hook_library_info_alter().
+ *
+ * Provides backward compatibility for sites that originally installed version
+ * 8.x-3.0 which gave the TimelineJS CSS libraries a weight of "theme."
+ *
+ * @todo Remove this in the next major version.
+ *
+ * @see https://www.drupal.org/node/2856403
+ */
+function views_timelinejs_library_info_alter(&$libraries, $extension) {
+  $config = \Drupal::config('views_timelinejs.settings');
+  $library_group = $config->get('css_library_group');
+  $valid_groups = [
+    'component',
+    'state',
+    'theme',
+  ];
+
+  // Verify that the group has been set and that it is a valid group key.
+  if ($extension == 'views_timelinejs' && isset($library_group) && in_array($library_group, $valid_groups)) {
+    $libraries['timelinejs.cdn']['css'] = [
+      $library_group => [
+        'https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css' => [
+          'type' => 'external',
+        ],
+      ],
+    ];
+    $libraries['timelinejs.local']['css'] = [
+      $library_group => [
+        '/libraries/TimelineJS3/compiled/css/timeline.css' => [],
+      ],
+    ];
+    foreach (array_keys(_views_timelinejs_list_font_sets()) as $set) {
+      $libraries['timelinejs.' . $set . '.cdn']['css'] = [
+        $library_group => [
+          'https://cdn.knightlab.com/libs/timeline3/latest/css/fonts/font.' . $set . '.css' => [
+            'type' => 'external'
+          ],
+        ],
+      ];
+      $libraries['timelinejs.' . $set . '.local']['css'] = [
+        $library_group => [
+          '/libraries/TimelineJS3/compiled/css/fonts/font.' . $set . '.css' => [],
+        ],
+      ];
+    }
+  }
 }
 
 /**

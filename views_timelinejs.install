@@ -1,12 +1,18 @@
 <?php
+
 /**
  * @file
  * Contains install, uninstall, and update hooks for Views TimelineJS.
  */
 
 /**
- * Flushes all caches following the plugin scale_factor option schema change.
+ * Sets the TimelineJS CSS library group to 'theme' for existing sites.
+ *
+ * @see https://www.drupal.org/node/2856403
  */
-function views_timelinejs_update_8301() {
-  drupal_flush_all_caches();
+function views_timelinejs_update_8302() {
+  $config = \Drupal::service('config.factory')
+    ->getEditable('views_timelinejs.settings')
+    ->set('css_library_group', 'theme')
+    ->save();
 }
