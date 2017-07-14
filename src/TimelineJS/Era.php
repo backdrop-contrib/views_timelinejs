@@ -14,21 +14,21 @@ class Era implements EraInterface {
   /**
    * The era start date.
    *
-   * @var DateInterface
+   * @var \Drupal\views_timelinejs\TimelineJS\DateInterface
    */
   protected $start_date;
 
   /**
    * The era end date.
    *
-   * @var DateInterface
+   * @var \Drupal\views_timelinejs\TimelineJS\DateInterface
    */
   protected $end_date;
 
   /**
    * The era headline and text.
    *
-   * @var TextInterface
+   * @var \Drupal\views_timelinejs\TimelineJS\TextInterface
    */
   protected $text;
 

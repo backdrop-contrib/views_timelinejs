@@ -16,28 +16,28 @@ class Slide implements SlideInterface {
   /**
    * The slide start date.
    *
-   * @var DateInterface
+   * @var \Drupal\views_timelinejs\TimelineJS\DateInterface
    */
   protected $start_date;
 
   /**
    * The slide end date.
    *
-   * @var DateInterface
+   * @var \Drupal\views_timelinejs\TimelineJS\DateInterface
    */
   protected $end_date;
 
   /**
    * The slide headline and text.
    *
-   * @var TextInterface
+   * @var \Drupal\views_timelinejs\TimelineJS\TextInterface
    */
   protected $text;
 
   /**
    * The slide media and its metadata.
    *
-   * @var MediaInterface
+   * @var \Drupal\views_timelinejs\TimelineJS\MediaInterface
    */
   protected $media;
 
@@ -58,12 +58,12 @@ class Slide implements SlideInterface {
   /**
    * The slide background url and color.
    *
-   * @var BackgroundInterface
+   * @var \Drupal\views_timelinejs\TimelineJS\BackgroundInterface
    */
   protected $background;
 
   /**
-   * The slide autolink property
+   * The slide autolink property.
    *
    * @var bool
    */

@@ -14,7 +14,7 @@ interface TimelineInterface extends ObjectInterface {
   /**
    * Adds a new slide to the timeline's events array.
    *
-   * @param SlideInterface $slide
+   * @param \Drupal\views_timelinejs\TimelineJS\SlideInterface $slide
    *   The new slide.
    */
   public function addEvent(SlideInterface $slide);
@@ -30,7 +30,7 @@ interface TimelineInterface extends ObjectInterface {
   /**
    * Adds a new era to the timeline's eras array.
    *
-   * @param EraInterface $era
+   * @param \Drupal\views_timelinejs\TimelineJS\EraInterface $era
    *   The new era.
    */
   public function addEra(EraInterface $era);
@@ -46,7 +46,7 @@ interface TimelineInterface extends ObjectInterface {
   /**
    * Sets the timeline's title slide.
    *
-   * @param SlideInterface $slide
+   * @param \Drupal\views_timelinejs\TimelineJS\SlideInterface $slide
    *   The new slide.
    */
   public function setTitleSlide(SlideInterface $slide);
@@ -54,7 +54,7 @@ interface TimelineInterface extends ObjectInterface {
   /**
    * Returns the timeline's title slide.
    *
-   * @return SlideInterface
+   * @return \Drupal\views_timelinejs\TimelineJS\SlideInterface
    *   The title slide.
    */
   public function getTitleSlide();

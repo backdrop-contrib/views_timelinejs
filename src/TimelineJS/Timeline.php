@@ -21,7 +21,7 @@ class Timeline implements TimelineInterface {
   /**
    * The timeline's title slide.
    *
-   * @var SlideInterface
+   * @var \Drupal\views_timelinejs\TimelineJS\SlideInterface
    */
   protected $title_slide;
 

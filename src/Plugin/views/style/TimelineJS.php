@@ -407,7 +407,7 @@ class TimelineJS extends StylePluginBase {
   /**
    * Builds a timeline slide from the current views data row.
    *
-   * @return Slide|NULL
+   * @return \Drupal\views_timelinejs\TimelineJS\Slide|null
    *   A slide object or NULL if the start date could not be parsed.
    */
   protected function buildSlide() {
@@ -442,7 +442,7 @@ class TimelineJS extends StylePluginBase {
   /**
    * Builds a timeline title slide from the current views data row.
    *
-   * @return TitleSlide
+   * @return \Drupal\views_timelinejs\TimelineJS\TitleSlide
    *   A slide object.
    */
   protected function buildTitleSlide() {
@@ -464,7 +464,7 @@ class TimelineJS extends StylePluginBase {
   /**
    * Builds a timeline era from the current views data row.
    *
-   * @return Era|NULL
+   * @return \Drupal\views_timelinejs\TimelineJS\Era|null
    *   An era object or NULL if the start or end date could not be parsed.
    */
   protected function buildEra() {
@@ -488,7 +488,7 @@ class TimelineJS extends StylePluginBase {
    * @param string $field
    *   The machine name of the date field.
    *
-   * @return Date|NULL
+   * @return \Drupal\views_timelinejs\TimelineJS\Date|null
    *   A date object or NULL if the start date could not be parsed.
    */
   protected function buildDate($field) {
@@ -531,7 +531,7 @@ class TimelineJS extends StylePluginBase {
   /**
    * Builds timeline text from the current data row.
    *
-   * @return Text
+   * @return \Drupal\views_timelinejs\TimelineJS\Text
    *   A text object.
    */
   protected function buildText() {
@@ -567,7 +567,7 @@ class TimelineJS extends StylePluginBase {
   /**
    * Builds a timeline background from the current data row.
    *
-   * @return Background
+   * @return \Drupal\views_timelinejs\TimelineJS\Background
    *   A background object.
    */
   protected function buildBackground() {
@@ -595,7 +595,7 @@ class TimelineJS extends StylePluginBase {
   /**
    * Builds timeline media from the current data row.
    *
-   * @return Media|NULL
+   * @return \Drupal\views_timelinejs\TimelineJS\Media|null
    *   A media object or NULL if the URL is empty.
    */
   protected function buildMedia() {
@@ -660,7 +660,7 @@ class TimelineJS extends StylePluginBase {
   /**
    * Checks a slide date to see if it should be displayed first in the timeline.
    *
-   * @param DateTime $date
+   * @param \DateTime $date
    *   A date from a TimelineJS slide.
    */
   protected function checkStartSlide(DateTime $date) {
@@ -740,7 +740,7 @@ class TimelineJS extends StylePluginBase {
    *
    * @param \LibXMLError $error
    *   Contains information about the XML parsing error.
-   * @param type $html
+   * @param mixed $html
    *   Contains the original HTML that was parsed.
    */
   protected function handleXmlErrors(\LibXMLError $error, $html) {

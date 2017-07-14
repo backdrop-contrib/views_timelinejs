@@ -14,7 +14,7 @@ interface SlideInterface extends ObjectInterface {
   /**
    * Sets the media for this slide.
    *
-   * @param MediaInterface $media
+   * @param \Drupal\views_timelinejs\TimelineJS\MediaInterface $media
    *   The media object.
    */
   public function setMedia(MediaInterface $media);
@@ -38,7 +38,7 @@ interface SlideInterface extends ObjectInterface {
   /**
    * Sets the background for this slide.
    *
-   * @param BackgroundInterface $backgound
+   * @param \Drupal\views_timelinejs\TimelineJS\BackgroundInterface $backgound
    *   The background object.
    */
   public function setBackground(BackgroundInterface $backgound);
