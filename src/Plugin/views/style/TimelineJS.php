@@ -54,7 +54,7 @@ class TimelineJS extends StylePluginBase {
   /**
    * {@inheritdoc}
    */
-  function defineOptions() {
+  public function defineOptions() {
     $options = parent::defineOptions();
 
     $options['timeline_config'] = [
@@ -102,7 +102,7 @@ class TimelineJS extends StylePluginBase {
   /**
    * {@inheritdoc}
    */
-  function buildOptionsForm(&$form, FormStateInterface $form_state) {
+  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     $initial_labels = ['' => $this->t('- None -')];
     $view_fields_labels = $this->displayHandler->getFieldLabels();
     $view_fields_labels = array_merge($initial_labels, $view_fields_labels);
@@ -336,7 +336,7 @@ class TimelineJS extends StylePluginBase {
   /**
    * {@inheritdoc}
    */
-  function render() {
+  public function render() {
     // Return if the start date field mapping is not configured.
     if (empty($this->options['timeline_fields']['start_date'])) {
       drupal_set_message(t('The Start date field mapping must be configured in the TimelineJS format settings before any slides or eras can be rendered.'), 'warning');
