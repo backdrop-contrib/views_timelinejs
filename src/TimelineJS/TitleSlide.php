@@ -20,7 +20,7 @@ class TitleSlide extends Slide {
    * {@inheritdoc}
    */
   public function buildArray() {
-    $slide = array();
+    $slide = [];
     if (!empty($this->text)) {
       $slide['text'] = $this->text->buildArray();
     }

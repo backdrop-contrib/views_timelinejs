@@ -34,7 +34,7 @@ class Background implements BackgroundInterface {
    * {@inheritdoc}
    */
   public function buildArray() {
-    $background = array();
+    $background = [];
     if (!empty($this->url)) {
       $background['url'] = $this->url;
     }

@@ -108,7 +108,7 @@ function views_timelinejs_library_info_alter(&$libraries, $extension) {
  *   filename, i.e. 'font.set-name.css'.
  */
 function _views_timelinejs_list_font_sets() {
-  return array(
+  return [
     'abril-droidsans' => 'Abril Fatface & Droid Sans',
     'amatic-andika' => 'Amatic & Andika',
     'bevan-pontanosans' => 'Bevan & Pontano Sans',
@@ -130,7 +130,7 @@ function _views_timelinejs_list_font_sets() {
     'rufina-sintony' => 'Rufina & Sintony',
     'ubuntu' => 'Ubuntu',
     'unicaone-vollkorn' => 'Unica One & Vollkorn',
-  );
+  ];
 }
 
 /**

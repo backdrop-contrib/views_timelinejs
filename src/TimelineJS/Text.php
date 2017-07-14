@@ -31,7 +31,7 @@ class Text implements TextInterface {
   }
 
   public function buildArray() {
-    $text = array();
+    $text = [];
     if (!empty($this->headline)) {
       $text['headline'] = $this->headline;
     }

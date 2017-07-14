@@ -30,14 +30,14 @@ class Timeline implements TimelineInterface {
    *
    * @var array
    */
-  protected $events = array();
+  protected $events = [];
 
   /**
    * The timeline's array of eras.
    *
    * @var array
    */
-  protected $eras = array();
+  protected $eras = [];
 
   /**
    * {@inheritdoc}
@@ -106,7 +106,7 @@ class Timeline implements TimelineInterface {
    * {@inheritdoc}
    */
   public function buildArray() {
-    $timeline = array('scale' => $this->scale);
+    $timeline = ['scale' => $this->scale];
     if (!empty($this->title_slide)) {
       $timeline['title'] = $this->title_slide->buildArray();
     }

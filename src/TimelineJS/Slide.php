@@ -139,7 +139,7 @@ class Slide implements SlideInterface {
    * {@inheritdoc}
    */
   public function buildArray() {
-    $slide = array('start_date' => $this->start_date->buildArray());
+    $slide = ['start_date' => $this->start_date->buildArray()];
     // Don't render end dates that are the same as the start date.  TimelineJS
     // won't display them anyway, but skipping them can make the rendered data
     // array smaller.

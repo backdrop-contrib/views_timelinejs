@@ -44,10 +44,10 @@ class Era implements EraInterface {
    * {@inheritdoc}
    */
   public function buildArray() {
-    $era = array(
+    $era = [
       'start_date' => $this->start_date->buildArray(),
       'end_date' => $this->end_date->buildArray(),
-    );
+    ];
     if (!empty($this->text)) {
       $era['text'] = $this->text->buildArray();
     }

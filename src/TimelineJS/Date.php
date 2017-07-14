@@ -46,7 +46,7 @@ class Date extends DateTime implements DateInterface {
     $exploded_date = explode(',', $this->format('Y,n,j,G,i,s'));
 
     // Re-key the date array with the property names that TimelineJS expects.
-    return array(
+    return [
       'year' => $exploded_date[0],
       'month' => $exploded_date[1],
       'day' => $exploded_date[2],
@@ -54,7 +54,7 @@ class Date extends DateTime implements DateInterface {
       'minute' => $exploded_date[4],
       'second' => $exploded_date[5],
       'display_date' => $this->date_string,
-    );
+    ];
   }
 
 }

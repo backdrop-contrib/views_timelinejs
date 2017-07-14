@@ -66,7 +66,7 @@ class Media implements MediaInterface {
    * {@inheritdoc}
    */
   public function buildArray() {
-    $media = array('url' => $this->url);
+    $media = ['url' => $this->url];
     if (!empty($this->caption)) {
       $media['caption'] = $this->caption;
     }
