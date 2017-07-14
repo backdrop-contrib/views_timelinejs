@@ -4,5 +4,5 @@ description: Provides a View style that displays rows in a Timeline.
 package: Views
 core: 8.x
 dependencies:
-  - views
+  - drupal:views
 configure: views_timelinejs.admin
