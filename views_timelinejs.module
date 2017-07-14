@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Views TimelineJS API, theming, libraries, etc.
@@ -12,7 +13,6 @@ use Drupal\Core\Template\Attribute;
  * Implements hook_library_info_build().
  */
 function views_timelinejs_library_info_build() {
-  //global $base_url;
   $libraries = [];
 
   // Create a library for each TimelineJS3 alternate font set.
@@ -87,7 +87,7 @@ function views_timelinejs_library_info_alter(&$libraries, $extension) {
       $libraries['timelinejs.' . $set . '.cdn']['css'] = [
         $library_group => [
           'https://cdn.knightlab.com/libs/timeline3/latest/css/fonts/font.' . $set . '.css' => [
-            'type' => 'external'
+            'type' => 'external',
           ],
         ],
       ];
@@ -240,14 +240,14 @@ function views_timelinejs_help($route_name, RouteMatchInterface $route_match) {
  *
  * Default template: views-timelinejs-view-timelinejs.html.twig.
  *
- * @param array $variables
+ * @param array $vars
  *   An associative array containing:
  *   - view: A ViewExecutable object.
  *   - rows: The raw row data.
  *   - timeline_options: TimelineJS presentation options.
  *   - timeline_font: The name of a TimelineJS font set.
  */
-function template_preprocess_views_timelinejs_view_timelinejs(&$vars) {
+function template_preprocess_views_timelinejs_view_timelinejs(array &$vars) {
   $config = \Drupal::config('views_timelinejs.settings');
   $library_location = $config->get('library_location');
   $view = $vars['view'];

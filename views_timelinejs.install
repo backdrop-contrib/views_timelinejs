@@ -11,7 +11,7 @@
  * @see https://www.drupal.org/node/2856403
  */
 function views_timelinejs_update_8302() {
-  $config = \Drupal::service('config.factory')
+  \Drupal::service('config.factory')
     ->getEditable('views_timelinejs.settings')
     ->set('css_library_group', 'theme')
     ->save();

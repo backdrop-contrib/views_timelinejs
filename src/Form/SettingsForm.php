@@ -30,16 +30,16 @@ class SettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('views_timelinejs.settings');
 
-  $form['library_location'] = array(
-    '#type' => 'radios',
-    '#title' => $this->t('TimelineJS library location'),
-    '#description' => $this->t('If serving the files from a local path, the library MUST be located in libraries/TimelineJS3.  See the module README file for more information.'),
-    '#options' => array(
-      'cdn' => $this->t('NU Knight Lab CDN'),
-      'local' => $this->t('Local path (libraries/TimelineJS3)'),
-    ),
-    '#default_value' => $config->get('library_location'),
-  );
+    $form['library_location'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('TimelineJS library location'),
+      '#description' => $this->t('If serving the files from a local path, the library MUST be located in libraries/TimelineJS3.  See the module README file for more information.'),
+      '#options' => [
+        'cdn' => $this->t('NU Knight Lab CDN'),
+        'local' => $this->t('Local path (libraries/TimelineJS3)'),
+      ],
+      '#default_value' => $config->get('library_location'),
+    ];
 
     return parent::buildForm($form, $form_state);
   }

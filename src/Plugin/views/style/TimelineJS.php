@@ -369,6 +369,7 @@ class TimelineJS extends StylePluginBase {
             $timeline->setTitleSlide($slide);
           }
           break;
+
         case 'era':
         case 'timeline_era':
           $era = $this->buildEra();
@@ -377,6 +378,7 @@ class TimelineJS extends StylePluginBase {
             $timeline->addEra($era);
           }
           break;
+
         default:
           $slide = $this->buildSlide();
           // Ensure the slide was built.
