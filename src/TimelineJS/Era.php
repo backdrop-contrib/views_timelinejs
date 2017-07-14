@@ -28,6 +28,16 @@ class Era implements EraInterface {
    */
   protected $text;
 
+  /**
+   * Constructs a new Era object.
+   *
+   * @param \Drupal\views_timelinejs\TimelineJS\DateInterface $start_date
+   *   The era's start date.
+   * @param \Drupal\views_timelinejs\TimelineJS\DateInterface $end_date
+   *   The era's end date.
+   * @param \Drupal\views_timelinejs\TimelineJS\TextInterface|null $text
+   *   Text to display on the era.
+   */
   public function __construct(DateInterface $start_date, DateInterface $end_date, TextInterface $text = NULL) {
     $this->startDate = $start_date;
     $this->endDate = $end_date;

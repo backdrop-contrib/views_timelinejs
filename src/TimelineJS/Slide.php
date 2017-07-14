@@ -70,6 +70,16 @@ class Slide implements SlideInterface {
    */
   protected $uniqueId;
 
+  /**
+   * Constructs a new Slide object.
+   *
+   * @param \Drupal\views_timelinejs\TimelineJS\DateInterface $start_date
+   *   The slide's start date.
+   * @param \Drupal\views_timelinejs\TimelineJS\DateInterface|null $end_date
+   *   The slide's end date.
+   * @param \Drupal\views_timelinejs\TimelineJS\TextInterface|null $text
+   *   Text to display on the slide.
+   */
   public function __construct(DateInterface $start_date, DateInterface $end_date = NULL, TextInterface $text = NULL) {
     $this->startDate = $start_date;
     if (!empty($end_date)) {

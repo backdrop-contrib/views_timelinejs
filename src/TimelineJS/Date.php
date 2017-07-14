@@ -18,6 +18,18 @@ class Date extends DateTime implements DateInterface {
    */
   protected $dateString;
 
+  /**
+   * Constructs a new Date object.
+   *
+   * @param string $date_string
+   *   A string representing a date.
+   * @param \DateTimeZone|null $timezone
+   *   The date's timezone.
+   *
+   * @throws \Exception
+   *
+   * @todo Change the exception to an InvalidArgumentException.
+   */
   public function __construct($date_string, DateTimeZone $timezone = NULL) {
     $this->dateString = $date_string;
 

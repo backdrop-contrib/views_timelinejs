@@ -35,6 +35,12 @@ class Media implements MediaInterface {
    */
   protected $thumbnail;
 
+  /**
+   * Constructs a new Media object.
+   *
+   * @param string $url
+   *   The URL of the media resource.
+   */
   public function __construct($url) {
     $this->url = $url;
   }

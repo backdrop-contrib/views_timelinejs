@@ -23,11 +23,22 @@ class Text implements TextInterface {
    */
   protected $text;
 
+  /**
+   * Constructs a new Text object.
+   *
+   * @param string $headline
+   *   The title of the text resource.
+   * @param string $text
+   *   The body of the text resource.
+   */
   public function __construct($headline = '', $text = '') {
     $this->headline = $headline;
     $this->text = $text;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildArray() {
     $text = [];
     if (!empty($this->headline)) {

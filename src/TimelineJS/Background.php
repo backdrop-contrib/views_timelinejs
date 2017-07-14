@@ -23,6 +23,14 @@ class Background implements BackgroundInterface {
    */
   protected $color;
 
+  /**
+   * Constructs a new Background object.
+   *
+   * @param string $url
+   *   The background image URL.
+   * @param string $color
+   *   The background color.
+   */
   public function __construct($url = '', $color = '') {
     $this->url = $url;
     $this->color = $color;

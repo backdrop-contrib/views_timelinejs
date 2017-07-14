@@ -48,6 +48,8 @@ class TimelineJS extends StylePluginBase {
 
   /**
    * The row index of the slide at which the timeline should first be rendered.
+   *
+   * @var int
    */
   protected $startSlideIndex;
 

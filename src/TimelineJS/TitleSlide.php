@@ -7,6 +7,12 @@ namespace Drupal\views_timelinejs\TimelineJS;
  */
 class TitleSlide extends Slide {
 
+  /**
+   * Constructs a new TitleSlide object.
+   *
+   * @param \Drupal\views_timelinejs\TimelineJS\TextInterface|null $text
+   *   Text to display on the title slide.
+   */
   public function __construct(TextInterface $text = NULL) {
     if (!empty($text)) {
       $this->text = $text;
