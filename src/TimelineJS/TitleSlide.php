@@ -2,9 +2,6 @@
 
 namespace Drupal\views_timelinejs\TimelineJS;
 
-use Drupal\views_timelinejs\TimelineJS\Slide;
-use Drupal\views_timelinejs\TimelineJS\TextInterface;
-
 /**
  * Defines a TimelineJS3 title slide.
  */

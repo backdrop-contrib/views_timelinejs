@@ -2,10 +2,6 @@
 
 namespace Drupal\views_timelinejs\TimelineJS;
 
-use Drupal\views_timelinejs\TimelineJS\DateInterface;
-use Drupal\views_timelinejs\TimelineJS\EraInterface;
-use Drupal\views_timelinejs\TimelineJS\TextInterface;
-
 /**
  * Defines a TimelineJS3 era.
  */

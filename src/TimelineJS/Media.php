@@ -2,8 +2,6 @@
 
 namespace Drupal\views_timelinejs\TimelineJS;
 
-use Drupal\views_timelinejs\TimelineJS\MediaInterface;
-
 /**
  * Defines a TimelineJS3 media object.
  */

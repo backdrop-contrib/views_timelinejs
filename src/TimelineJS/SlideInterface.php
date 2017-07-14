@@ -2,10 +2,6 @@
 
 namespace Drupal\views_timelinejs\TimelineJS;
 
-use Drupal\views_timelinejs\TimelineJS\BackgroundInterface;
-use Drupal\views_timelinejs\TimelineJS\MediaInterface;
-use Drupal\views_timelinejs\TimelineJS\ObjectInterface;
-
 /**
  * Provides an interface for defining TimelineJS3 slides.
  */

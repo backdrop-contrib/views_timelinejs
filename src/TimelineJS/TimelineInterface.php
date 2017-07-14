@@ -2,10 +2,6 @@
 
 namespace Drupal\views_timelinejs\TimelineJS;
 
-use Drupal\views_timelinejs\TimelineJS\EraInterface;
-use Drupal\views_timelinejs\TimelineJS\ObjectInterface;
-use Drupal\views_timelinejs\TimelineJS\SlideInterface;
-
 /**
  * Provides an interface for defining TimelineJS3 timelines.
  */

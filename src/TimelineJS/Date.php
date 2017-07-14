@@ -4,7 +4,6 @@ namespace Drupal\views_timelinejs\TimelineJS;
 
 use DateTime;
 use DateTimeZone;
-use Drupal\views_timelinejs\TimelineJS\DateInterface;
 use Exception;
 
 /**

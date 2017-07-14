@@ -2,8 +2,6 @@
 
 namespace Drupal\views_timelinejs\TimelineJS;
 
-use Drupal\views_timelinejs\TimelineJS\BackgroundInterface;
-
 /**
  * Defines a TimelineJS3 background object.
  */
