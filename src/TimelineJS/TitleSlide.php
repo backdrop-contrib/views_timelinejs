@@ -30,8 +30,8 @@ class TitleSlide extends Slide {
     if (!$this->autolink) {
       $slide['autolink'] = FALSE;
     }
-    if (!empty($this->unique_id)) {
-      $slide['unique_id'] = $this->unique_id;
+    if (!empty($this->uniqueId)) {
+      $slide['unique_id'] = $this->uniqueId;
     }
     // Filter any empty values before returning.
     return array_filter($slide);

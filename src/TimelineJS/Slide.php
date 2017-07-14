@@ -12,14 +12,14 @@ class Slide implements SlideInterface {
    *
    * @var \Drupal\views_timelinejs\TimelineJS\DateInterface
    */
-  protected $start_date;
+  protected $startDate;
 
   /**
    * The slide end date.
    *
    * @var \Drupal\views_timelinejs\TimelineJS\DateInterface
    */
-  protected $end_date;
+  protected $endDate;
 
   /**
    * The slide headline and text.
@@ -47,7 +47,7 @@ class Slide implements SlideInterface {
    *
    * @var string
    */
-  protected $display_date;
+  protected $displayDate;
 
   /**
    * The slide background url and color.
@@ -68,12 +68,12 @@ class Slide implements SlideInterface {
    *
    * @var int|string
    */
-  protected $unique_id;
+  protected $uniqueId;
 
   public function __construct(DateInterface $start_date, DateInterface $end_date = NULL, TextInterface $text = NULL) {
-    $this->start_date = $start_date;
+    $this->startDate = $start_date;
     if (!empty($end_date)) {
-      $this->end_date = $end_date;
+      $this->endDate = $end_date;
     }
     if (!empty($text)) {
       $this->text = $text;
@@ -98,7 +98,7 @@ class Slide implements SlideInterface {
    * {@inheritdoc}
    */
   public function setDisplayDate($display_date) {
-    $this->display_date = $display_date;
+    $this->displayDate = $display_date;
   }
 
   /**
@@ -112,7 +112,7 @@ class Slide implements SlideInterface {
    * {@inheritdoc}
    */
   public function setUniqueId($id) {
-    $this->unique_id = $id;
+    $this->uniqueId = $id;
   }
 
   /**
@@ -133,12 +133,12 @@ class Slide implements SlideInterface {
    * {@inheritdoc}
    */
   public function buildArray() {
-    $slide = ['start_date' => $this->start_date->buildArray()];
+    $slide = ['start_date' => $this->startDate->buildArray()];
     // Don't render end dates that are the same as the start date.  TimelineJS
     // won't display them anyway, but skipping them can make the rendered data
     // array smaller.
-    if (!empty($this->end_date) && $this->start_date != $this->end_date) {
-      $slide['end_date'] = $this->end_date->buildArray();
+    if (!empty($this->endDate) && $this->startDate != $this->endDate) {
+      $slide['end_date'] = $this->endDate->buildArray();
     }
     if (!empty($this->text)) {
       $slide['text'] = $this->text->buildArray();
@@ -149,8 +149,8 @@ class Slide implements SlideInterface {
     if (!empty($this->group)) {
       $slide['group'] = $this->group;
     }
-    if (!empty($this->display_date)) {
-      $slide['display_date'] = $this->display_date;
+    if (!empty($this->displayDate)) {
+      $slide['display_date'] = $this->displayDate;
     }
     if (!empty($this->background)) {
       $slide['background'] = $this->background->buildArray();
@@ -158,8 +158,8 @@ class Slide implements SlideInterface {
     if (!$this->autolink) {
       $slide['autolink'] = FALSE;
     }
-    if (!empty($this->unique_id)) {
-      $slide['unique_id'] = $this->unique_id;
+    if (!empty($this->uniqueId)) {
+      $slide['unique_id'] = $this->uniqueId;
     }
     // Filter any empty values before returning.
     return array_filter($slide);

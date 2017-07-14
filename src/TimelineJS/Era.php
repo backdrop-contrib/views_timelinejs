@@ -12,14 +12,14 @@ class Era implements EraInterface {
    *
    * @var \Drupal\views_timelinejs\TimelineJS\DateInterface
    */
-  protected $start_date;
+  protected $startDate;
 
   /**
    * The era end date.
    *
    * @var \Drupal\views_timelinejs\TimelineJS\DateInterface
    */
-  protected $end_date;
+  protected $endDate;
 
   /**
    * The era headline and text.
@@ -29,8 +29,8 @@ class Era implements EraInterface {
   protected $text;
 
   public function __construct(DateInterface $start_date, DateInterface $end_date, TextInterface $text = NULL) {
-    $this->start_date = $start_date;
-    $this->end_date = $end_date;
+    $this->startDate = $start_date;
+    $this->endDate = $end_date;
     if (!empty($text)) {
       $this->text = $text;
     }
@@ -41,8 +41,8 @@ class Era implements EraInterface {
    */
   public function buildArray() {
     $era = [
-      'start_date' => $this->start_date->buildArray(),
-      'end_date' => $this->end_date->buildArray(),
+      'start_date' => $this->startDate->buildArray(),
+      'end_date' => $this->endDate->buildArray(),
     ];
     if (!empty($this->text)) {
       $era['text'] = $this->text->buildArray();

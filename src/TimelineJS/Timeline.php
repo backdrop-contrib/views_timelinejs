@@ -19,7 +19,7 @@ class Timeline implements TimelineInterface {
    *
    * @var \Drupal\views_timelinejs\TimelineJS\SlideInterface
    */
-  protected $title_slide;
+  protected $titleSlide;
 
   /**
    * The timeline's array of event slides.
@@ -39,14 +39,14 @@ class Timeline implements TimelineInterface {
    * {@inheritdoc}
    */
   public function setTitleSlide(SlideInterface $slide) {
-    $this->title_slide = $slide;
+    $this->titleSlide = $slide;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getTitleSlide() {
-    return $this->title_slide;
+    return $this->titleSlide;
   }
 
   /**
@@ -103,8 +103,8 @@ class Timeline implements TimelineInterface {
    */
   public function buildArray() {
     $timeline = ['scale' => $this->scale];
-    if (!empty($this->title_slide)) {
-      $timeline['title'] = $this->title_slide->buildArray();
+    if (!empty($this->titleSlide)) {
+      $timeline['title'] = $this->titleSlide->buildArray();
     }
     foreach ($this->events as $event) {
       $timeline['events'][] = $event->buildArray();

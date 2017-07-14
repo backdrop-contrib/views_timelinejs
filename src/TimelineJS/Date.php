@@ -13,11 +13,13 @@ class Date extends DateTime implements DateInterface {
 
   /**
    * The original date string that was passed to the constructor.
+   *
+   * @var string
    */
-  protected $date_string;
+  protected $dateString;
 
   public function __construct($date_string, DateTimeZone $timezone = NULL) {
-    $this->date_string = $date_string;
+    $this->dateString = $date_string;
 
     // Disallow empty date strings.  They will cause DateTime::__construct() to
     // return a date object with the current time.
@@ -52,7 +54,7 @@ class Date extends DateTime implements DateInterface {
       'hour' => $exploded_date[3],
       'minute' => $exploded_date[4],
       'second' => $exploded_date[5],
-      'display_date' => $this->date_string,
+      'display_date' => $this->dateString,
     ];
   }
 
