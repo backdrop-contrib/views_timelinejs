@@ -18,8 +18,8 @@ interface TimelineInterface extends ObjectInterface {
   /**
    * Returns the timeline's array of event slides.
    *
-   * @return array
-   *   An array of SlideInterface objects.
+   * @return \Drupal\views_timelinejs\TimelineJS\SlideInterface[]
+   *   An array of slides.
    */
   public function getEvents();
 
@@ -34,8 +34,8 @@ interface TimelineInterface extends ObjectInterface {
   /**
    * Returns the timeline's array of eras.
    *
-   * @return array
-   *   An array of EraInterface objects.
+   * @return \Drupal\views_timelinejs\TimelineJS\EraInterface[]
+   *   An array of eras.
    */
   public function getEras();
 

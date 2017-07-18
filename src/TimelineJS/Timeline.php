@@ -24,14 +24,14 @@ class Timeline implements TimelineInterface {
   /**
    * The timeline's array of event slides.
    *
-   * @var array
+   * @var \Drupal\views_timelinejs\TimelineJS\SlideInterface[]
    */
   protected $events = [];
 
   /**
    * The timeline's array of eras.
    *
-   * @var array
+   * @var \Drupal\views_timelinejs\TimelineJS\EraInterface[]
    */
   protected $eras = [];
 

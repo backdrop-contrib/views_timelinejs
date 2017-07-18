@@ -10,7 +10,7 @@ interface ObjectInterface {
   /**
    * Creates an array representing the TimelineJS javascript object.
    *
-   * @return array
+   * @return mixed[]
    *   The formatted array.
    */
   public function buildArray();
