@@ -4,6 +4,7 @@ namespace Drupal\views_timelinejs\Plugin\views\style;
 
 use DateTime;
 use DOMDocument;
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\style\StylePluginBase;
 use Drupal\views_timelinejs\TimelineJS\Background;
@@ -15,6 +16,7 @@ use Drupal\views_timelinejs\TimelineJS\Text;
 use Drupal\views_timelinejs\TimelineJS\Timeline;
 use Drupal\views_timelinejs\TimelineJS\TitleSlide;
 use Exception;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Style plugin to render items as TimelineJS3 slides.
@@ -52,6 +54,32 @@ class TimelineJS extends StylePluginBase {
    * @var int
    */
   protected $startSlideIndex;
+
+  /**
+   * Constructs a TimelineJS object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Config\ImmutableConfig $module_configuration
+   *   The Views TimelineJS module's configuration.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ImmutableConfig $module_configuration) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+
+    $this->configuration['library_location'] = $module_configuration->get('library_location');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $module_configuration = $container->get('config.factory')->get('views_timelinejs.settings');
+    return new static($configuration, $plugin_id, $plugin_definition, $module_configuration);
+  }
 
   /**
    * {@inheritdoc}
@@ -756,6 +784,11 @@ class TimelineJS extends StylePluginBase {
    * Processes timeline options before theming.
    */
   protected function prepareTimelineOptions() {
+    // Set the script_path option for locally-hosted libraries.
+    if ($this->configuration['library_location'] == 'local') {
+      $this->prepareScriptPathOption();
+    }
+
     // Set the language option to the site's default if it is empty and the
     // language is supported.
     if (empty($this->options['timeline_config']['language'])) {
@@ -789,6 +822,15 @@ class TimelineJS extends StylePluginBase {
     elseif (isset($language_map[$current_language])) {
       $this->options['timeline_config']['language'] = $language_map[$current_language];
     }
+  }
+
+  /**
+   * Sets the timeline script_path option to the library's location.
+   */
+  protected function prepareScriptPathOption() {
+    global $base_url;
+    $script_path = $base_url . '/libraries/TimelineJS3/compiled/js';
+    $this->options['timeline_config']['script_path'] = $script_path;
   }
 
 }
