@@ -89,6 +89,7 @@ class TimelineJS extends StylePluginBase {
 
     $options['timeline_config'] = [
       'contains' => [
+        'font' => ['default' => 'default'],
         'width' => ['default' => '100%'],
         'height' => ['default' => '40em'],
         'hash_bookmark' => ['default' => FALSE],
@@ -104,7 +105,6 @@ class TimelineJS extends StylePluginBase {
     ];
     $options['additional_config'] = [
       'contains' => [
-        'font' => ['default' => ''],
         'start_at_current' => ['default' => FALSE],
       ],
     ];
@@ -147,6 +147,14 @@ class TimelineJS extends StylePluginBase {
       '#title' => $this->t('TimelineJS Options'),
       '#description' => $this->t('Each of these settings maps directly to one of the TimelineJS presentation options.  See the <a href="@options-doc">options documentation page</a> for additional information.', ['@options-doc' => 'https://timeline.knightlab.com/docs/options.html']),
       '#open' => TRUE,
+    ];
+    $form['timeline_config']['font'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Font set'),
+      '#description' => $this->t('TimelineJS3 offers several pre-selected font sets.  If a set is selected its CSS file will be downloaded from the CDN.'),
+      '#options' => array_merge($initial_labels, _views_timelinejs_list_font_sets()),
+      '#default_value' => $this->options['timeline_config']['font'],
+      '#required' => TRUE,
     ];
     $form['timeline_config']['width'] = [
       '#type' => 'textfield',
@@ -238,15 +246,8 @@ class TimelineJS extends StylePluginBase {
     $form['additional_config'] = [
       '#type' => 'details',
       '#title' => $this->t('Additional Options'),
-      '#description' => $this->t('These settings include extra options to control the TimelineJS presentation or options unique to this plugin.'),
+      '#description' => $this->t('These settings include extra options unique to this plugin.'),
       '#open' => TRUE,
-    ];
-    $form['additional_config']['font'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Font set'),
-      '#description' => $this->t('TimelineJS3 offers several pre-selected font sets.  If a set is selected its CSS file will be downloaded from the CDN.'),
-      '#options' => array_merge($initial_labels, _views_timelinejs_list_font_sets()),
-      '#default_value' => $this->options['additional_config']['font'],
     ];
     $form['additional_config']['start_at_current'] = [
       '#type' => 'checkbox',
@@ -430,7 +431,6 @@ class TimelineJS extends StylePluginBase {
       '#view' => $this->view,
       '#options' => [
         'timeline_options' => $this->options['timeline_config'],
-        'timeline_font' => $this->options['additional_config']['font'],
       ],
       '#rows' => $timeline->buildArray(),
     ];
@@ -829,7 +829,7 @@ class TimelineJS extends StylePluginBase {
    */
   protected function prepareScriptPathOption() {
     global $base_url;
-    $script_path = $base_url . '/libraries/TimelineJS3/compiled/js';
+    $script_path = $base_url . '/libraries/timeline3/js/';
     $this->options['timeline_config']['script_path'] = $script_path;
   }
 

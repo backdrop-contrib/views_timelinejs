@@ -1,6 +1,6 @@
 timelinejs.cdn:
   remote: https://github.com/NUKnightLab/TimelineJS3
-  version: 3.3.15
+  version: latest
   license:
     name: MPL
     url: https://github.com/NUKnightLab/TimelineJS3/blob/master/LICENSE
@@ -11,6 +11,19 @@ timelinejs.cdn:
   js:
     https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js: { type: external }
 
+timelinejs.cdn_3.8.18:
+  remote: https://github.com/NUKnightLab/TimelineJS3
+  version: 3.8.18
+  license:
+    name: MPL
+    url: https://github.com/NUKnightLab/TimelineJS3/blob/master/LICENSE
+    gpl-compatible: false
+  css:
+    component:
+      https://cdn.knightlab.com/libs/timeline3/3.8.18/css/timeline.css: { type: external }
+  js:
+    https://cdn.knightlab.com/libs/timeline3/3.8.18/js/timeline.js: { type: external }
+
 timelinejs.local:
   remote: https://timeline.knightlab.com
   version: 3.3.15
@@ -20,9 +33,9 @@ timelinejs.local:
     gpl-compatible: false
   css:
     component:
-      /libraries/TimelineJS3/compiled/css/timeline.css: { }
+      /libraries/timeline3/css/timeline.css: { }
   js:
-    /libraries/TimelineJS3/compiled/js/timeline.js: { }
+    /libraries/timeline3/js/timeline.js: { }
 
 create_timeline:
   version: 3.x

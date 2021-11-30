@@ -10,47 +10,6 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Template\Attribute;
 
 /**
- * Implements hook_library_info_build().
- */
-function views_timelinejs_library_info_build() {
-  $libraries = [];
-
-  // Create a library for each TimelineJS3 alternate font set.
-  foreach (array_keys(_views_timelinejs_list_font_sets()) as $set) {
-    $libraries['timelinejs.' . $set . '.cdn'] = [
-      'remote' => 'https://github.com/NUKnightLab/TimelineJS3',
-      'version' => '3.3.15',
-      'license' => [
-        'name' => 'MPL',
-        'url' => 'https://github.com/NUKnightLab/TimelineJS3/blob/master/LICENSE',
-        'gpl-compatible' => FALSE,
-      ],
-      'css' => [
-        'component' => [
-          'https://cdn.knightlab.com/libs/timeline3/latest/css/fonts/font.' . $set . '.css' => ['type' => 'external'],
-        ],
-      ],
-    ];
-    $libraries['timelinejs.' . $set . '.local'] = [
-      'remote' => 'https://github.com/NUKnightLab/TimelineJS3',
-      'version' => '3.3.15',
-      'license' => [
-        'name' => 'MPL',
-        'url' => 'https://github.com/NUKnightLab/TimelineJS3/blob/master/LICENSE',
-        'gpl-compatible' => FALSE,
-      ],
-      'css' => [
-        'component' => [
-          '/libraries/TimelineJS3/compiled/css/fonts/font.' . $set . '.css' => [],
-        ],
-      ],
-    ];
-  }
-
-  return $libraries;
-}
-
-/**
  * Implements hook_library_info_alter().
  *
  * Provides backward compatibility for sites that originally installed version
@@ -80,23 +39,9 @@ function views_timelinejs_library_info_alter(&$libraries, $extension) {
     ];
     $libraries['timelinejs.local']['css'] = [
       $library_group => [
-        '/libraries/TimelineJS3/compiled/css/timeline.css' => [],
+        '/libraries/timeline3/css/timeline.css' => [],
       ],
     ];
-    foreach (array_keys(_views_timelinejs_list_font_sets()) as $set) {
-      $libraries['timelinejs.' . $set . '.cdn']['css'] = [
-        $library_group => [
-          'https://cdn.knightlab.com/libs/timeline3/latest/css/fonts/font.' . $set . '.css' => [
-            'type' => 'external',
-          ],
-        ],
-      ];
-      $libraries['timelinejs.' . $set . '.local']['css'] = [
-        $library_group => [
-          '/libraries/TimelineJS3/compiled/css/fonts/font.' . $set . '.css' => [],
-        ],
-      ];
-    }
   }
 }
 
@@ -268,11 +213,6 @@ function template_preprocess_views_timelinejs_view_timelinejs(array &$vars) {
     'embed_id' => $id,
     'processed' => FALSE,
   ];
-
-  // Add alternate font CSS.
-  if ($vars['options']['timeline_font']) {
-    $vars['#attached']['library'][] = 'views_timelinejs/timelinejs.' . $vars['options']['timeline_font'] . '.' . $library_location;
-  }
 }
 
 /**

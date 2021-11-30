@@ -1,40 +1,52 @@
 Views TimelineJS
 ================
 This module adds a new style plugin for Views which renders result rows as
-TimelineJS slides and eras.  The 8.x-3.x branch was created to work with the
-TimelineJS3 version of the library.  For more information about TimelineJS visit
-https://timeline.knightlab.com/index.html or the GitHub repository
-https://github.com/NUKnightLab/TimelineJS3.
+TimelineJS slides and eras.  The 8.x-3.x and 4.x branches were created to work
+with the TimelineJS3 version of the library.  For more information about
+TimelineJS visit the
+[official website](https://timeline.knightlab.com/index.html) or the [GitHub
+repository](https://timeline.knightlab.com/index.html).
 
 Installation
 ------------
-Download the module from http://drupal.org/project/views_timelinejs and enable
-it.  By default, there are no library files to download because they are served
-from the NU Knight Lab CDN.
+Download the module using Composer with the command ```composer require
+drupal/views_timelinejs``` and enable it.  By default, there are no library
+files to download because they are served from the NU Knight Lab CDN.  New
+installations will be configured to use the last version with which the module
+was tested.  You can change this setting at
+```admin/config/development/views_timelinejs```.  Other options include using
+the latest version of TimelineJS from the CDN or to serve the library files
+locally from your own server.
 
-Optional: If you want to serve the library files from your own site instead of
-the CDN, then you need to download the library files.  You MUST put the
-TimelineJS library in the /libraries directory inside your Drupal installation.
-Alternate library locations such as those checked by the Libraries API module
-will not work.
+Please note that using the latest version of the library is not recommended.
+Recently the library maintainers have shown that they may introduce changes that
+break backward compatibility for the library's API.  If this happens again in
+the future, then it is possible that some functionality may cease to work with
+no warning.  The latest version option is available in case you need it for bug
+fixes for feature additions, but use it at your own risk.
 
-You can download or clone the entire TimelineJS3 GitHub repository.
-```
-git clone --branch master https://github.com/NUKnightLab/TimelineJS3.git
-```
+If you want to serve the library files from your own site instead of the CDN,
+then you need to download them.  ZIP files of the compiled library are
+available.  You may download a specific version from
+```https://cdn.knightlab.com/libs/timeline3/VERSION-NUMBER/timeline3.zip```, for
+example:
+* https://cdn.knightlab.com/libs/timeline3/3.8.18/timeline3.zip
+* https://cdn.knightlab.com/libs/timeline3/latest/timeline3.zip
 
-If you don't want to download the entire repository, then you can download the
-Javascript and CSS files selectively.  The timeline.js and timeline.css files
+You **must** put the TimelineJS library in the /libraries directory inside your
+Drupal installation.  Alternate library locations such as those checked by the
+Libraries API module will not work.  The timeline.js and timeline.css files
 are required to use TimelineJS.  The library also includes several font
 library CSS files that must be downloaded if you want to use them.  In the end,
 you need to have the following files in these directories:
 
-1. /libraries/TimelineJS3/compiled/js/timeline.js
-2. /libraries/TimelineJS3/compiled/css/timeline.css
-3. /libraries/TimelineJS3/compiled/css/fonts/font.FONT-NAME.css (optional)
+1. ```/libraries/timeline3/js/timeline.js```
+2. ```/libraries/timeline3/css/timeline.css```
+3. ```/libraries/timeline3/css/fonts/font.FONT-NAME.css``` (optional)
 
-Finally, visit the admin settings form admin/config/development/views_timelinejs
-to change the library location setting to Local path.
+Other methods of downloading the library will not be supported.  Previously
+these instructions recommended cloning the library's repository from GitHub, but
+the repo no longer contains the compiled files.
 
 Upgrading
 ---------
@@ -46,7 +58,7 @@ plugin has received a lot of updates in order to take full advantage of the new
 library.  Some settings have been changed or removed.  New settings have been
 added.  The fact that the Date field setting has been split into separate Start
 date and End date field settings means that all existing views that were built
-with version 7.x-1.x will need to be reconfigured for 8.x-3.x.
+with version 7.x-1.x will need to be configured differently in Drupal 9.
 
 Configuring the Plugin
 ----------------------
