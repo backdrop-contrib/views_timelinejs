@@ -533,7 +533,7 @@ class TimelineJS extends StylePluginBase {
       // necessary.  Strip HTML tags from dates so users don't run into problems
       // like Date fields wrapping their output with metadata.
       $date_string = strip_tags($date_markup->__toString());
-      $date = new Date($date_string);
+      $date = new Date(trim($date_string));
     }
     catch (Exception $e) {
       // Return NULL if the field didn't contain a parseable date string.
