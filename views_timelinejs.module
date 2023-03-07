@@ -208,7 +208,7 @@ function template_preprocess_views_timelinejs_view_timelinejs(array &$vars) {
   $vars['#attached']['library'][] = 'views_timelinejs/timelinejs.' . $library_location;
   $vars['#attached']['library'][] = 'views_timelinejs/create_timeline';
   $vars['#attached']['drupalSettings']['TimelineJS'][] = [
-    'options' => _sanitize_timeline_options($vars['options']['timeline_options']),
+    'options' => views_timelinejs_sanitize_timeline_options($vars['options']['timeline_options']),
     'source' => $vars['rows'],
     'embed_id' => $id,
     'processed' => FALSE,
@@ -218,7 +218,7 @@ function template_preprocess_views_timelinejs_view_timelinejs(array &$vars) {
 /**
  * Sanitizes the timeline options.
  */
-function _sanitize_timeline_options($options) {
+function views_timelinejs_sanitize_timeline_options($options) {
   // Sanitize the options.
   $options = array_map(['Drupal\Component\Utility\Html', 'escape'], $options);
   // Remove empty values from the options before returning.

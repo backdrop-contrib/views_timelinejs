@@ -2,14 +2,10 @@
 
 namespace Drupal\views_timelinejs\TimelineJS;
 
-use DateTime;
-use DateTimeZone;
-use Exception;
-
 /**
  * Converts date strings to TimelineJS3-compatible date arrays.
  */
-class Date extends DateTime implements DateInterface {
+class Date extends \DateTime implements DateInterface {
 
   /**
    * The original date string that was passed to the constructor.
@@ -30,13 +26,13 @@ class Date extends DateTime implements DateInterface {
    *
    * @todo Change the exception to an InvalidArgumentException.
    */
-  public function __construct($date_string, DateTimeZone $timezone = NULL) {
+  public function __construct($date_string, \DateTimeZone $timezone = NULL) {
     $this->dateString = $date_string;
 
     // Disallow empty date strings.  They will cause DateTime::__construct() to
     // return a date object with the current time.
     if (empty($date_string)) {
-      throw new Exception('Empty date strings are not allowed.');
+      throw new \Exception('Empty date strings are not allowed.');
     }
 
     // Check for date strings that only include a year value.
