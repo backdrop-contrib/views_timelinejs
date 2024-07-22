@@ -634,6 +634,7 @@ class TimelineJS extends StylePluginBase {
     $url = '';
     if ($this->options['timeline_fields']['media']) {
       $url_markup = $this->getField($this->view->row_index, $this->options['timeline_fields']['media']);
+      $url_raw_value = $this->getFieldValue($this->view->row_index, $this->options['timeline_fields']['media']);
       $url = $url_markup ? $url_markup->__toString() : '';
 
       // Special handling because core Image fields have no raw URL formatter.
@@ -643,33 +644,35 @@ class TimelineJS extends StylePluginBase {
         $url = $this->extractUrl($url);
       }
     }
+
     // Return NULL if the URL is empty.
-    if (empty($url)) {
+    if (empty($url) || is_null($url_raw_value)) {
       return NULL;
     }
 
     $media = new Media($url);
-    if ($this->options['timeline_fields']['thumbnail']) {
-      $thumbnail_markup = $this->getField($this->view->row_index, $this->options['timeline_fields']['thumbnail']);
-      $thumbnail = $thumbnail_markup ? $thumbnail_markup->__toString() : '';
-
-      // Special handling because core Image fields have no raw URL formatter.
-      // Check to see if we don't have a raw URL.
-      if (!filter_var($thumbnail, FILTER_VALIDATE_URL)) {
-        // Attempt to extract a URL from an img or anchor tag in the string.
-        $thumbnail = $this->extractUrl($thumbnail);
+    if (isset($this->view->row_index)) {
+      if ($this->options['timeline_fields']['thumbnail']) {
+        $thumbnail_markup = $this->getField($this->view->row_index, $this->options['timeline_fields']['thumbnail']);
+        $thumbnail = $thumbnail_markup ? $thumbnail_markup->__toString() : '';
+        // Special handling because core Image fields have no raw URL formatter.
+        // Check to see if we don't have a raw URL.
+        if (!filter_var($thumbnail, FILTER_VALIDATE_URL)) {
+          // Attempt to extract a URL from an img or anchor tag in the string.
+          $thumbnail = $this->extractUrl($thumbnail);
+        }
+        $media->setThumbnail($thumbnail);
       }
-      $media->setThumbnail($thumbnail);
-    }
-    if ($this->options['timeline_fields']['caption']) {
-      $caption_markup = $this->getField($this->view->row_index, $this->options['timeline_fields']['caption']);
-      $caption = $caption_markup ? $caption_markup->__toString() : '';
-      $media->setCaption($caption);
-    }
-    if ($this->options['timeline_fields']['credit']) {
-      $credit_markup = $this->getField($this->view->row_index, $this->options['timeline_fields']['credit']);
-      $credit = $credit_markup ? $credit_markup->__toString() : '';
-      $media->setCredit($credit);
+      if ($this->options['timeline_fields']['caption']) {
+        $caption_markup = $this->getField($this->view->row_index, $this->options['timeline_fields']['caption']);
+        $caption = $caption_markup ? $caption_markup->__toString() : '';
+        $media->setCaption($caption);
+      }
+      if ($this->options['timeline_fields']['credit']) {
+        $credit_markup = $this->getField($this->view->row_index, $this->options['timeline_fields']['credit']);
+        $credit = $credit_markup ? $credit_markup->__toString() : '';
+        $media->setCredit($credit);
+      }
     }
     return $media;
   }
