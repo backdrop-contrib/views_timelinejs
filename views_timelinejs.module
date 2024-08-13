@@ -10,8 +10,19 @@
 function views_timelinejs_views_api() {
   return array(
     'api' => '3',
-    'path' => drupal_get_path('module', 'views_timelinejs'),
+    'path' => backdrop_get_path('module', 'views_timelinejs'),
   );
+}
+
+/**
+ * Implements hook_config_info().
+ */
+function views_timelinejs_config_info() {
+  $prefixes['views_timelinejs.settings'] = array(
+    'label' => t('Views TimelineJS settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
 }
 
 /**
@@ -23,9 +34,9 @@ function views_timelinejs_views_api() {
  *
  * @todo Remove this variable in the next major version of the module.
  *
- * @see https://www.drupal.org/node/2856403
  */
-function views_timelinejs_library() {
+function views_timelinejs_library_info() {
+  $config = config('views_timelinejs.settings');
   global $base_url;
   $libraries = array();
 
@@ -44,7 +55,7 @@ function views_timelinejs_library() {
       'timeline.css' => array(
         'data' => 'https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css',
         'type' => 'external',
-        'group' => variable_get('views_timelinejs_css_library_group', CSS_DEFAULT),
+        'group' => $config->get('views_timelinejs_css_library_group'),
       ),
     ),
   );
@@ -63,7 +74,7 @@ function views_timelinejs_library() {
       'timeline.css' => array(
         'data' => $base_url . '/sites/all/libraries/TimelineJS3/compiled/css/timeline.css',
         'type' => 'external',
-        'group' => variable_get('views_timelinejs_css_library_group', CSS_DEFAULT),
+        'group' => $config->get('views_timelinejs_css_library_group'),
       ),
     ),
   );
@@ -78,7 +89,7 @@ function views_timelinejs_library() {
         'font.' . $set . '.css' => array(
           'data' => 'https://cdn.knightlab.com/libs/timeline3/latest/css/fonts/font.' . $set . '.css',
           'type' => 'external',
-          'group' => variable_get('views_timelinejs_css_library_group', CSS_DEFAULT),
+          'group' => $config->get('views_timelinejs_css_library_group'),
         ),
       ),
     );
@@ -90,7 +101,7 @@ function views_timelinejs_library() {
         'font.' . $set . '.css' => array(
           'data' => $base_url . '/sites/all/libraries/TimelineJS3/compiled/css/fonts/font.' . $set . '.css',
           'type' => 'external',
-          'group' => variable_get('views_timelinejs_css_library_group', CSS_DEFAULT),
+          'group' => $config->get('views_timelinejs_css_library_group'),
         ),
       ),
     );
@@ -206,11 +217,11 @@ function _views_timelinejs_list_languages() {
 }
 
 /**
- * Returns an array of Drupal language codes mapped to TimelineJS codes.
+ * Returns an array of Backdrop language codes mapped to TimelineJS codes.
  *
  * @return array
  *   An array of language codes supported by TimelineJS, keyed by the equivalent
- *   Drupal language code.
+ *   Backdrop language code.
  */
 function _views_timelinejs_language_map() {
   return array(
@@ -230,7 +241,7 @@ function views_timelinejs_menu() {
   $items['admin/config/development/views_timelinejs'] = array(
     'title' => 'Views TimelineJS',
     'description' => 'Configure settings related to the TimelineJS library.',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('views_timelinejs_settings_form'),
     'access arguments' => array('administer site configuration'),
   );
@@ -244,15 +255,15 @@ function views_timelinejs_menu() {
  * @see views_timelinejs_menu()
  */
 function views_timelinejs_settings_form() {
-  $form['views_timelinejs_library'] = array(
+  $form['#config'] = 'views_timelinejs.settings';
+  $form['views_timelinejs_library_info'] = array(
     '#type' => 'radios',
     '#title' => t('TimelineJS library location'),
-    '#description' => t('If serving the files from a local path, the library MUST be located in sites/all/libraries/TimelineJS3.  See the module README file for more information.'),
+    '#description' => t('There are no library files to download because they are served from the NU Knight Lab CDN.  See the module README file for more information.'),
     '#options' => array(
       'cdn' => t('NU Knight Lab CDN'),
-      'local' => t('Local path (sites/all/libraries)'),
     ),
-    '#default_value' => variable_get('views_timelinejs_library', 'cdn'),
+    '#default_value' => config_get('views_timelinejs.settings', 'views_timelinejs_library'),
   );
 
   return system_settings_form($form);
@@ -267,4 +278,29 @@ function views_timelinejs_help($path, $arg) {
     case 'admin/config/development/views_timelinejs':
       return '<p>' . t('Configure how the Views TimelineJS plugin behaves on the site. Select whether to use a CDN or serve the library locally.') . '</p>';
   }
+}
+
+/**
+ * Implements hook_autoload_info().
+ */
+function views_timelinejs_autoload_info() {
+  return array(
+    'Timeline' => 'src/Timeline.php',
+    'TimelineBackground' => 'src/TimelineBackground.php',
+    'TimelineBackgroundInterface' => 'src/TimelineBackgroundInterface.php',
+    'TimelineDate' => 'src/TimelineDate.php',
+    'TimelineDateInterface' => 'src/TimelineDateInterface.php',
+    'TimelineEra' => 'src/TimelineEra.php',
+    'TimelineEraInterface' => 'src/TimelineEraInterface.php',
+    'TimelineInterface' => 'src/TimelineInterface.php',
+    'TimelineMedia' => 'src/TimelineMedia.php',
+    'TimelineMediaInterface' => 'src/TimelineMediaInterface.php',
+    'TimelineObjectInterface' => 'src/TimelineObjectInterface.php',
+    'TimelineSlide' => 'src/TimelineSlide.php',
+    'TimelineSlideInterface' => 'src/TimelineSlideInterface.php',
+    'TimelineText' => 'src/TimelineText.php',
+    'TimelineTextInterface' => 'src/TimelineTextInterface.php',
+    'TimelineTitleSlide' => 'src/TimelineTitleSlide.php',
+    'views_timelinejs_plugin_style_timelinejs' => 'views_timelinejs_plugin_style_timelinejs.inc',
+  );
 }

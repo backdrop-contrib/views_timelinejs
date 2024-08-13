@@ -9,14 +9,35 @@
  * Implements hook_uninstall().
  */
 function views_timelinejs_uninstall() {
-  variable_del('views_timelinejs_css_library_group');
+  config_clear('views_timelinejs.settings', 'views_timelinejs_css_library_group');
+}
+
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
+function views_timelinejs_update_7300() { }
+
+/**
+ * Implements hook_update_last_removed().
+ */
+function views_timelinejs_update_last_removed() {
+  return 7300;
 }
 
 /**
- * Sets the CSS library group to 200 for existing installations.
- *
- * @see https://www.drupal.org/node/2856403
+ * Migrate views_timelinejs variables to config.
  */
-function views_timelinejs_update_7300() {
-  variable_set('views_timelinejs_css_library_group', 200);
+function views_timelinejs_update_1000() {
+  $config = config('views_timelinejs.settings');
+  $config->set('views_timelinejs_library', update_variable_get('views_timelinejs_library', 'cdn'));
+  $config->set('views_timelinejs_css_library_group', update_variable_get('views_timelinejs_css_library_group', 'CSS_DEFAULT'));
+  $config->save();
+
+  update_variable_del('views_timelinejs_library');
+  update_variable_del('views_timelinejs_css_library_group');
+}
+
+/**
+ * Implements hook_install().
+ */
+function views_timelinejs_install() {
+  // Dynamically generated variable data was detected.
 }

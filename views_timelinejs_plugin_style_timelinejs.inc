@@ -316,7 +316,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
   function render() {
     // Return if the start date field mapping is not configured.
     if (empty($this->options['timeline_fields']['start_date'])) {
-      drupal_set_message(t('The Start date field mapping must be configured in the TimelineJS format settings before any slides or eras can be rendered.'), 'warning');
+      backdrop_set_message(t('The Start date field mapping must be configured in the TimelineJS format settings before any slides or eras can be rendered.'), 'warning');
       return;
     }
 
@@ -475,10 +475,20 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     }
     catch (Exception $e) {
       // Return NULL if the field didn't contain a parseable date string.
-      views_debug('The date "@date" does not conform to a <a href="@php-manual">PHP supported date and time format</a>.', array('@date' => $date_string, '@php-manual' => 'http://php.net/manual/en/datetime.formats.php'));
+      $this->views_timeline_debug('The date "@date" does not conform to a <a href="@php-manual">PHP supported date and time format</a>.', array('@date' => $date_string, '@php-manual' => 'http://php.net/manual/en/datetime.formats.php'));
       return NULL;
     }
     return $date;
+  }
+
+  function views_timeline_debug($message, $placeholders = array()) {
+    if (!is_string($message)) {
+      $output = '<pre>' . var_export($message, TRUE) . '</pre>';
+    }
+    elseif (isset($GLOBALS['drupal_test_info'])) {
+      $output = empty($output) ? t($message, $placeholders) : $output;
+      debug($output);
+    }
   }
 
   /**
@@ -692,7 +702,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
   }
 
   /**
-   * Sets Drupal messages to inform users of HTML parsing errors.
+   * Sets Backdrop messages to inform users of HTML parsing errors.
    *
    * @param \LibXMLError $error
    *   Contains information about the XML parsing error.
@@ -701,7 +711,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
    */
   protected function handle_xml_errors(\LibXMLError $error, $html) {
     $message = t('A media field has an error in its HTML.<br>Error message: @message<br>Views result row: @row<br>HTML: <pre>@html</pre>', array('@message' => $error->message, '@row' => $this->view->row_index, '@html' => $html));
-    drupal_set_message($message, 'warning');
+    backdrop_set_message($message, 'warning');
   }
 
   /**
@@ -709,7 +719,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
    */
   protected function prepare_timeline_options() {
     // Set the script_path option for locally-hosted libraries.
-    if (variable_get('views_timelinejs_library', 'cdn') == 'local') {
+    if (config_get('views_timelinejs.settings', 'views_timelinejs_library_info') == 'local') {
       $this->prepareScriptPathOption();
     }
 
@@ -737,13 +747,13 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
 
     // Check for the site's current language in the list of languages that are
     // supported by TimelineJS.
-    if (isset($supported_languages[$language->language])) {
-      $this->options['timeline_config']['language'] = $language->language;
+    if (isset($supported_languages[$language->langcode])) {
+      $this->options['timeline_config']['language'] = $language->langcode;
     }
     // Check for the site's current language in the list of language codes
-    // that are different in Drupal than they are in TimelineJS.
-    elseif (isset($language_map[$language->language])) {
-      $this->options['timeline_config']['language'] = $language_map[$language->language];
+    // that are different in Backdrop than they are in TimelineJS.
+    elseif (isset($language_map[$language->langcode])) {
+      $this->options['timeline_config']['language'] = $language_map[$language->langcode];
     }
   }
 
