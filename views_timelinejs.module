@@ -28,7 +28,7 @@ function views_timelinejs_config_info() {
 /**
  * Implements hook_library().
  *
- * The views_timelinejs_css_library_group variable provides backward
+ * The css_library_group variable provides backward
  * compatibility for sites that originally installed version 7.x-3.0 which gave
  * the TimelineJS CSS libraries a weight of 200.
  *
@@ -55,7 +55,7 @@ function views_timelinejs_library_info() {
       'timeline.css' => array(
         'data' => 'https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css',
         'type' => 'external',
-        'group' => $config->get('views_timelinejs_css_library_group'),
+        'group' => $config->get('css_library_group'),
       ),
     ),
   );
@@ -74,7 +74,7 @@ function views_timelinejs_library_info() {
       'timeline.css' => array(
         'data' => $base_url . '/sites/all/libraries/TimelineJS3/compiled/css/timeline.css',
         'type' => 'external',
-        'group' => $config->get('views_timelinejs_css_library_group'),
+        'group' => $config->get('css_library_group'),
       ),
     ),
   );
@@ -89,7 +89,7 @@ function views_timelinejs_library_info() {
         'font.' . $set . '.css' => array(
           'data' => 'https://cdn.knightlab.com/libs/timeline3/latest/css/fonts/font.' . $set . '.css',
           'type' => 'external',
-          'group' => $config->get('views_timelinejs_css_library_group'),
+          'group' => $config->get('css_library_group'),
         ),
       ),
     );
@@ -101,7 +101,7 @@ function views_timelinejs_library_info() {
         'font.' . $set . '.css' => array(
           'data' => $base_url . '/sites/all/libraries/TimelineJS3/compiled/css/fonts/font.' . $set . '.css',
           'type' => 'external',
-          'group' => $config->get('views_timelinejs_css_library_group'),
+          'group' => $config->get('css_library_group'),
         ),
       ),
     );
@@ -259,14 +259,30 @@ function views_timelinejs_settings_form() {
   $form['views_timelinejs_library_info'] = array(
     '#type' => 'radios',
     '#title' => t('TimelineJS library location'),
-    '#description' => t('There are no library files to download because they are served from the NU Knight Lab CDN.  See the module README file for more information.'),
+    '#description' =>  t('If serving the files from a local path, the library MUST be located in sites/all/libraries/TimelineJS3.  See the module README file for more information.'),
     '#options' => array(
       'cdn' => t('NU Knight Lab CDN'),
+      'local' => t('Local path (sites/all/libraries)'),
     ),
-    '#default_value' => config_get('views_timelinejs.settings', 'views_timelinejs_library'),
+    '#default_value' => config_get('views_timelinejs.settings', 'library'),
   );
+  $form['actions']['#type'] = 'actions';
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save configuration'),
+  );
+  return $form;
+}
 
-  return system_settings_form($form);
+/**
+ * Submit callback for views_timelinejs_settings_form().
+ */
+function views_timelinejs_settings_form_submit($form, &$form_state) {
+  $config = config('views_timelinejs.settings');
+  $config->set('library', $form_state['values']['views_timelinejs_library_info']);
+  $config->save();
+
+  backdrop_set_message(t('The configuration options have been saved.'));
 }
 
 /**

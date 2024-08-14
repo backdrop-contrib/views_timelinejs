@@ -475,20 +475,13 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
     }
     catch (Exception $e) {
       // Return NULL if the field didn't contain a parseable date string.
-      $this->views_timeline_debug('The date "@date" does not conform to a <a href="@php-manual">PHP supported date and time format</a>.', array('@date' => $date_string, '@php-manual' => 'http://php.net/manual/en/datetime.formats.php'));
+      if (isset($GLOBALS['backdrop_test_info'])) {
+        $output = empty($output) ? t('The date "@date" does not conform to a <a href="@php-manual">PHP supported date and time format</a>.', array('@date' => $date_string, '@php-manual' => 'http://php.net/manual/en/datetime.formats.php')) : $output;
+        debug($output);
+      }
       return NULL;
     }
     return $date;
-  }
-
-  function views_timeline_debug($message, $placeholders = array()) {
-    if (!is_string($message)) {
-      $output = '<pre>' . var_export($message, TRUE) . '</pre>';
-    }
-    elseif (isset($GLOBALS['drupal_test_info'])) {
-      $output = empty($output) ? t($message, $placeholders) : $output;
-      debug($output);
-    }
   }
 
   /**
