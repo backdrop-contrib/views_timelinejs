@@ -712,7 +712,7 @@ class views_timelinejs_plugin_style_timelinejs extends views_plugin_style {
    */
   protected function prepare_timeline_options() {
     // Set the script_path option for locally-hosted libraries.
-    if (config_get('views_timelinejs.settings', 'views_timelinejs_library_info') == 'local') {
+    if (config_get('views_timelinejs.settings', 'library') == 'local') {
       $this->prepareScriptPathOption();
     }
 

@@ -1,5 +1,5 @@
 {
     "_config_name": "views_timelinejs.settings",
-    "views_timelinejs_library": "cdn",
-    "views_timelinejs_css_library_group": 0
+    "library": "cdn",
+    "css_library_group": 0
 }
