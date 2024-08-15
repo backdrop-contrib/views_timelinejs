@@ -1,0 +1,11 @@
+*.pyc
+
+# Other
+.DS_Store
+codekit-config.json
+
+build/website
+build
+*.log
+
+/node_modules

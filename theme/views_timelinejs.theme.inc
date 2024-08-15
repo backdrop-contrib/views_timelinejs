@@ -8,7 +8,7 @@
  * Prepares variables for the TimelineJS style template.
  */
 function template_preprocess_views_timelinejs(&$vars) {
-  $library_location = config_get('views_timelinejs.settings', 'library');
+  $library_location = config_get('views_timelinejs.settings', 'views_timelinejs_library');
   $view = $vars['view'];
 
   $id = backdrop_html_id('timelinejs_' . $view->name . '_' . $view->current_display);
